@@ -3,6 +3,13 @@
     var width = 0, height = 0, bar_h = 0, axis_h = 0, sono_h = 0;
     var canvas = null, canvas_ctx = null, axis = null, cqt = null, blocker = null;
     var audio_ctx = new window.AudioContext();
+    function resume_audio_ctx() {
+        if (audio_ctx.state === "suspended") {
+            audio_ctx.resume();
+            window.setTimeout(resume_audio_ctx, 100);
+        }
+    }
+    resume_audio_ctx();
     var videos = document.getElementsByTagName("video");
     var video = null, stream = null;
     var img_buffer = null, audio_data_l = null, audio_data_r = null, line = null;
