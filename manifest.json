@@ -1,0 +1,34 @@
+{
+    "manifest_version" : 2,
+    "name" : "Youtube Musical Spectrum",
+    "description" : "Music spectrum audio visualization for Youtube with musical notes.",
+    "version" : "1.0.1",
+    "icons" : {
+        "128" : "icon-128.png",
+        "64"  : "icon-64.png",
+        "48"  : "icon-48.png",
+        "32"  : "icon-32.png",
+        "24"  : "icon-24.png",
+        "16"  : "icon-16.png"
+    },
+    "browser_action" : {
+        "default_icon" : {
+            "128" : "icon-128.png",
+            "64"  : "icon-64.png",
+            "48"  : "icon-48.png",
+            "32"  : "icon-32.png",
+            "24"  : "icon-24.png",
+            "16"  : "icon-16.png"
+        },
+        "default_title" : "Youtube Musical Spectrum"
+    },
+    "web_accessible_resources": ["/axis-1920x32.png", "/icon-24.png"],
+    "content_scripts" : [
+        {
+            "runs_at"   : "document_end",
+            "js"        : [ "showcqtbar.js", "script.js" ],
+            "matches"   : [ "https://www.youtube.com/*" ]
+        }
+    ],
+    "permissions" : [ "storage", "https://www.youtube.com/*" ]
+}
