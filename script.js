@@ -247,6 +247,13 @@
         canvas.style.pointerEvents = options.transparent ? "none" : "auto";
         canvas_ctx = canvas.getContext("2d", {alpha: true});
         img_buffer = canvas_ctx.createImageData(width, height);
+        /* make opaque */
+        for (var k = 0; k < width * height * 4; k += 4) {
+            img_buffer.data[k] = 0;
+            img_buffer.data[k+1] = 0;
+            img_buffer.data[k+2] = 0;
+            img_buffer.data[k+3] = 255;
+        }
 
         if (!axis) {
             axis = document.createElement("img");
