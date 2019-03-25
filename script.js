@@ -33,6 +33,7 @@
         waterfall: 33,
         brightness: 17,
         bass: -30,
+        speed: 2,
         transparent: true,
         visible: true
     };
@@ -42,7 +43,8 @@
         bar_min: 3, bar_max: 33,
         waterfall_min: 0, waterfall_max: 40,
         brightness_min: 7, brightness_max: 49,
-        bass_min: -50, bass_max: 0
+        bass_min: -50, bass_max: 0,
+        speed_min: 1, speed_max: 3
     }
 
     function set_fixed_style(element, z_index) {
@@ -161,6 +163,21 @@
             iir.gain.value = options.bass;
         }
         iir.gain.value = options.bass;
+        menu_table.appendChild(child);
+        menu_table.appendChild(document.createElement("br"));
+
+        child = document.createElement("span");
+        child.textContent = "    Speed           ";
+        menu_table.appendChild(child);
+        child = document.createElement("input");
+        child.type = "range";
+        child.min = bound.speed_min;
+        child.max = bound.speed_max;
+        child.step = 1;
+        child.value = options.speed;
+        child.onchange = function() {
+            options.speed = this.value;
+        };
         menu_table.appendChild(child);
         menu_table.appendChild(document.createElement("br"));
 
@@ -284,7 +301,7 @@
         var new_height = Math.min(Math.max(Math.floor(window.innerHeight * options.height / 100), 100), 1080);
         var new_sono_h = Math.round(new_height * options.waterfall / 100);
         if (new_sono_h > 0)
-            new_sono_h = Math.max(new_sono_h, 3);
+            new_sono_h = Math.max(new_sono_h, 4);
         var new_axis_h = Math.round(new_width * 32 / 1920);
         var new_bar_h = new_height - new_sono_h - new_axis_h;
 
@@ -336,12 +353,24 @@
         }
 
         if (sono_h) {
-            img_buffer.data.copyWithin(4*width*(bar_h+axis_h), 4*width*(bar_h+axis_h-2), 4*width*(height-2));
+            var speed = Math.round(options.speed);
+            img_buffer.data.copyWithin(4*width*(bar_h+axis_h), 4*width*(bar_h+axis_h-speed), 4*width*(height-speed));
             var src0 = 4*width*(bar_h+axis_h);
-            var src1 = 4*width*(bar_h+axis_h+2);
-            var dst = 4*width*(bar_h+axis_h+1);
-            for (var x = 0; x < width*4; x++)
-                img_buffer.data[dst+x] = 0.5 * (img_buffer.data[src0+x] + img_buffer.data[src1+x]);
+            var src1 = 4*width*(bar_h+axis_h+speed);
+            var dst_a = 4*width*(bar_h+axis_h+1);
+            var dst_b = 4*width*(bar_h+axis_h+2);
+
+            if (speed == 2) {
+                for (var x = 0; x < width*4; x++)
+                    img_buffer.data[dst_a+x] = 0.3333 + 0.5 * (img_buffer.data[src0+x] + img_buffer.data[src1+x]);
+            }
+
+            if (speed == 3) {
+                for (var x = 0; x < width*4; x++) {
+                    img_buffer.data[dst_a+x] = 0.3333 + 0.6667 * img_buffer.data[src0+x] + 0.3333 * img_buffer.data[src1+x];
+                    img_buffer.data[dst_b+x] = 0.3333 + 0.3333 * img_buffer.data[src0+x] + 0.6667 * img_buffer.data[src1+x];
+                }
+            }
         }
         canvas_ctx.putImageData(img_buffer, 0, 0);
     }
@@ -357,6 +386,8 @@
             options.brightness = Math.round(value.brightness);
         if (value.bass != undefined && value.bass >= bound.bass_min && value.bass <= bound.bass_max)
             options.bass = Math.round(value.bass);
+        if (value.speed != undefined && value.speed >= bound.speed_min && value.speed <= bound.speed_max)
+            options.speed = Math.round(value.speed);
         if (value.transparent != undefined)
             options.transparent = value.transparent;
         if (value.visible != undefined)
