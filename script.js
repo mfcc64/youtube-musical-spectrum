@@ -1,7 +1,7 @@
 
 (function(){
     var width = 0, height = 0, bar_h = 0, axis_h = 0, sono_h = 0;
-    var canvas = null, canvas_ctx = null, axis = null, cqt = null, blocker = null;
+    var canvas = null, canvas_ctx = null, axis = null, cqt = null, blocker = null, alpha_table = null;
     var audio_ctx = new window.AudioContext();
     function resume_audio_ctx() {
         if (audio_ctx.state === "suspended") {
@@ -320,8 +320,13 @@
             analyser_r.fftSize = cqt.fft_size;
             line = cqt.get_output_array();
             resize_canvas();
-        }
 
+            alpha_table = new Uint8Array(bar_h + axis_h);
+            for (var y = 0; y < bar_h; y++)
+                alpha_table[y] = Math.round(255 * Math.sin(0.5*Math.PI*y/bar_h) * Math.sin(0.5*Math.PI*y/bar_h));
+            for (var y = bar_h; y < bar_h + axis_h; y++)
+                alpha_table[y] = 255;
+        }
     }
 
     function draw() {
@@ -348,7 +353,7 @@
         cqt.calc();
 
         for (var y = 0; y < bar_h + axis_h; y++) {
-            cqt.render_line(y, options.transparent ? Math.round(255 * y / bar_h) : 255);
+            cqt.render_line(y, options.transparent ? alpha_table[y] : 255);
             img_buffer.data.set(line, 4*width*y);
         }
 
