@@ -305,7 +305,7 @@
         var new_axis_h = Math.round(new_width * 32 / 1920);
         var new_bar_h = new_height - new_sono_h - new_axis_h;
 
-        if (new_width != width || new_bar_h != bar_h) {
+        if (new_width != width || new_bar_h != bar_h || new_height != height || new_axis_h != axis_h) {
             if (new_width != width)
                 cqt = new ShowCQTBar(audio_ctx.sampleRate, new_width, 1, 17, 17, 1);
             width = new_width;
