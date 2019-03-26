@@ -10,6 +10,6 @@ Install [Youtube Musical Spectrum on Chrome Webstore](https://chrome.google.com/
 
 ## Screenshots
 
-![screenshot](screenshots/00.jpg)
+![screenshot](screenshots/00.jpeg)
 
-![screenshot](screenshots/01.jpg)
+![screenshot](screenshots/01.jpeg)
