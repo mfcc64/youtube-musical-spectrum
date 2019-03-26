@@ -2,7 +2,7 @@
     "manifest_version" : 2,
     "name" : "Youtube Musical Spectrum",
     "description" : "Music spectrum audio visualization for Youtube with musical notes.",
-    "version" : "1.0.2",
+    "version" : "1.0.3",
     "icons" : {
         "128" : "icon-128.png",
         "64"  : "icon-64.png",
