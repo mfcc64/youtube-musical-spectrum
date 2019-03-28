@@ -27,16 +27,18 @@
     splitter.connect(analyser_r, 1);
     panner.connect(audio_ctx.destination);
 
-    var options = {
-        height: 33,
-        bar: 17,
-        waterfall: 33,
-        brightness: 17,
-        bass: -30,
-        speed: 2,
-        transparent: true,
-        visible: true
-    };
+    var options = {};
+    function load_default_options() {
+        options.height = 33;
+        options.bar = 17;
+        options.waterfall = 33;
+        options.brightness = 17;
+        options.bass = -30;
+        options.speed = 2;
+        options.transparent = true;
+        options.visible = true;
+    }
+    load_default_options();
 
     var bound = {
         height_min: 20, height_max: 100,
@@ -45,6 +47,50 @@
         brightness_min: 7, brightness_max: 49,
         bass_min: -50, bass_max: 0,
         speed_min: 1, speed_max: 3
+    }
+
+    var child_menu = {
+        height: null,
+        bar: null,
+        waterfall: null,
+        brightness: null,
+        bass: null,
+        speed: null,
+        transparent: null,
+        visible: null
+    };
+
+    function load_options(value) {
+        if (value.height != undefined && value.height >= bound.height_min && value.height <= bound.height_max)
+            options.height = Math.round(value.height);
+        if (value.bar != undefined && value.bar >= bound.bar_min && value.bar <= bound.bar_max)
+            options.bar = Math.round(value.bar);
+        if (value.waterfall != undefined && value.waterfall >= bound.waterfall_min && value.waterfall <= bound.waterfall_max)
+            options.waterfall = Math.round(value.waterfall);
+        if (value.brightness != undefined && value.brightness >= bound.brightness_min && value.brightness <= bound.brightness_max)
+            options.brightness = Math.round(value.brightness);
+        if (value.bass != undefined && value.bass >= bound.bass_min && value.bass <= bound.bass_max)
+            options.bass = Math.round(value.bass);
+        if (value.speed != undefined && value.speed >= bound.speed_min && value.speed <= bound.speed_max)
+            options.speed = Math.round(value.speed);
+        if (value.transparent != undefined)
+            options.transparent = value.transparent;
+        if (value.visible != undefined)
+            options.visible = value.visible;
+    }
+
+    function reset_child_menu() {
+        child_menu.height.value = options.height;
+        child_menu.bar.value = options.bar;
+        child_menu.waterfall.value = options.waterfall;
+        child_menu.brightness.value = options.brightness;
+        child_menu.bass.value = options.bass;
+        child_menu.bass.onchange();
+        child_menu.speed.value = options.speed;
+        child_menu.transparent.checked = options.transparent;
+        child_menu.transparent.onchange();
+        child_menu.visible.checked = options.visible;
+        child_menu.visible.onchange();
     }
 
     function set_fixed_style(element, z_index) {
@@ -86,7 +132,7 @@
         child = document.createElement("span");
         child.textContent = "Height          ";
         menu_table.appendChild(child);
-        child = document.createElement("input");
+        child = child_menu.height = document.createElement("input");
         child.type = "range";
         child.min  = bound.height_min;
         child.max  = bound.height_max;
@@ -101,7 +147,7 @@
         child = document.createElement("span");
         child.textContent = "Bar             ";
         menu_table.appendChild(child);
-        child = document.createElement("input");
+        child = child_menu.bar = document.createElement("input");
         child.type = "range";
         child.min  = bound.bar_min;
         child.max  = bound.bar_max;
@@ -116,7 +162,7 @@
         child = document.createElement("span");
         child.textContent = "Waterfall       ";
         menu_table.appendChild(child);
-        child = document.createElement("input");
+        child = child_menu.waterfall = document.createElement("input");
         child.type = "range";
         child.min  = bound.waterfall_min;
         child.max  = bound.waterfall_max;
@@ -131,7 +177,7 @@
         child = document.createElement("span");
         child.textContent = "Brightness      ";
         menu_table.appendChild(child);
-        child = document.createElement("input");
+        child = child_menu.brightness = document.createElement("input");
         child.type = "range";
         child.min  = bound.brightness_min;
         child.max  = bound.brightness_max;
@@ -146,7 +192,7 @@
         child = document.createElement("span");
         child.textContent = "Bass            ";
         menu_table.appendChild(child);
-        child = document.createElement("input");
+        child = child_menu.bass = document.createElement("input");
         child.type = "range";
         child.min  = bound.bass_min;
         child.max  = bound.bass_max;
@@ -163,7 +209,7 @@
         child = document.createElement("span");
         child.textContent = "Speed           ";
         menu_table.appendChild(child);
-        child = document.createElement("input");
+        child = child_menu.speed = document.createElement("input");
         child.type = "range";
         child.min = bound.speed_min;
         child.max = bound.speed_max;
@@ -178,7 +224,7 @@
         child = document.createElement("span");
         child.textContent = "Transparent      ";
         menu_table.appendChild(child);
-        child = document.createElement("input");
+        child = child_menu.transparent = document.createElement("input");
         child.type = "checkbox";
         child.checked = options.transparent;
         child.onchange = function() {
@@ -192,7 +238,7 @@
         child = document.createElement("span");
         child.textContent = "Visible          ";
         menu_table.appendChild(child);
-        child = document.createElement("input");
+        child = child_menu.visible = document.createElement("input");
         child.type = "checkbox";
         child.checked = options.visible;
         child.onchange = function() {
@@ -203,6 +249,20 @@
                 axis.style.visibility = options.visible ? "visible" : "hidden";
             if (blocker)
                 blocker.style.visibility = options.visible ? "visible" : "hidden";
+        }
+        menu_table.appendChild(child);
+        menu_table.appendChild(document.createElement("br"));
+
+        child = document.createElement("input");
+        child.type = "button";
+        child.style.cursor = "pointer";
+        child.value = "Reset Settings";
+        child.onclick = function() {
+            chrome.storage.local.get(null, function(value) {
+                load_default_options();
+                load_options(value);
+                reset_child_menu();
+            });
         }
         menu_table.appendChild(child);
         menu_table.appendChild(document.createElement("br"));
@@ -375,22 +435,7 @@
     }
 
     chrome.storage.local.get(null, function(value) {
-        if (value.height != undefined && value.height >= bound.height_min && value.height <= bound.height_max)
-            options.height = Math.round(value.height);
-        if (value.bar != undefined && value.bar >= bound.bar_min && value.bar <= bound.bar_max)
-            options.bar = Math.round(value.bar);
-        if (value.waterfall != undefined && value.waterfall >= bound.waterfall_min && value.waterfall <= bound.waterfall_max)
-            options.waterfall = Math.round(value.waterfall);
-        if (value.brightness != undefined && value.brightness >= bound.brightness_min && value.brightness <= bound.brightness_max)
-            options.brightness = Math.round(value.brightness);
-        if (value.bass != undefined && value.bass >= bound.bass_min && value.bass <= bound.bass_max)
-            options.bass = Math.round(value.bass);
-        if (value.speed != undefined && value.speed >= bound.speed_min && value.speed <= bound.speed_max)
-            options.speed = Math.round(value.speed);
-        if (value.transparent != undefined)
-            options.transparent = value.transparent;
-        if (value.visible != undefined)
-            options.visible = value.visible;
+        load_options(value);
         create_menu();
         requestAnimationFrame(draw);
     });
