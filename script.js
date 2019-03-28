@@ -84,13 +84,7 @@
         menu_table.style.display = "none";
 
         child = document.createElement("span");
-        child.style.fontSize = "12pt";
-        child.textContent = "Settings:";
-        menu_table.appendChild(child);
-        menu_table.appendChild(document.createElement("br"));
-
-        child = document.createElement("span");
-        child.textContent = "    Height          ";
+        child.textContent = "Height          ";
         menu_table.appendChild(child);
         child = document.createElement("input");
         child.type = "range";
@@ -105,7 +99,7 @@
         menu_table.appendChild(document.createElement("br"));
 
         child = document.createElement("span");
-        child.textContent = "    Bar             ";
+        child.textContent = "Bar             ";
         menu_table.appendChild(child);
         child = document.createElement("input");
         child.type = "range";
@@ -120,7 +114,7 @@
         menu_table.appendChild(document.createElement("br"));
 
         child = document.createElement("span");
-        child.textContent = "    Waterfall       ";
+        child.textContent = "Waterfall       ";
         menu_table.appendChild(child);
         child = document.createElement("input");
         child.type = "range";
@@ -135,7 +129,7 @@
         menu_table.appendChild(document.createElement("br"));
 
         child = document.createElement("span");
-        child.textContent = "    Brightness      ";
+        child.textContent = "Brightness      ";
         menu_table.appendChild(child);
         child = document.createElement("input");
         child.type = "range";
@@ -150,7 +144,7 @@
         menu_table.appendChild(document.createElement("br"));
 
         child = document.createElement("span");
-        child.textContent = "    Bass            ";
+        child.textContent = "Bass            ";
         menu_table.appendChild(child);
         child = document.createElement("input");
         child.type = "range";
@@ -167,7 +161,7 @@
         menu_table.appendChild(document.createElement("br"));
 
         child = document.createElement("span");
-        child.textContent = "    Speed           ";
+        child.textContent = "Speed           ";
         menu_table.appendChild(child);
         child = document.createElement("input");
         child.type = "range";
@@ -182,7 +176,7 @@
         menu_table.appendChild(document.createElement("br"));
 
         child = document.createElement("span");
-        child.textContent = "    Transparent      ";
+        child.textContent = "Transparent      ";
         menu_table.appendChild(child);
         child = document.createElement("input");
         child.type = "checkbox";
@@ -196,7 +190,7 @@
         menu_table.appendChild(document.createElement("br"));
 
         child = document.createElement("span");
-        child.textContent = "    Visible          ";
+        child.textContent = "Visible          ";
         menu_table.appendChild(child);
         child = document.createElement("input");
         child.type = "checkbox";
