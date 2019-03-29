@@ -17,6 +17,7 @@
  */
 
 /* Audio visualization based on showcqtbar mpv/ffmpeg audio visualization */
+/* See https://github.com/mfcc64/html5-showcqtbar/blob/master/showcqtbar.js */
 /* See https://github.com/FFmpeg/FFmpeg/blob/master/libavfilter/avf_showcqt.c */
 /* See common.js for usage example */
 
