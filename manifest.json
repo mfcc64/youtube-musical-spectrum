@@ -1,7 +1,8 @@
 {
     "manifest_version" : 2,
-    "name" : "Youtube Musical Spectrum",
-    "description" : "Music spectrum audio visualization for Youtube with musical notes.",
+    "name" : "YouTube Musical Spectrum",
+    "short_name" : "YTMS",
+    "description" : "Audio visualizer for YouTube with musical notes.",
     "version" : "1.0.4",
     "icons" : {
         "128" : "icon-128.png",
@@ -21,7 +22,7 @@
             "16"  : "icon-16.png"
         },
         "default_popup" : "popup.html",
-        "default_title" : "Youtube Musical Spectrum"
+        "default_title" : "YouTube Musical Spectrum"
     },
     "web_accessible_resources": ["/axis-1920x32.png", "/icon-24.png"],
     "content_scripts" : [
