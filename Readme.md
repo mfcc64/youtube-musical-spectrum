@@ -10,6 +10,12 @@ Install [YouTube Musical Spectrum on Chrome Web Store](https://chrome.google.com
 
 ## Screenshots
 
-![screenshot](screenshots/00.jpeg)
+![screenshot](screenshots/00.jpg)
 
-![screenshot](screenshots/01.jpeg)
+![screenshot](screenshots/01.jpg)
+
+![screenshot](screenshots/02.jpg)
+
+![screenshot](screenshots/03.jpg)
+
+![screenshot](screenshots/04.jpg)
