@@ -25,7 +25,7 @@ function ShowCQTBar(rate, width, height, bar_v, sono_v, supersampling) {
     this.rate = rate;
     this.width = width;
     this.height = height;
-    this.buffer = new ArrayBuffer(2048*1024);
+    this.buffer = new ArrayBuffer(8*1024*1024);
     this.asm = this.emscripten(window, null, this.buffer);
     this.fft_size = this.asm._init(rate, width, height, bar_v, sono_v, supersampling);
     if (!this.fft_size)
@@ -99,77 +99,77 @@ ShowCQTBar.prototype.emscripten = function(global, env, buffer) {
 
 function _calc() {
  var i1 = 0, i2 = 0, i3 = 0, i4 = 0, f5 = f0, f6 = f0, f7 = f0, f8 = f0, i9 = 0, i10 = 0, i11 = 0, i12 = 0, i13 = 0, f14 = f0, f15 = f0, f16 = f0, f17 = f0, f18 = f0, f19 = f0, f20 = f0;
- i9 = HEAP32[240770] | 0;
+ i9 = HEAP32[298370] | 0;
  i2 = i9 >> 1;
  i9 = i9 >> 2;
- i1 = HEAP32[240772] | 0;
+ i1 = HEAP32[298372] | 0;
  i10 = i2 - i1 | 0;
  if ((i1 | 0) > 0) {
   i3 = i10 + i2 | 0;
   i4 = i10 + i9 | 0;
   i2 = 0;
   do {
-   i1 = HEAP16[598016 + (i2 << 1) >> 1] << 2;
+   i1 = HEAP16[621056 + (i2 << 1) >> 1] << 2;
    i13 = i2 + i10 | 0;
    i12 = HEAP32[131584 + (i13 << 2) >> 2] | 0;
-   HEAP32[631808 + (i1 << 3) >> 2] = HEAP32[512 + (i13 << 2) >> 2];
-   HEAP32[631808 + (i1 << 3) + 4 >> 2] = i12;
-   i12 = 614400 + (i2 << 2) | 0;
+   HEAP32[654848 + (i1 << 3) >> 2] = HEAP32[512 + (i13 << 2) >> 2];
+   HEAP32[654848 + (i1 << 3) + 4 >> 2] = i12;
+   i12 = 637440 + (i2 << 2) | 0;
    f8 = Math_fround(HEAPF32[i12 >> 2]);
    i13 = i3 + i2 | 0;
    i11 = i1 | 1;
-   HEAPF32[631808 + (i11 << 3) >> 2] = Math_fround(f8 * Math_fround(HEAPF32[512 + (i13 << 2) >> 2]));
+   HEAPF32[654848 + (i11 << 3) >> 2] = Math_fround(f8 * Math_fround(HEAPF32[512 + (i13 << 2) >> 2]));
    f8 = Math_fround(HEAPF32[i12 >> 2]);
-   HEAPF32[631808 + (i11 << 3) + 4 >> 2] = Math_fround(f8 * Math_fround(HEAPF32[131584 + (i13 << 2) >> 2]));
+   HEAPF32[654848 + (i11 << 3) + 4 >> 2] = Math_fround(f8 * Math_fround(HEAPF32[131584 + (i13 << 2) >> 2]));
    i11 = i1 | 2;
    i13 = i4 + i2 | 0;
    i12 = HEAP32[131584 + (i13 << 2) >> 2] | 0;
-   HEAP32[631808 + (i11 << 3) >> 2] = HEAP32[512 + (i13 << 2) >> 2];
-   HEAP32[631808 + (i11 << 3) + 4 >> 2] = i12;
+   HEAP32[654848 + (i11 << 3) >> 2] = HEAP32[512 + (i13 << 2) >> 2];
+   HEAP32[654848 + (i11 << 3) + 4 >> 2] = i12;
    i1 = i1 | 3;
-   HEAPF32[631808 + (i1 << 3) >> 2] = Math_fround(0.0);
-   HEAPF32[631808 + (i1 << 3) + 4 >> 2] = Math_fround(0.0);
+   HEAPF32[654848 + (i1 << 3) >> 2] = Math_fround(0.0);
+   HEAPF32[654848 + (i1 << 3) + 4 >> 2] = Math_fround(0.0);
    i2 = i2 + 1 | 0;
-   i1 = HEAP32[240772] | 0;
+   i1 = HEAP32[298372] | 0;
   } while ((i2 | 0) < (i1 | 0));
  }
  if ((i1 | 0) < (i9 | 0)) {
   i2 = i10 + i9 | 0;
   do {
-   i13 = HEAP16[598016 + (i1 << 1) >> 1] << 2;
+   i13 = HEAP16[621056 + (i1 << 1) >> 1] << 2;
    i4 = i1 + i10 | 0;
    i12 = HEAP32[131584 + (i4 << 2) >> 2] | 0;
-   HEAP32[631808 + (i13 << 3) >> 2] = HEAP32[512 + (i4 << 2) >> 2];
-   HEAP32[631808 + (i13 << 3) + 4 >> 2] = i12;
+   HEAP32[654848 + (i13 << 3) >> 2] = HEAP32[512 + (i4 << 2) >> 2];
+   HEAP32[654848 + (i13 << 3) + 4 >> 2] = i12;
    i12 = i13 | 1;
-   HEAPF32[631808 + (i12 << 3) >> 2] = Math_fround(0.0);
-   HEAPF32[631808 + (i12 << 3) + 4 >> 2] = Math_fround(0.0);
+   HEAPF32[654848 + (i12 << 3) >> 2] = Math_fround(0.0);
+   HEAPF32[654848 + (i12 << 3) + 4 >> 2] = Math_fround(0.0);
    i12 = i13 | 2;
    i4 = i2 + i1 | 0;
    i11 = HEAP32[131584 + (i4 << 2) >> 2] | 0;
-   HEAP32[631808 + (i12 << 3) >> 2] = HEAP32[512 + (i4 << 2) >> 2];
-   HEAP32[631808 + (i12 << 3) + 4 >> 2] = i11;
+   HEAP32[654848 + (i12 << 3) >> 2] = HEAP32[512 + (i4 << 2) >> 2];
+   HEAP32[654848 + (i12 << 3) + 4 >> 2] = i11;
    i13 = i13 | 3;
-   HEAPF32[631808 + (i13 << 3) >> 2] = Math_fround(0.0);
-   HEAPF32[631808 + (i13 << 3) + 4 >> 2] = Math_fround(0.0);
+   HEAPF32[654848 + (i13 << 3) >> 2] = Math_fround(0.0);
+   HEAPF32[654848 + (i13 << 3) + 4 >> 2] = Math_fround(0.0);
    i1 = i1 + 1 | 0;
   } while ((i1 | 0) != (i9 | 0));
  }
- i1 = HEAP32[240770] | 0;
+ i1 = HEAP32[298370] | 0;
  L11 : do if ((i1 | 0) < 8192) switch (i1 | 0) {
  case 1024:
   {
-   _fft_calc_1024(631808);
+   _fft_calc_1024(654848);
    break L11;
   }
  case 2048:
   {
-   _fft_calc_2048(631808);
+   _fft_calc_2048(654848);
    break L11;
   }
  case 4096:
   {
-   _fft_calc_4096(631808);
+   _fft_calc_4096(654848);
    break L11;
   }
  default:
@@ -182,7 +182,7 @@ function _calc() {
    default:
     break L11;
    }
-   _fft_calc_8192(631808);
+   _fft_calc_8192(654848);
    break;
   }
   if ((i1 | 0) < 32768) {
@@ -192,18 +192,18 @@ function _calc() {
    default:
     break L11;
    }
-   _fft_calc_4096(631808);
-   _fft_calc_4096(664576);
-   _fft_calc_4096(697344);
-   _fft_calc_4096(730112);
-   f14 = Math_fround(HEAPF32[157952]);
-   f15 = Math_fround(HEAPF32[157953]);
-   f6 = Math_fround(HEAPF32[166144]);
-   f5 = Math_fround(HEAPF32[166145]);
-   f19 = Math_fround(HEAPF32[174336]);
-   f18 = Math_fround(HEAPF32[174337]);
-   f8 = Math_fround(HEAPF32[182528]);
-   f7 = Math_fround(HEAPF32[182529]);
+   _fft_calc_4096(654848);
+   _fft_calc_4096(687616);
+   _fft_calc_4096(720384);
+   _fft_calc_4096(753152);
+   f14 = Math_fround(HEAPF32[163712]);
+   f15 = Math_fround(HEAPF32[163713]);
+   f6 = Math_fround(HEAPF32[171904]);
+   f5 = Math_fround(HEAPF32[171905]);
+   f19 = Math_fround(HEAPF32[180096]);
+   f18 = Math_fround(HEAPF32[180097]);
+   f8 = Math_fround(HEAPF32[188288]);
+   f7 = Math_fround(HEAPF32[188289]);
    f16 = Math_fround(f14 + f6);
    f17 = Math_fround(f15 + f5);
    f6 = Math_fround(f14 - f6);
@@ -213,50 +213,50 @@ function _calc() {
    f8 = Math_fround(f19 - f8);
    f7 = Math_fround(f18 - f7);
    f18 = Math_fround(f17 + f14);
-   HEAPF32[157952] = Math_fround(f16 + f15);
-   HEAPF32[157953] = f18;
+   HEAPF32[163712] = Math_fround(f16 + f15);
+   HEAPF32[163713] = f18;
    f18 = Math_fround(f5 - f8);
-   HEAPF32[166144] = Math_fround(f6 + f7);
-   HEAPF32[166145] = f18;
+   HEAPF32[171904] = Math_fround(f6 + f7);
+   HEAPF32[171905] = f18;
    f14 = Math_fround(f17 - f14);
-   HEAPF32[174336] = Math_fround(f16 - f15);
-   HEAPF32[174337] = f14;
+   HEAPF32[180096] = Math_fround(f16 - f15);
+   HEAPF32[180097] = f14;
    f8 = Math_fround(f5 + f8);
-   HEAPF32[182528] = Math_fround(f6 - f7);
-   HEAPF32[182529] = f8;
+   HEAPF32[188288] = Math_fround(f6 - f7);
+   HEAPF32[188289] = f8;
    i1 = 1;
    do {
-    i2 = 631808 + (i1 << 3) | 0;
+    i2 = 654848 + (i1 << 3) | 0;
     f15 = Math_fround(HEAPF32[i2 >> 2]);
-    i3 = 631808 + (i1 << 3) + 4 | 0;
+    i3 = 654848 + (i1 << 3) + 4 | 0;
     f14 = Math_fround(HEAPF32[i3 >> 2]);
-    f8 = Math_fround(HEAPF32[335872 + (i1 << 3) >> 2]);
+    f8 = Math_fround(HEAPF32[358912 + (i1 << 3) >> 2]);
     i9 = i1 + 4096 | 0;
-    i4 = 631808 + (i9 << 3) | 0;
+    i4 = 654848 + (i9 << 3) | 0;
     f5 = Math_fround(HEAPF32[i4 >> 2]);
     f17 = Math_fround(f8 * f5);
-    f19 = Math_fround(HEAPF32[335872 + (i1 << 3) + 4 >> 2]);
-    i9 = 631808 + (i9 << 3) + 4 | 0;
+    f19 = Math_fround(HEAPF32[358912 + (i1 << 3) + 4 >> 2]);
+    i9 = 654848 + (i9 << 3) + 4 | 0;
     f16 = Math_fround(HEAPF32[i9 >> 2]);
     f17 = Math_fround(f17 - Math_fround(f19 * f16));
     f16 = Math_fround(Math_fround(f5 * f19) + Math_fround(f8 * f16));
-    f8 = Math_fround(HEAPF32[401408 + (i1 << 3) >> 2]);
+    f8 = Math_fround(HEAPF32[424448 + (i1 << 3) >> 2]);
     i11 = i1 + 8192 | 0;
-    i10 = 631808 + (i11 << 3) | 0;
+    i10 = 654848 + (i11 << 3) | 0;
     f19 = Math_fround(HEAPF32[i10 >> 2]);
     f5 = Math_fround(f8 * f19);
-    f20 = Math_fround(HEAPF32[401408 + (i1 << 3) + 4 >> 2]);
-    i11 = 631808 + (i11 << 3) + 4 | 0;
+    f20 = Math_fround(HEAPF32[424448 + (i1 << 3) + 4 >> 2]);
+    i11 = 654848 + (i11 << 3) + 4 | 0;
     f6 = Math_fround(HEAPF32[i11 >> 2]);
     f5 = Math_fround(f5 - Math_fround(f20 * f6));
     f6 = Math_fround(Math_fround(f19 * f20) + Math_fround(f8 * f6));
-    f8 = Math_fround(HEAPF32[368640 + (i1 << 3) >> 2]);
+    f8 = Math_fround(HEAPF32[391680 + (i1 << 3) >> 2]);
     i13 = i1 + 12288 | 0;
-    i12 = 631808 + (i13 << 3) | 0;
+    i12 = 654848 + (i13 << 3) | 0;
     f20 = Math_fround(HEAPF32[i12 >> 2]);
     f19 = Math_fround(f8 * f20);
-    f7 = Math_fround(HEAPF32[368640 + (i1 << 3) + 4 >> 2]);
-    i13 = 631808 + (i13 << 3) + 4 | 0;
+    f7 = Math_fround(HEAPF32[391680 + (i1 << 3) + 4 >> 2]);
+    i13 = 654848 + (i13 << 3) + 4 | 0;
     f18 = Math_fround(HEAPF32[i13 >> 2]);
     f19 = Math_fround(f19 - Math_fround(f7 * f18));
     f18 = Math_fround(Math_fround(f20 * f7) + Math_fround(f8 * f18));
@@ -289,18 +289,18 @@ function _calc() {
    default:
     break L11;
    }
-   _fft_calc_8192(631808);
-   _fft_calc_8192(697344);
-   _fft_calc_8192(762880);
-   _fft_calc_8192(828416);
-   f16 = Math_fround(HEAPF32[157952]);
-   f15 = Math_fround(HEAPF32[157953]);
-   f18 = Math_fround(HEAPF32[174336]);
-   f17 = Math_fround(HEAPF32[174337]);
-   f6 = Math_fround(HEAPF32[190720]);
-   f7 = Math_fround(HEAPF32[190721]);
-   f20 = Math_fround(HEAPF32[207104]);
-   f19 = Math_fround(HEAPF32[207105]);
+   _fft_calc_8192(654848);
+   _fft_calc_8192(720384);
+   _fft_calc_8192(785920);
+   _fft_calc_8192(851456);
+   f16 = Math_fround(HEAPF32[163712]);
+   f15 = Math_fround(HEAPF32[163713]);
+   f18 = Math_fround(HEAPF32[180096]);
+   f17 = Math_fround(HEAPF32[180097]);
+   f6 = Math_fround(HEAPF32[196480]);
+   f7 = Math_fround(HEAPF32[196481]);
+   f20 = Math_fround(HEAPF32[212864]);
+   f19 = Math_fround(HEAPF32[212865]);
    f14 = Math_fround(f16 + f18);
    f8 = Math_fround(f15 + f17);
    f18 = Math_fround(f16 - f18);
@@ -310,50 +310,50 @@ function _calc() {
    f20 = Math_fround(f6 - f20);
    f19 = Math_fround(f7 - f19);
    f7 = Math_fround(f8 + f16);
-   HEAPF32[157952] = Math_fround(f14 + f15);
-   HEAPF32[157953] = f7;
+   HEAPF32[163712] = Math_fround(f14 + f15);
+   HEAPF32[163713] = f7;
    f7 = Math_fround(f17 - f20);
-   HEAPF32[174336] = Math_fround(f18 + f19);
-   HEAPF32[174337] = f7;
+   HEAPF32[180096] = Math_fround(f18 + f19);
+   HEAPF32[180097] = f7;
    f16 = Math_fround(f8 - f16);
-   HEAPF32[190720] = Math_fround(f14 - f15);
-   HEAPF32[190721] = f16;
+   HEAPF32[196480] = Math_fround(f14 - f15);
+   HEAPF32[196481] = f16;
    f20 = Math_fround(f17 + f20);
-   HEAPF32[207104] = Math_fround(f18 - f19);
-   HEAPF32[207105] = f20;
+   HEAPF32[212864] = Math_fround(f18 - f19);
+   HEAPF32[212865] = f20;
    i1 = 1;
    do {
-    i2 = 631808 + (i1 << 3) | 0;
+    i2 = 654848 + (i1 << 3) | 0;
     f16 = Math_fround(HEAPF32[i2 >> 2]);
-    i3 = 631808 + (i1 << 3) + 4 | 0;
+    i3 = 654848 + (i1 << 3) + 4 | 0;
     f15 = Math_fround(HEAPF32[i3 >> 2]);
-    f14 = Math_fround(HEAPF32[401408 + (i1 << 3) >> 2]);
+    f14 = Math_fround(HEAPF32[424448 + (i1 << 3) >> 2]);
     i9 = i1 + 8192 | 0;
-    i4 = 631808 + (i9 << 3) | 0;
+    i4 = 654848 + (i9 << 3) | 0;
     f6 = Math_fround(HEAPF32[i4 >> 2]);
     f18 = Math_fround(f14 * f6);
-    f20 = Math_fround(HEAPF32[401408 + (i1 << 3) + 4 >> 2]);
-    i9 = 631808 + (i9 << 3) + 4 | 0;
+    f20 = Math_fround(HEAPF32[424448 + (i1 << 3) + 4 >> 2]);
+    i9 = 654848 + (i9 << 3) + 4 | 0;
     f17 = Math_fround(HEAPF32[i9 >> 2]);
     f18 = Math_fround(f18 - Math_fround(f20 * f17));
     f17 = Math_fround(Math_fround(f6 * f20) + Math_fround(f14 * f17));
-    f14 = Math_fround(HEAPF32[532480 + (i1 << 3) >> 2]);
+    f14 = Math_fround(HEAPF32[555520 + (i1 << 3) >> 2]);
     i11 = i1 + 16384 | 0;
-    i10 = 631808 + (i11 << 3) | 0;
+    i10 = 654848 + (i11 << 3) | 0;
     f20 = Math_fround(HEAPF32[i10 >> 2]);
     f6 = Math_fround(f14 * f20);
-    f5 = Math_fround(HEAPF32[532480 + (i1 << 3) + 4 >> 2]);
-    i11 = 631808 + (i11 << 3) + 4 | 0;
+    f5 = Math_fround(HEAPF32[555520 + (i1 << 3) + 4 >> 2]);
+    i11 = 654848 + (i11 << 3) + 4 | 0;
     f7 = Math_fround(HEAPF32[i11 >> 2]);
     f6 = Math_fround(f6 - Math_fround(f5 * f7));
     f7 = Math_fround(Math_fround(f20 * f5) + Math_fround(f14 * f7));
-    f14 = Math_fround(HEAPF32[466944 + (i1 << 3) >> 2]);
+    f14 = Math_fround(HEAPF32[489984 + (i1 << 3) >> 2]);
     i13 = i1 + 24576 | 0;
-    i12 = 631808 + (i13 << 3) | 0;
+    i12 = 654848 + (i13 << 3) | 0;
     f5 = Math_fround(HEAPF32[i12 >> 2]);
     f20 = Math_fround(f14 * f5);
-    f8 = Math_fround(HEAPF32[466944 + (i1 << 3) + 4 >> 2]);
-    i13 = 631808 + (i13 << 3) + 4 | 0;
+    f8 = Math_fround(HEAPF32[489984 + (i1 << 3) + 4 >> 2]);
+    i13 = 654848 + (i13 << 3) + 4 | 0;
     f19 = Math_fround(HEAPF32[i13 >> 2]);
     f20 = Math_fround(f20 - Math_fround(f8 * f19));
     f19 = Math_fround(Math_fround(f5 * f8) + Math_fround(f14 * f19));
@@ -381,22 +381,22 @@ function _calc() {
    } while ((i1 | 0) != 8192);
   }
  } while (0);
- i1 = HEAP32[240771] | 0;
+ i1 = HEAP32[298371] | 0;
  if ((i1 | 0) > 0) {
   i10 = 0;
   i2 = 0;
   do {
-   i9 = HEAP32[963100 + (i2 << 2) >> 2] | 0;
-   i3 = HEAP32[963100 + (i2 + 1 << 2) >> 2] | 0;
+   i9 = HEAP32[1193500 + (i2 << 2) >> 2] | 0;
+   i3 = HEAP32[1193500 + (i2 + 1 << 2) >> 2] | 0;
    if (!i9) {
-    i13 = 893952 + (i10 << 4) | 0;
+    i13 = 916992 + (i10 << 4) | 0;
     HEAP32[i13 >> 2] = 0;
     HEAP32[i13 + 4 >> 2] = 0;
     HEAP32[i13 + 8 >> 2] = 0;
     HEAP32[i13 + 12 >> 2] = 0;
    } else {
     if ((i9 | 0) > 0) {
-     i4 = HEAP32[240770] | 0;
+     i4 = HEAP32[298370] | 0;
      i1 = i2 + 2 | 0;
      i2 = 0;
      f8 = Math_fround(0.0);
@@ -406,11 +406,11 @@ function _calc() {
      do {
       i12 = i2 + i3 | 0;
       i13 = i4 - i12 | 0;
-      f20 = Math_fround(HEAPF32[963100 + (i1 + i2 << 2) >> 2]);
-      f7 = Math_fround(f7 + Math_fround(f20 * Math_fround(HEAPF32[631808 + (i12 << 3) >> 2])));
-      f5 = Math_fround(f5 + Math_fround(f20 * Math_fround(HEAPF32[631808 + (i12 << 3) + 4 >> 2])));
-      f8 = Math_fround(f8 + Math_fround(f20 * Math_fround(HEAPF32[631808 + (i13 << 3) >> 2])));
-      f6 = Math_fround(f6 + Math_fround(f20 * Math_fround(HEAPF32[631808 + (i13 << 3) + 4 >> 2])));
+      f20 = Math_fround(HEAPF32[1193500 + (i1 + i2 << 2) >> 2]);
+      f7 = Math_fround(f7 + Math_fround(f20 * Math_fround(HEAPF32[654848 + (i12 << 3) >> 2])));
+      f5 = Math_fround(f5 + Math_fround(f20 * Math_fround(HEAPF32[654848 + (i12 << 3) + 4 >> 2])));
+      f8 = Math_fround(f8 + Math_fround(f20 * Math_fround(HEAPF32[654848 + (i13 << 3) >> 2])));
+      f6 = Math_fround(f6 + Math_fround(f20 * Math_fround(HEAPF32[654848 + (i13 << 3) + 4 >> 2])));
       i2 = i2 + 1 | 0;
      } while ((i2 | 0) != (i9 | 0));
     } else {
@@ -426,47 +426,47 @@ function _calc() {
     f18 = Math_fround(f8 - f7);
     f20 = Math_fround(Math_fround(f17 * f17) + Math_fround(f20 * f20));
     f19 = Math_fround(Math_fround(f18 * f18) + Math_fround(f19 * f19));
-    f18 = Math_fround(HEAPF32[240773]);
+    f18 = Math_fround(HEAPF32[298373]);
     f17 = Math_fround(Math_fround(Math_sqrt(Math_fround(f18 * Math_fround(Math_sqrt(Math_fround(f20)))))) * Math_fround(255.0));
     i2 = f17 < Math_fround(255.0);
-    HEAPF32[893952 + (i10 << 4) >> 2] = i2 ? f17 : Math_fround(255.0);
+    HEAPF32[916992 + (i10 << 4) >> 2] = i2 ? f17 : Math_fround(255.0);
     f20 = Math_fround(Math_sqrt(Math_fround(Math_fround(f20 + f19) * Math_fround(.5))));
     f18 = Math_fround(Math_fround(Math_sqrt(Math_fround(f18 * f20))) * Math_fround(255.0));
     i2 = f18 < Math_fround(255.0);
-    HEAPF32[893952 + (i10 << 4) + 4 >> 2] = i2 ? f18 : Math_fround(255.0);
-    f19 = Math_fround(Math_fround(Math_sqrt(Math_fround(Math_fround(HEAPF32[240773]) * Math_fround(Math_sqrt(Math_fround(f19)))))) * Math_fround(255.0));
+    HEAPF32[916992 + (i10 << 4) + 4 >> 2] = i2 ? f18 : Math_fround(255.0);
+    f19 = Math_fround(Math_fround(Math_sqrt(Math_fround(Math_fround(HEAPF32[298373]) * Math_fround(Math_sqrt(Math_fround(f19)))))) * Math_fround(255.0));
     i2 = f19 < Math_fround(255.0);
-    HEAPF32[893952 + (i10 << 4) + 8 >> 2] = i2 ? f19 : Math_fround(255.0);
-    HEAPF32[893952 + (i10 << 4) + 12 >> 2] = Math_fround(f20 * Math_fround(HEAPF32[240774]));
+    HEAPF32[916992 + (i10 << 4) + 8 >> 2] = i2 ? f19 : Math_fround(255.0);
+    HEAPF32[916992 + (i10 << 4) + 12 >> 2] = Math_fround(f20 * Math_fround(HEAPF32[298374]));
     i2 = i1 + i9 | 0;
    }
    i10 = i10 + 1 | 0;
-   i1 = HEAP32[240771] | 0;
+   i1 = HEAP32[298371] | 0;
   } while ((i10 | 0) < (i1 | 0));
  }
- i2 = HEAP32[240768] | 0;
+ i2 = HEAP32[298368] | 0;
  if ((i1 | 0) != (i2 | 0) & (i2 | 0) > 0) {
   i2 = 0;
   do {
    i13 = i2 << 1;
-   f20 = Math_fround(HEAPF32[893952 + (i13 << 4) >> 2]);
+   f20 = Math_fround(HEAPF32[916992 + (i13 << 4) >> 2]);
    i1 = i13 | 1;
-   HEAPF32[893952 + (i2 << 4) >> 2] = Math_fround(Math_fround(f20 + Math_fround(HEAPF32[893952 + (i1 << 4) >> 2])) * Math_fround(.5));
-   f20 = Math_fround(HEAPF32[893952 + (i13 << 4) + 4 >> 2]);
-   HEAPF32[893952 + (i2 << 4) + 4 >> 2] = Math_fround(Math_fround(f20 + Math_fround(HEAPF32[893952 + (i1 << 4) + 4 >> 2])) * Math_fround(.5));
-   f20 = Math_fround(HEAPF32[893952 + (i13 << 4) + 8 >> 2]);
-   HEAPF32[893952 + (i2 << 4) + 8 >> 2] = Math_fround(Math_fround(f20 + Math_fround(HEAPF32[893952 + (i1 << 4) + 8 >> 2])) * Math_fround(.5));
-   f20 = Math_fround(HEAPF32[893952 + (i13 << 4) + 12 >> 2]);
-   HEAPF32[893952 + (i2 << 4) + 12 >> 2] = Math_fround(Math_fround(f20 + Math_fround(HEAPF32[893952 + (i1 << 4) + 12 >> 2])) * Math_fround(.5));
+   HEAPF32[916992 + (i2 << 4) >> 2] = Math_fround(Math_fround(f20 + Math_fround(HEAPF32[916992 + (i1 << 4) >> 2])) * Math_fround(.5));
+   f20 = Math_fround(HEAPF32[916992 + (i13 << 4) + 4 >> 2]);
+   HEAPF32[916992 + (i2 << 4) + 4 >> 2] = Math_fround(Math_fround(f20 + Math_fround(HEAPF32[916992 + (i1 << 4) + 4 >> 2])) * Math_fround(.5));
+   f20 = Math_fround(HEAPF32[916992 + (i13 << 4) + 8 >> 2]);
+   HEAPF32[916992 + (i2 << 4) + 8 >> 2] = Math_fround(Math_fround(f20 + Math_fround(HEAPF32[916992 + (i1 << 4) + 8 >> 2])) * Math_fround(.5));
+   f20 = Math_fround(HEAPF32[916992 + (i13 << 4) + 12 >> 2]);
+   HEAPF32[916992 + (i2 << 4) + 12 >> 2] = Math_fround(Math_fround(f20 + Math_fround(HEAPF32[916992 + (i1 << 4) + 12 >> 2])) * Math_fround(.5));
    i2 = i2 + 1 | 0;
-   i1 = HEAP32[240768] | 0;
+   i1 = HEAP32[298368] | 0;
   } while ((i2 | 0) < (i1 | 0));
  } else i1 = i2;
  if ((i1 | 0) > 0) i1 = 0; else return;
  do {
-  HEAPF32[955392 + (i1 << 2) >> 2] = Math_fround(Math_fround(1.0) / Math_fround(Math_fround(HEAPF32[893952 + (i1 << 4) + 12 >> 2]) + Math_fround(.0000999999974)));
+  HEAPF32[1162752 + (i1 << 2) >> 2] = Math_fround(Math_fround(1.0) / Math_fround(Math_fround(HEAPF32[916992 + (i1 << 4) + 12 >> 2]) + Math_fround(.0000999999974)));
   i1 = i1 + 1 | 0;
- } while ((i1 | 0) < (HEAP32[240768] | 0));
+ } while ((i1 | 0) < (HEAP32[298368] | 0));
  return;
 }
 
@@ -643,32 +643,32 @@ function _fft_calc_16(i2) {
   f22 = Math_fround(HEAPF32[i16 >> 2]);
   i17 = i2 + (i1 << 3) + 4 | 0;
   f18 = Math_fround(HEAPF32[i17 >> 2]);
-  f15 = Math_fround(HEAPF32[270400 + (i1 << 3) >> 2]);
+  f15 = Math_fround(HEAPF32[293440 + (i1 << 3) >> 2]);
   i20 = i1 + 4 | 0;
   i19 = i2 + (i20 << 3) | 0;
   f11 = Math_fround(HEAPF32[i19 >> 2]);
   f25 = Math_fround(f15 * f11);
-  f28 = Math_fround(HEAPF32[270400 + (i1 << 3) + 4 >> 2]);
+  f28 = Math_fround(HEAPF32[293440 + (i1 << 3) + 4 >> 2]);
   i20 = i2 + (i20 << 3) + 4 | 0;
   f24 = Math_fround(HEAPF32[i20 >> 2]);
   f25 = Math_fround(f25 - Math_fround(f28 * f24));
   f24 = Math_fround(Math_fround(f11 * f28) + Math_fround(f15 * f24));
-  f15 = Math_fround(HEAPF32[270464 + (i1 << 3) >> 2]);
+  f15 = Math_fround(HEAPF32[293504 + (i1 << 3) >> 2]);
   i23 = i1 + 8 | 0;
   i21 = i2 + (i23 << 3) | 0;
   f28 = Math_fround(HEAPF32[i21 >> 2]);
   f11 = Math_fround(f15 * f28);
-  f9 = Math_fround(HEAPF32[270464 + (i1 << 3) + 4 >> 2]);
+  f9 = Math_fround(HEAPF32[293504 + (i1 << 3) + 4 >> 2]);
   i23 = i2 + (i23 << 3) + 4 | 0;
   f12 = Math_fround(HEAPF32[i23 >> 2]);
   f11 = Math_fround(f11 - Math_fround(f9 * f12));
   f12 = Math_fround(Math_fround(f28 * f9) + Math_fround(f15 * f12));
-  f15 = Math_fround(HEAPF32[270432 + (i1 << 3) >> 2]);
+  f15 = Math_fround(HEAPF32[293472 + (i1 << 3) >> 2]);
   i29 = i1 + 12 | 0;
   i27 = i2 + (i29 << 3) | 0;
   f9 = Math_fround(HEAPF32[i27 >> 2]);
   f28 = Math_fround(f15 * f9);
-  f13 = Math_fround(HEAPF32[270432 + (i1 << 3) + 4 >> 2]);
+  f13 = Math_fround(HEAPF32[293472 + (i1 << 3) + 4 >> 2]);
   i29 = i2 + (i29 << 3) + 4 | 0;
   f26 = Math_fround(HEAPF32[i29 >> 2]);
   f28 = Math_fround(f28 - Math_fround(f13 * f26));
@@ -706,20 +706,20 @@ function _init(i1, i3, i4, f5, f6, i11) {
  f6 = Math_fround(f6);
  i11 = i11 | 0;
  var d2 = 0.0, i7 = 0, d8 = 0.0, i9 = 0, d10 = 0.0, i12 = 0, d13 = 0.0, d14 = 0.0, d15 = 0.0, d16 = 0.0, d17 = 0.0, i18 = 0, d19 = 0.0;
- if ((i3 + -1 | 0) >>> 0 > 1919 | (i4 + -1 | 0) >>> 0 > 1079) {
+ if ((i3 + -1 | 0) >>> 0 > 7679 | (i4 + -1 | 0) >>> 0 > 4319) {
   i18 = 0;
   return i18 | 0;
  }
- HEAP32[240768] = i3;
- HEAP32[240769] = i4;
+ HEAP32[298368] = i3;
+ HEAP32[298369] = i4;
  i18 = f5 > Math_fround(100.0);
  i12 = f5 > Math_fround(1.0);
  f5 = i12 ? f5 : Math_fround(1.0);
- HEAPF32[240774] = i18 ? Math_fround(100.0) : f5;
+ HEAPF32[298374] = i18 ? Math_fround(100.0) : f5;
  i18 = f6 > Math_fround(100.0);
  i12 = f6 > Math_fround(1.0);
  f6 = i12 ? f6 : Math_fround(1.0);
- HEAPF32[240773] = i18 ? Math_fround(100.0) : f6;
+ HEAPF32[298373] = i18 ? Math_fround(100.0) : f6;
  if ((i1 + -8e3 | 0) >>> 0 > 92e3) {
   i18 = 0;
   return i18 | 0;
@@ -731,7 +731,7 @@ function _init(i1, i3, i4, f5, f6, i11) {
   return i18 | 0;
  }
  i3 = 1 << i1;
- HEAP32[240770] = i3;
+ HEAP32[298370] = i3;
  if ((i3 | 0) > 32768) {
   i18 = 0;
   return i18 | 0;
@@ -747,10 +747,10 @@ function _init(i1, i3, i4, f5, f6, i11) {
    i18 = i18 << 2 & -858993460 | i18 >>> 2 & 858993459;
    i18 = i18 << 4 & -252645136 | i18 >>> 4 & 252645135;
    i18 = i18 << 8 & -16711936 | i18 >>> 8 & 16711935;
-   HEAP16[598016 + (i1 << 1) >> 1] = (i18 << 16 | i18 >>> 16) >>> i3 & i4;
+   HEAP16[621056 + (i1 << 1) >> 1] = (i18 << 16 | i18 >>> 16) >>> i3 & i4;
    i1 = i1 + 1 | 0;
   } while ((i1 | 0) < (i7 | 0));
-  i3 = HEAP32[240770] | 0;
+  i3 = HEAP32[298370] | 0;
  }
  if ((i3 | 0) > 2) {
   i7 = 2;
@@ -764,8 +764,8 @@ function _init(i1, i3, i4, f5, f6, i11) {
      i18 = i1 + i7 | 0;
      d17 = d8 * +(i1 | 0);
      f6 = Math_fround(-Math_fround(+Math_sin(+d17)));
-     HEAPF32[270336 + (i18 << 3) >> 2] = Math_fround(+Math_cos(+d17));
-     HEAPF32[270336 + (i18 << 3) + 4 >> 2] = f6;
+     HEAPF32[293376 + (i18 << 3) >> 2] = Math_fround(+Math_cos(+d17));
+     HEAPF32[293376 + (i18 << 3) + 4 >> 2] = f6;
      i1 = i1 + 1 | 0;
     } while ((i1 | 0) < (i9 | 0));
     d2 = 9.42477796076938 / d2;
@@ -775,8 +775,8 @@ function _init(i1, i3, i4, f5, f6, i11) {
      i18 = i4 + i1 | 0;
      d17 = d2 * +(i1 | 0);
      f6 = Math_fround(-Math_fround(+Math_sin(+d17)));
-     HEAPF32[270336 + (i18 << 3) >> 2] = Math_fround(+Math_cos(+d17));
-     HEAPF32[270336 + (i18 << 3) + 4 >> 2] = f6;
+     HEAPF32[293376 + (i18 << 3) >> 2] = Math_fround(+Math_cos(+d17));
+     HEAPF32[293376 + (i18 << 3) + 4 >> 2] = f6;
      i1 = i1 + 1 | 0;
     } while ((i1 | 0) < (i9 | 0));
    }
@@ -790,31 +790,31 @@ function _init(i1, i3, i4, f5, f6, i11) {
     i18 = i1 + i3 | 0;
     d17 = d2 * +(i1 | 0);
     f6 = Math_fround(-Math_fround(+Math_sin(+d17)));
-    HEAPF32[270336 + (i18 << 3) >> 2] = Math_fround(+Math_cos(+d17));
-    HEAPF32[270336 + (i18 << 3) + 4 >> 2] = f6;
+    HEAPF32[293376 + (i18 << 3) >> 2] = Math_fround(+Math_cos(+d17));
+    HEAPF32[293376 + (i18 << 3) + 4 >> 2] = f6;
     i1 = i1 + 1 | 0;
    } while ((i1 | 0) < (i4 | 0));
   }
  }
  d2 = d19 * .033;
  i18 = ~~+Math_ceil(+d2);
- HEAP32[240772] = i18;
+ HEAP32[298372] = i18;
  if ((i18 | 0) > 0) {
   i1 = 0;
   do {
    d17 = +(i1 | 0) * 3.141592653589793 / d2;
-   HEAPF32[614400 + (i1 << 2) >> 2] = Math_fround(+Math_cos(+d17) * .487396 + .355768 + +Math_cos(+(d17 * 2.0)) * .144232 + +Math_cos(+(d17 * 3.0)) * .012604);
+   HEAPF32[637440 + (i1 << 2) >> 2] = Math_fround(+Math_cos(+d17) * .487396 + .355768 + +Math_cos(+(d17 * 2.0)) * .144232 + +Math_cos(+(d17 * 3.0)) * .012604);
    i1 = i1 + 1 | 0;
-  } while ((i1 | 0) < (HEAP32[240772] | 0));
+  } while ((i1 | 0) < (HEAP32[298372] | 0));
  }
- i12 = Math_imul(HEAP32[240768] | 0, i11 | 0 ? 2 : 1) | 0;
- HEAP32[240771] = i12;
+ i12 = Math_imul(HEAP32[298368] | 0, i11 | 0 ? 2 : 1) | 0;
+ HEAP32[298371] = i12;
  if ((i12 | 0) <= 0) {
-  i18 = HEAP32[240770] | 0;
+  i18 = HEAP32[298370] | 0;
   return i18 | 0;
  }
  d13 = d19 * .5;
- i1 = HEAP32[240770] | 0;
+ i1 = HEAP32[298370] | 0;
  d14 = +(i1 | 0);
  d15 = d14 * 8.0;
  d16 = 1.0 / d14;
@@ -835,19 +835,19 @@ function _init(i1, i3, i4, f5, f6, i11) {
   i7 = ~~+Math_floor(+(d10 + d2));
   i9 = i7 - i3 | 0;
   i4 = i9 + 1 | 0;
-  if ((i18 + 1e3 + i4 | 0) > 2e5) {
+  if ((i18 + 1e3 + i4 | 0) > 1572864) {
    i1 = 0;
    i3 = 29;
    break;
   }
-  HEAP32[963100 + (i18 << 2) >> 2] = i4;
-  HEAP32[963100 + (i18 + 1 << 2) >> 2] = i3;
+  HEAP32[1193500 + (i18 << 2) >> 2] = i4;
+  HEAP32[1193500 + (i18 + 1 << 2) >> 2] = i3;
   if ((i7 | 0) >= (i3 | 0)) {
    d2 = 1.0 / d8;
    i4 = i18 + 2 - i3 | 0;
    while (1) {
     d8 = d2 * ((+(i3 | 0) - d10) * 6.283185307179586);
-    HEAPF32[963100 + (i4 + i3 << 2) >> 2] = Math_fround(d16 * +((i3 << 1 & 2 ^ 2) + -1 | 0) * (+Math_cos(+d8) * .487396 + .355768 + +Math_cos(+(d8 * 2.0)) * .144232 + +Math_cos(+(d8 * 3.0)) * .012604));
+    HEAPF32[1193500 + (i4 + i3 << 2) >> 2] = Math_fround(d16 * +((i3 << 1 & 2 ^ 2) + -1 | 0) * (+Math_cos(+d8) * .487396 + .355768 + +Math_cos(+(d8 * 2.0)) * .144232 + +Math_cos(+(d8 * 3.0)) * .012604));
     if ((i3 | 0) < (i7 | 0)) i3 = i3 + 1 | 0; else break;
    }
   }
@@ -858,7 +858,7 @@ function _init(i1, i3, i4, f5, f6, i11) {
   } else i18 = i18 + 3 + i9 | 0;
  }
  if ((i3 | 0) == 23) {
-  HEAP32[963100 + (i18 << 2) >> 2] = 0;
+  HEAP32[1193500 + (i18 << 2) >> 2] = 0;
   i18 = i1;
   return i18 | 0;
  } else if ((i3 | 0) == 29) return i1 | 0;
@@ -937,19 +937,19 @@ function _fft_calc_8(i1) {
  f12 = Math_fround(f23 + f12);
  HEAPF32[i22 >> 2] = Math_fround(f19 - f6);
  HEAPF32[i21 >> 2] = f12;
- f12 = Math_fround(HEAPF32[67594]);
+ f12 = Math_fround(HEAPF32[73354]);
  f6 = Math_fround(f12 * f3);
- f19 = Math_fround(HEAPF32[67595]);
+ f19 = Math_fround(HEAPF32[73355]);
  f6 = Math_fround(f6 - Math_fround(f19 * f7));
  f7 = Math_fround(Math_fround(f3 * f19) + Math_fround(f12 * f7));
- f12 = Math_fround(HEAPF32[67602]);
+ f12 = Math_fround(HEAPF32[73362]);
  f19 = Math_fround(f12 * f13);
- f3 = Math_fround(HEAPF32[67603]);
+ f3 = Math_fround(HEAPF32[73363]);
  f19 = Math_fround(f19 - Math_fround(f3 * f15));
  f15 = Math_fround(Math_fround(f13 * f3) + Math_fround(f12 * f15));
- f12 = Math_fround(HEAPF32[67598]);
+ f12 = Math_fround(HEAPF32[73358]);
  f3 = Math_fround(f12 * f20);
- f13 = Math_fround(HEAPF32[67599]);
+ f13 = Math_fround(HEAPF32[73359]);
  f3 = Math_fround(f3 - Math_fround(f13 * f5));
  f5 = Math_fround(Math_fround(f20 * f13) + Math_fround(f12 * f5));
  f12 = Math_fround(f9 + f6);
@@ -1023,32 +1023,32 @@ function _fft_calc_8192(i2) {
   f11 = Math_fround(HEAPF32[i20 >> 2]);
   i19 = i2 + (i1 << 3) + 4 | 0;
   f9 = Math_fround(HEAPF32[i19 >> 2]);
-  f7 = Math_fround(HEAPF32[303104 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[326144 + (i1 << 3) >> 2]);
   i8 = i1 + 2048 | 0;
   i4 = i2 + (i8 << 3) | 0;
   f3 = Math_fround(HEAPF32[i4 >> 2]);
   f13 = Math_fround(f7 * f3);
-  f18 = Math_fround(HEAPF32[303104 + (i1 << 3) + 4 >> 2]);
+  f18 = Math_fround(HEAPF32[326144 + (i1 << 3) + 4 >> 2]);
   i8 = i2 + (i8 << 3) + 4 | 0;
   f12 = Math_fround(HEAPF32[i8 >> 2]);
   f13 = Math_fround(f13 - Math_fround(f18 * f12));
   f12 = Math_fround(Math_fround(f3 * f18) + Math_fround(f7 * f12));
-  f7 = Math_fround(HEAPF32[335872 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[358912 + (i1 << 3) >> 2]);
   i14 = i1 + 4096 | 0;
   i10 = i2 + (i14 << 3) | 0;
   f18 = Math_fround(HEAPF32[i10 >> 2]);
   f3 = Math_fround(f7 * f18);
-  f21 = Math_fround(HEAPF32[335872 + (i1 << 3) + 4 >> 2]);
+  f21 = Math_fround(HEAPF32[358912 + (i1 << 3) + 4 >> 2]);
   i14 = i2 + (i14 << 3) + 4 | 0;
   f5 = Math_fround(HEAPF32[i14 >> 2]);
   f3 = Math_fround(f3 - Math_fround(f21 * f5));
   f5 = Math_fround(Math_fround(f18 * f21) + Math_fround(f7 * f5));
-  f7 = Math_fround(HEAPF32[319488 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[342528 + (i1 << 3) >> 2]);
   i17 = i1 + 6144 | 0;
   i16 = i2 + (i17 << 3) | 0;
   f21 = Math_fround(HEAPF32[i16 >> 2]);
   f18 = Math_fround(f7 * f21);
-  f6 = Math_fround(HEAPF32[319488 + (i1 << 3) + 4 >> 2]);
+  f6 = Math_fround(HEAPF32[342528 + (i1 << 3) + 4 >> 2]);
   i17 = i2 + (i17 << 3) + 4 | 0;
   f15 = Math_fround(HEAPF32[i17 >> 2]);
   f18 = Math_fround(f18 - Math_fround(f6 * f15));
@@ -1126,32 +1126,32 @@ function _fft_calc_4096(i2) {
   f11 = Math_fround(HEAPF32[i20 >> 2]);
   i19 = i2 + (i1 << 3) + 4 | 0;
   f9 = Math_fround(HEAPF32[i19 >> 2]);
-  f7 = Math_fround(HEAPF32[286720 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[309760 + (i1 << 3) >> 2]);
   i8 = i1 + 1024 | 0;
   i4 = i2 + (i8 << 3) | 0;
   f3 = Math_fround(HEAPF32[i4 >> 2]);
   f13 = Math_fround(f7 * f3);
-  f18 = Math_fround(HEAPF32[286720 + (i1 << 3) + 4 >> 2]);
+  f18 = Math_fround(HEAPF32[309760 + (i1 << 3) + 4 >> 2]);
   i8 = i2 + (i8 << 3) + 4 | 0;
   f12 = Math_fround(HEAPF32[i8 >> 2]);
   f13 = Math_fround(f13 - Math_fround(f18 * f12));
   f12 = Math_fround(Math_fround(f3 * f18) + Math_fround(f7 * f12));
-  f7 = Math_fround(HEAPF32[303104 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[326144 + (i1 << 3) >> 2]);
   i14 = i1 + 2048 | 0;
   i10 = i2 + (i14 << 3) | 0;
   f18 = Math_fround(HEAPF32[i10 >> 2]);
   f3 = Math_fround(f7 * f18);
-  f21 = Math_fround(HEAPF32[303104 + (i1 << 3) + 4 >> 2]);
+  f21 = Math_fround(HEAPF32[326144 + (i1 << 3) + 4 >> 2]);
   i14 = i2 + (i14 << 3) + 4 | 0;
   f5 = Math_fround(HEAPF32[i14 >> 2]);
   f3 = Math_fround(f3 - Math_fround(f21 * f5));
   f5 = Math_fround(Math_fround(f18 * f21) + Math_fround(f7 * f5));
-  f7 = Math_fround(HEAPF32[294912 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[317952 + (i1 << 3) >> 2]);
   i17 = i1 + 3072 | 0;
   i16 = i2 + (i17 << 3) | 0;
   f21 = Math_fround(HEAPF32[i16 >> 2]);
   f18 = Math_fround(f7 * f21);
-  f6 = Math_fround(HEAPF32[294912 + (i1 << 3) + 4 >> 2]);
+  f6 = Math_fround(HEAPF32[317952 + (i1 << 3) + 4 >> 2]);
   i17 = i2 + (i17 << 3) + 4 | 0;
   f15 = Math_fround(HEAPF32[i17 >> 2]);
   f18 = Math_fround(f18 - Math_fround(f6 * f15));
@@ -1229,32 +1229,32 @@ function _fft_calc_2048(i2) {
   f11 = Math_fround(HEAPF32[i20 >> 2]);
   i19 = i2 + (i1 << 3) + 4 | 0;
   f9 = Math_fround(HEAPF32[i19 >> 2]);
-  f7 = Math_fround(HEAPF32[278528 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[301568 + (i1 << 3) >> 2]);
   i8 = i1 + 512 | 0;
   i4 = i2 + (i8 << 3) | 0;
   f3 = Math_fround(HEAPF32[i4 >> 2]);
   f13 = Math_fround(f7 * f3);
-  f18 = Math_fround(HEAPF32[278528 + (i1 << 3) + 4 >> 2]);
+  f18 = Math_fround(HEAPF32[301568 + (i1 << 3) + 4 >> 2]);
   i8 = i2 + (i8 << 3) + 4 | 0;
   f12 = Math_fround(HEAPF32[i8 >> 2]);
   f13 = Math_fround(f13 - Math_fround(f18 * f12));
   f12 = Math_fround(Math_fround(f3 * f18) + Math_fround(f7 * f12));
-  f7 = Math_fround(HEAPF32[286720 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[309760 + (i1 << 3) >> 2]);
   i14 = i1 + 1024 | 0;
   i10 = i2 + (i14 << 3) | 0;
   f18 = Math_fround(HEAPF32[i10 >> 2]);
   f3 = Math_fround(f7 * f18);
-  f21 = Math_fround(HEAPF32[286720 + (i1 << 3) + 4 >> 2]);
+  f21 = Math_fround(HEAPF32[309760 + (i1 << 3) + 4 >> 2]);
   i14 = i2 + (i14 << 3) + 4 | 0;
   f5 = Math_fround(HEAPF32[i14 >> 2]);
   f3 = Math_fround(f3 - Math_fround(f21 * f5));
   f5 = Math_fround(Math_fround(f18 * f21) + Math_fround(f7 * f5));
-  f7 = Math_fround(HEAPF32[282624 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[305664 + (i1 << 3) >> 2]);
   i17 = i1 + 1536 | 0;
   i16 = i2 + (i17 << 3) | 0;
   f21 = Math_fround(HEAPF32[i16 >> 2]);
   f18 = Math_fround(f7 * f21);
-  f6 = Math_fround(HEAPF32[282624 + (i1 << 3) + 4 >> 2]);
+  f6 = Math_fround(HEAPF32[305664 + (i1 << 3) + 4 >> 2]);
   i17 = i2 + (i17 << 3) + 4 | 0;
   f15 = Math_fround(HEAPF32[i17 >> 2]);
   f18 = Math_fround(f18 - Math_fround(f6 * f15));
@@ -1332,32 +1332,32 @@ function _fft_calc_1024(i2) {
   f11 = Math_fround(HEAPF32[i20 >> 2]);
   i19 = i2 + (i1 << 3) + 4 | 0;
   f9 = Math_fround(HEAPF32[i19 >> 2]);
-  f7 = Math_fround(HEAPF32[274432 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[297472 + (i1 << 3) >> 2]);
   i8 = i1 + 256 | 0;
   i4 = i2 + (i8 << 3) | 0;
   f3 = Math_fround(HEAPF32[i4 >> 2]);
   f13 = Math_fround(f7 * f3);
-  f18 = Math_fround(HEAPF32[274432 + (i1 << 3) + 4 >> 2]);
+  f18 = Math_fround(HEAPF32[297472 + (i1 << 3) + 4 >> 2]);
   i8 = i2 + (i8 << 3) + 4 | 0;
   f12 = Math_fround(HEAPF32[i8 >> 2]);
   f13 = Math_fround(f13 - Math_fround(f18 * f12));
   f12 = Math_fround(Math_fround(f3 * f18) + Math_fround(f7 * f12));
-  f7 = Math_fround(HEAPF32[278528 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[301568 + (i1 << 3) >> 2]);
   i14 = i1 + 512 | 0;
   i10 = i2 + (i14 << 3) | 0;
   f18 = Math_fround(HEAPF32[i10 >> 2]);
   f3 = Math_fround(f7 * f18);
-  f21 = Math_fround(HEAPF32[278528 + (i1 << 3) + 4 >> 2]);
+  f21 = Math_fround(HEAPF32[301568 + (i1 << 3) + 4 >> 2]);
   i14 = i2 + (i14 << 3) + 4 | 0;
   f5 = Math_fround(HEAPF32[i14 >> 2]);
   f3 = Math_fround(f3 - Math_fround(f21 * f5));
   f5 = Math_fround(Math_fround(f18 * f21) + Math_fround(f7 * f5));
-  f7 = Math_fround(HEAPF32[276480 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[299520 + (i1 << 3) >> 2]);
   i17 = i1 + 768 | 0;
   i16 = i2 + (i17 << 3) | 0;
   f21 = Math_fround(HEAPF32[i16 >> 2]);
   f18 = Math_fround(f7 * f21);
-  f6 = Math_fround(HEAPF32[276480 + (i1 << 3) + 4 >> 2]);
+  f6 = Math_fround(HEAPF32[299520 + (i1 << 3) + 4 >> 2]);
   i17 = i2 + (i17 << 3) + 4 | 0;
   f15 = Math_fround(HEAPF32[i17 >> 2]);
   f18 = Math_fround(f18 - Math_fround(f6 * f15));
@@ -1435,32 +1435,32 @@ function _fft_calc_512(i2) {
   f11 = Math_fround(HEAPF32[i20 >> 2]);
   i19 = i2 + (i1 << 3) + 4 | 0;
   f9 = Math_fround(HEAPF32[i19 >> 2]);
-  f7 = Math_fround(HEAPF32[272384 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[295424 + (i1 << 3) >> 2]);
   i8 = i1 + 128 | 0;
   i4 = i2 + (i8 << 3) | 0;
   f3 = Math_fround(HEAPF32[i4 >> 2]);
   f13 = Math_fround(f7 * f3);
-  f18 = Math_fround(HEAPF32[272384 + (i1 << 3) + 4 >> 2]);
+  f18 = Math_fround(HEAPF32[295424 + (i1 << 3) + 4 >> 2]);
   i8 = i2 + (i8 << 3) + 4 | 0;
   f12 = Math_fround(HEAPF32[i8 >> 2]);
   f13 = Math_fround(f13 - Math_fround(f18 * f12));
   f12 = Math_fround(Math_fround(f3 * f18) + Math_fround(f7 * f12));
-  f7 = Math_fround(HEAPF32[274432 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[297472 + (i1 << 3) >> 2]);
   i14 = i1 + 256 | 0;
   i10 = i2 + (i14 << 3) | 0;
   f18 = Math_fround(HEAPF32[i10 >> 2]);
   f3 = Math_fround(f7 * f18);
-  f21 = Math_fround(HEAPF32[274432 + (i1 << 3) + 4 >> 2]);
+  f21 = Math_fround(HEAPF32[297472 + (i1 << 3) + 4 >> 2]);
   i14 = i2 + (i14 << 3) + 4 | 0;
   f5 = Math_fround(HEAPF32[i14 >> 2]);
   f3 = Math_fround(f3 - Math_fround(f21 * f5));
   f5 = Math_fround(Math_fround(f18 * f21) + Math_fround(f7 * f5));
-  f7 = Math_fround(HEAPF32[273408 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[296448 + (i1 << 3) >> 2]);
   i17 = i1 + 384 | 0;
   i16 = i2 + (i17 << 3) | 0;
   f21 = Math_fround(HEAPF32[i16 >> 2]);
   f18 = Math_fround(f7 * f21);
-  f6 = Math_fround(HEAPF32[273408 + (i1 << 3) + 4 >> 2]);
+  f6 = Math_fround(HEAPF32[296448 + (i1 << 3) + 4 >> 2]);
   i17 = i2 + (i17 << 3) + 4 | 0;
   f15 = Math_fround(HEAPF32[i17 >> 2]);
   f18 = Math_fround(f18 - Math_fround(f6 * f15));
@@ -1538,32 +1538,32 @@ function _fft_calc_256(i2) {
   f11 = Math_fround(HEAPF32[i20 >> 2]);
   i19 = i2 + (i1 << 3) + 4 | 0;
   f9 = Math_fround(HEAPF32[i19 >> 2]);
-  f7 = Math_fround(HEAPF32[271360 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[294400 + (i1 << 3) >> 2]);
   i8 = i1 + 64 | 0;
   i4 = i2 + (i8 << 3) | 0;
   f3 = Math_fround(HEAPF32[i4 >> 2]);
   f13 = Math_fround(f7 * f3);
-  f18 = Math_fround(HEAPF32[271360 + (i1 << 3) + 4 >> 2]);
+  f18 = Math_fround(HEAPF32[294400 + (i1 << 3) + 4 >> 2]);
   i8 = i2 + (i8 << 3) + 4 | 0;
   f12 = Math_fround(HEAPF32[i8 >> 2]);
   f13 = Math_fround(f13 - Math_fround(f18 * f12));
   f12 = Math_fround(Math_fround(f3 * f18) + Math_fround(f7 * f12));
-  f7 = Math_fround(HEAPF32[272384 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[295424 + (i1 << 3) >> 2]);
   i14 = i1 + 128 | 0;
   i10 = i2 + (i14 << 3) | 0;
   f18 = Math_fround(HEAPF32[i10 >> 2]);
   f3 = Math_fround(f7 * f18);
-  f21 = Math_fround(HEAPF32[272384 + (i1 << 3) + 4 >> 2]);
+  f21 = Math_fround(HEAPF32[295424 + (i1 << 3) + 4 >> 2]);
   i14 = i2 + (i14 << 3) + 4 | 0;
   f5 = Math_fround(HEAPF32[i14 >> 2]);
   f3 = Math_fround(f3 - Math_fround(f21 * f5));
   f5 = Math_fround(Math_fround(f18 * f21) + Math_fround(f7 * f5));
-  f7 = Math_fround(HEAPF32[271872 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[294912 + (i1 << 3) >> 2]);
   i17 = i1 + 192 | 0;
   i16 = i2 + (i17 << 3) | 0;
   f21 = Math_fround(HEAPF32[i16 >> 2]);
   f18 = Math_fround(f7 * f21);
-  f6 = Math_fround(HEAPF32[271872 + (i1 << 3) + 4 >> 2]);
+  f6 = Math_fround(HEAPF32[294912 + (i1 << 3) + 4 >> 2]);
   i17 = i2 + (i17 << 3) + 4 | 0;
   f15 = Math_fround(HEAPF32[i17 >> 2]);
   f18 = Math_fround(f18 - Math_fround(f6 * f15));
@@ -1641,32 +1641,32 @@ function _fft_calc_128(i2) {
   f11 = Math_fround(HEAPF32[i20 >> 2]);
   i19 = i2 + (i1 << 3) + 4 | 0;
   f9 = Math_fround(HEAPF32[i19 >> 2]);
-  f7 = Math_fround(HEAPF32[270848 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[293888 + (i1 << 3) >> 2]);
   i8 = i1 + 32 | 0;
   i4 = i2 + (i8 << 3) | 0;
   f3 = Math_fround(HEAPF32[i4 >> 2]);
   f13 = Math_fround(f7 * f3);
-  f18 = Math_fround(HEAPF32[270848 + (i1 << 3) + 4 >> 2]);
+  f18 = Math_fround(HEAPF32[293888 + (i1 << 3) + 4 >> 2]);
   i8 = i2 + (i8 << 3) + 4 | 0;
   f12 = Math_fround(HEAPF32[i8 >> 2]);
   f13 = Math_fround(f13 - Math_fround(f18 * f12));
   f12 = Math_fround(Math_fround(f3 * f18) + Math_fround(f7 * f12));
-  f7 = Math_fround(HEAPF32[271360 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[294400 + (i1 << 3) >> 2]);
   i14 = i1 + 64 | 0;
   i10 = i2 + (i14 << 3) | 0;
   f18 = Math_fround(HEAPF32[i10 >> 2]);
   f3 = Math_fround(f7 * f18);
-  f21 = Math_fround(HEAPF32[271360 + (i1 << 3) + 4 >> 2]);
+  f21 = Math_fround(HEAPF32[294400 + (i1 << 3) + 4 >> 2]);
   i14 = i2 + (i14 << 3) + 4 | 0;
   f5 = Math_fround(HEAPF32[i14 >> 2]);
   f3 = Math_fround(f3 - Math_fround(f21 * f5));
   f5 = Math_fround(Math_fround(f18 * f21) + Math_fround(f7 * f5));
-  f7 = Math_fround(HEAPF32[271104 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[294144 + (i1 << 3) >> 2]);
   i17 = i1 + 96 | 0;
   i16 = i2 + (i17 << 3) | 0;
   f21 = Math_fround(HEAPF32[i16 >> 2]);
   f18 = Math_fround(f7 * f21);
-  f6 = Math_fround(HEAPF32[271104 + (i1 << 3) + 4 >> 2]);
+  f6 = Math_fround(HEAPF32[294144 + (i1 << 3) + 4 >> 2]);
   i17 = i2 + (i17 << 3) + 4 | 0;
   f15 = Math_fround(HEAPF32[i17 >> 2]);
   f18 = Math_fround(f18 - Math_fround(f6 * f15));
@@ -1744,32 +1744,32 @@ function _fft_calc_64(i2) {
   f11 = Math_fround(HEAPF32[i20 >> 2]);
   i19 = i2 + (i1 << 3) + 4 | 0;
   f9 = Math_fround(HEAPF32[i19 >> 2]);
-  f7 = Math_fround(HEAPF32[270592 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[293632 + (i1 << 3) >> 2]);
   i8 = i1 + 16 | 0;
   i4 = i2 + (i8 << 3) | 0;
   f3 = Math_fround(HEAPF32[i4 >> 2]);
   f13 = Math_fround(f7 * f3);
-  f18 = Math_fround(HEAPF32[270592 + (i1 << 3) + 4 >> 2]);
+  f18 = Math_fround(HEAPF32[293632 + (i1 << 3) + 4 >> 2]);
   i8 = i2 + (i8 << 3) + 4 | 0;
   f12 = Math_fround(HEAPF32[i8 >> 2]);
   f13 = Math_fround(f13 - Math_fround(f18 * f12));
   f12 = Math_fround(Math_fround(f3 * f18) + Math_fround(f7 * f12));
-  f7 = Math_fround(HEAPF32[270848 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[293888 + (i1 << 3) >> 2]);
   i14 = i1 + 32 | 0;
   i10 = i2 + (i14 << 3) | 0;
   f18 = Math_fround(HEAPF32[i10 >> 2]);
   f3 = Math_fround(f7 * f18);
-  f21 = Math_fround(HEAPF32[270848 + (i1 << 3) + 4 >> 2]);
+  f21 = Math_fround(HEAPF32[293888 + (i1 << 3) + 4 >> 2]);
   i14 = i2 + (i14 << 3) + 4 | 0;
   f5 = Math_fround(HEAPF32[i14 >> 2]);
   f3 = Math_fround(f3 - Math_fround(f21 * f5));
   f5 = Math_fround(Math_fround(f18 * f21) + Math_fround(f7 * f5));
-  f7 = Math_fround(HEAPF32[270720 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[293760 + (i1 << 3) >> 2]);
   i17 = i1 + 48 | 0;
   i16 = i2 + (i17 << 3) | 0;
   f21 = Math_fround(HEAPF32[i16 >> 2]);
   f18 = Math_fround(f7 * f21);
-  f6 = Math_fround(HEAPF32[270720 + (i1 << 3) + 4 >> 2]);
+  f6 = Math_fround(HEAPF32[293760 + (i1 << 3) + 4 >> 2]);
   i17 = i2 + (i17 << 3) + 4 | 0;
   f15 = Math_fround(HEAPF32[i17 >> 2]);
   f18 = Math_fround(f18 - Math_fround(f6 * f15));
@@ -1847,32 +1847,32 @@ function _fft_calc_32(i2) {
   f11 = Math_fround(HEAPF32[i20 >> 2]);
   i19 = i2 + (i1 << 3) + 4 | 0;
   f9 = Math_fround(HEAPF32[i19 >> 2]);
-  f7 = Math_fround(HEAPF32[270464 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[293504 + (i1 << 3) >> 2]);
   i8 = i1 + 8 | 0;
   i4 = i2 + (i8 << 3) | 0;
   f3 = Math_fround(HEAPF32[i4 >> 2]);
   f13 = Math_fround(f7 * f3);
-  f18 = Math_fround(HEAPF32[270464 + (i1 << 3) + 4 >> 2]);
+  f18 = Math_fround(HEAPF32[293504 + (i1 << 3) + 4 >> 2]);
   i8 = i2 + (i8 << 3) + 4 | 0;
   f12 = Math_fround(HEAPF32[i8 >> 2]);
   f13 = Math_fround(f13 - Math_fround(f18 * f12));
   f12 = Math_fround(Math_fround(f3 * f18) + Math_fround(f7 * f12));
-  f7 = Math_fround(HEAPF32[270592 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[293632 + (i1 << 3) >> 2]);
   i14 = i1 + 16 | 0;
   i10 = i2 + (i14 << 3) | 0;
   f18 = Math_fround(HEAPF32[i10 >> 2]);
   f3 = Math_fround(f7 * f18);
-  f21 = Math_fround(HEAPF32[270592 + (i1 << 3) + 4 >> 2]);
+  f21 = Math_fround(HEAPF32[293632 + (i1 << 3) + 4 >> 2]);
   i14 = i2 + (i14 << 3) + 4 | 0;
   f5 = Math_fround(HEAPF32[i14 >> 2]);
   f3 = Math_fround(f3 - Math_fround(f21 * f5));
   f5 = Math_fround(Math_fround(f18 * f21) + Math_fround(f7 * f5));
-  f7 = Math_fround(HEAPF32[270528 + (i1 << 3) >> 2]);
+  f7 = Math_fround(HEAPF32[293568 + (i1 << 3) >> 2]);
   i17 = i1 + 24 | 0;
   i16 = i2 + (i17 << 3) | 0;
   f21 = Math_fround(HEAPF32[i16 >> 2]);
   f18 = Math_fround(f7 * f21);
-  f6 = Math_fround(HEAPF32[270528 + (i1 << 3) + 4 >> 2]);
+  f6 = Math_fround(HEAPF32[293568 + (i1 << 3) + 4 >> 2]);
   i17 = i2 + (i17 << 3) + 4 | 0;
   f15 = Math_fround(HEAPF32[i17 >> 2]);
   f18 = Math_fround(f18 - Math_fround(f6 * f15));
@@ -1908,18 +1908,18 @@ function _render_line(i2, i1) {
  var f3 = f0, i4 = 0, i5 = 0, f6 = f0, i7 = 0;
  i7 = (i1 | 0) < 0 ? 0 : ((i1 | 0) < 255 ? i1 : 255) & 255;
  if ((i2 | 0) > -1) {
-  i1 = HEAP32[240769] | 0;
+  i1 = HEAP32[298369] | 0;
   if ((i1 | 0) > (i2 | 0)) {
    f6 = Math_fround(Math_fround(i1 - i2 | 0) / Math_fround(i1 | 0));
-   if ((HEAP32[240768] | 0) > 0) i5 = 0; else return;
+   if ((HEAP32[298368] | 0) > 0) i5 = 0; else return;
    do {
-    f3 = Math_fround(HEAPF32[893952 + (i5 << 4) + 12 >> 2]);
+    f3 = Math_fround(HEAPF32[916992 + (i5 << 4) + 12 >> 2]);
     if (!(f3 <= f6)) {
      f3 = Math_fround(f3 - f6);
-     f3 = Math_fround(f3 * Math_fround(HEAPF32[955392 + (i5 << 2) >> 2]));
-     i4 = ~~Math_fround(Math_fround(f3 * Math_fround(HEAPF32[893952 + (i5 << 4) >> 2])) + Math_fround(.5)) & 255;
-     i2 = ~~Math_fround(Math_fround(f3 * Math_fround(HEAPF32[893952 + (i5 << 4) + 4 >> 2])) + Math_fround(.5)) & 255;
-     i1 = ~~Math_fround(Math_fround(f3 * Math_fround(HEAPF32[893952 + (i5 << 4) + 8 >> 2])) + Math_fround(.5)) & 255;
+     f3 = Math_fround(f3 * Math_fround(HEAPF32[1162752 + (i5 << 2) >> 2]));
+     i4 = ~~Math_fround(Math_fround(f3 * Math_fround(HEAPF32[916992 + (i5 << 4) >> 2])) + Math_fround(.5)) & 255;
+     i2 = ~~Math_fround(Math_fround(f3 * Math_fround(HEAPF32[916992 + (i5 << 4) + 4 >> 2])) + Math_fround(.5)) & 255;
+     i1 = ~~Math_fround(Math_fround(f3 * Math_fround(HEAPF32[916992 + (i5 << 4) + 8 >> 2])) + Math_fround(.5)) & 255;
     } else {
      i1 = 0;
      i2 = 0;
@@ -1930,21 +1930,21 @@ function _render_line(i2, i1) {
     HEAP8[262656 + (i5 << 2) + 2 >> 0] = i1;
     HEAP8[262656 + (i5 << 2) + 3 >> 0] = i7;
     i5 = i5 + 1 | 0;
-   } while ((i5 | 0) < (HEAP32[240768] | 0));
+   } while ((i5 | 0) < (HEAP32[298368] | 0));
    return;
   }
  }
- if ((HEAP32[240768] | 0) > 0) i1 = 0; else return;
+ if ((HEAP32[298368] | 0) > 0) i1 = 0; else return;
  do {
-  i2 = ~~Math_fround(Math_fround(HEAPF32[893952 + (i1 << 4) >> 2]) + Math_fround(.5)) & 255;
-  i4 = ~~Math_fround(Math_fround(HEAPF32[893952 + (i1 << 4) + 4 >> 2]) + Math_fround(.5)) & 255;
-  i5 = ~~Math_fround(Math_fround(HEAPF32[893952 + (i1 << 4) + 8 >> 2]) + Math_fround(.5)) & 255;
+  i2 = ~~Math_fround(Math_fround(HEAPF32[916992 + (i1 << 4) >> 2]) + Math_fround(.5)) & 255;
+  i4 = ~~Math_fround(Math_fround(HEAPF32[916992 + (i1 << 4) + 4 >> 2]) + Math_fround(.5)) & 255;
+  i5 = ~~Math_fround(Math_fround(HEAPF32[916992 + (i1 << 4) + 8 >> 2]) + Math_fround(.5)) & 255;
   HEAP8[262656 + (i1 << 2) >> 0] = i2;
   HEAP8[262656 + (i1 << 2) + 1 >> 0] = i4;
   HEAP8[262656 + (i1 << 2) + 2 >> 0] = i5;
   HEAP8[262656 + (i1 << 2) + 3 >> 0] = i7;
   i1 = i1 + 1 | 0;
- } while ((i1 | 0) < (HEAP32[240768] | 0));
+ } while ((i1 | 0) < (HEAP32[298368] | 0));
  return;
 }
 
@@ -1955,17 +1955,17 @@ function _set_volume(f1, f2) {
  i3 = f1 > Math_fround(100.0);
  i4 = f1 > Math_fround(1.0);
  f1 = i4 ? f1 : Math_fround(1.0);
- HEAPF32[240774] = i3 ? Math_fround(100.0) : f1;
+ HEAPF32[298374] = i3 ? Math_fround(100.0) : f1;
  i3 = f2 > Math_fround(100.0);
  i4 = f2 > Math_fround(1.0);
  f2 = i4 ? f2 : Math_fround(1.0);
- HEAPF32[240773] = i3 ? Math_fround(100.0) : f2;
+ HEAPF32[298373] = i3 ? Math_fround(100.0) : f2;
  return;
 }
 
 function _set_height(i1) {
  i1 = i1 | 0;
- HEAP32[240769] = (i1 | 0) > 1080 ? 1080 : (i1 | 0) > 1 ? i1 : 1;
+ HEAP32[298369] = (i1 | 0) > 4320 ? 4320 : (i1 | 0) > 1 ? i1 : 1;
  return;
 }
 
