@@ -143,114 +143,37 @@
         menu_table.style.lineHeight = "20pt";
         menu_table.style.display = "none";
 
-        child = document.createElement("span");
-        child.textContent = "Height          ";
-        menu_table.appendChild(child);
-        child = child_menu.height = document.createElement("input");
-        child.type = "range";
-        child.min  = bound.height_min;
-        child.max  = bound.height_max;
-        child.step = 1;
-        child.value = options.height;
-        child.onchange = function() {
-            options.height = this.value;
-            child_text.height.textContent = " " + options.height;
+        function create_child_range_menu(title, name, callback) {
+            child = document.createElement("span");
+            child.textContent = title;
+            menu_table.appendChild(child);
+            child_menu[name] = child = document.createElement("input");
+            child.type = "range";
+            child.min = bound[name + "_min"];
+            child.max = bound[name + "_max"];
+            child.step = 1;
+            child.value = options[name];
+            child.oninput = function() {
+                child_text[name].textContent = " " + this.value;
+            }
+            child.onchange = function() {
+                this.oninput();
+                options[name] = this.value;
+                if (callback)
+                    callback();
+            }
+            menu_table.appendChild(child);
+            menu_table.appendChild(child_text[name] = document.createElement("span"));
+            child.onchange();
+            menu_table.appendChild(document.createElement("br"));
         }
-        menu_table.appendChild(child);
-        menu_table.appendChild(child_text.height = document.createElement("span"));
-        child.onchange();
-        menu_table.appendChild(document.createElement("br"));
 
-        child = document.createElement("span");
-        child.textContent = "Bar             ";
-        menu_table.appendChild(child);
-        child = child_menu.bar = document.createElement("input");
-        child.type = "range";
-        child.min  = bound.bar_min;
-        child.max  = bound.bar_max;
-        child.step = 1;
-        child.value = options.bar;
-        child.onchange = function() {
-            options.bar = this.value;
-            child_text.bar.textContent = " " + options.bar;
-        }
-        menu_table.appendChild(child);
-        menu_table.appendChild(child_text.bar = document.createElement("span"));
-        child.onchange();
-        menu_table.appendChild(document.createElement("br"));
-
-        child = document.createElement("span");
-        child.textContent = "Waterfall       ";
-        menu_table.appendChild(child);
-        child = child_menu.waterfall = document.createElement("input");
-        child.type = "range";
-        child.min  = bound.waterfall_min;
-        child.max  = bound.waterfall_max;
-        child.step = 1;
-        child.value = options.waterfall;
-        child.onchange = function() {
-            options.waterfall = this.value;
-            child_text.waterfall.textContent = " " + options.waterfall;
-        }
-        menu_table.appendChild(child);
-        menu_table.appendChild(child_text.waterfall = document.createElement("span"));
-        child.onchange();
-        menu_table.appendChild(document.createElement("br"));
-
-        child = document.createElement("span");
-        child.textContent = "Brightness      ";
-        menu_table.appendChild(child);
-        child = child_menu.brightness = document.createElement("input");
-        child.type = "range";
-        child.min  = bound.brightness_min;
-        child.max  = bound.brightness_max;
-        child.step = 1;
-        child.value = options.brightness;
-        child.onchange = function() {
-            options.brightness = this.value;
-            child_text.brightness.textContent = " " + options.brightness;
-        }
-        menu_table.appendChild(child);
-        menu_table.appendChild(child_text.brightness = document.createElement("span"));
-        child.onchange();
-        menu_table.appendChild(document.createElement("br"));
-
-        child = document.createElement("span");
-        child.textContent = "Bass            ";
-        menu_table.appendChild(child);
-        child = child_menu.bass = document.createElement("input");
-        child.type = "range";
-        child.min  = bound.bass_min;
-        child.max  = bound.bass_max;
-        child.step = 1;
-        child.value = options.bass;
-        child.onchange = function() {
-            options.bass = this.value;
-            iir.gain.value = options.bass;
-            child_text.bass.textContent = " " + options.bass;
-        }
-        menu_table.appendChild(child);
-        menu_table.appendChild(child_text.bass = document.createElement("span"));
-        child.onchange();
-        menu_table.appendChild(document.createElement("br"));
-
-        child = document.createElement("span");
-        child.textContent = "Speed           ";
-        menu_table.appendChild(child);
-        child = child_menu.speed = document.createElement("input");
-        child.type = "range";
-        child.min = bound.speed_min;
-        child.max = bound.speed_max;
-        child.step = 1;
-        child.value = options.speed;
-        child.onchange = function() {
-            options.speed = this.value;
-            child_text.speed.textContent = " " + options.speed;
-        };
-        menu_table.appendChild(child);
-        menu_table.appendChild(child_text.speed = document.createElement("span"));
-        child.onchange();
-        menu_table.appendChild(document.createElement("br"));
+        create_child_range_menu("Height          ", "height");
+        create_child_range_menu("Bar             ", "bar");
+        create_child_range_menu("Waterfall       ", "waterfall");
+        create_child_range_menu("Brightness      ", "brightness");
+        create_child_range_menu("Bass            ", "bass", function(){ iir.gain.value = options.bass; });
+        create_child_range_menu("Speed           ", "speed");
 
         child = document.createElement("span");
         child.textContent = "Transparent      ";
