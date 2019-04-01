@@ -70,18 +70,16 @@
     };
 
     function load_options(value) {
-        if (value.height != undefined && value.height >= bound.height_min && value.height <= bound.height_max)
-            options.height = Math.round(value.height);
-        if (value.bar != undefined && value.bar >= bound.bar_min && value.bar <= bound.bar_max)
-            options.bar = Math.round(value.bar);
-        if (value.waterfall != undefined && value.waterfall >= bound.waterfall_min && value.waterfall <= bound.waterfall_max)
-            options.waterfall = Math.round(value.waterfall);
-        if (value.brightness != undefined && value.brightness >= bound.brightness_min && value.brightness <= bound.brightness_max)
-            options.brightness = Math.round(value.brightness);
-        if (value.bass != undefined && value.bass >= bound.bass_min && value.bass <= bound.bass_max)
-            options.bass = Math.round(value.bass);
-        if (value.speed != undefined && value.speed >= bound.speed_min && value.speed <= bound.speed_max)
-            options.speed = Math.round(value.speed);
+        function check_and_set_range(name) {
+            if (value[name] != undefined && value[name] >= bound[name + "_min"] && value[name] <= bound[name + "_max"])
+                options[name] = Math.round(value[name]);
+        }
+        check_and_set_range("height");
+        check_and_set_range("bar");
+        check_and_set_range("waterfall");
+        check_and_set_range("brightness");
+        check_and_set_range("bass");
+        check_and_set_range("speed");
         if (value.transparent != undefined)
             options.transparent = value.transparent;
         if (value.visible != undefined)
