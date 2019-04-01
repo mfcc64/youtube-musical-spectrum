@@ -159,7 +159,10 @@
             child.step = 1;
             child.value = options[name];
             child.oninput = function() {
-                child_text[name].textContent = " " + this.value;
+                var str = this.value.toString();
+                while (str.length < 4)
+                    str = " " + str;
+                child_text[name].textContent = str;
             }
             child.onchange = function() {
                 this.oninput();
