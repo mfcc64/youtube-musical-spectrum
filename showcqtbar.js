@@ -22,6 +22,13 @@
 /* See common.js for usage example */
 
 function ShowCQTBar(rate, width, height, bar_v, sono_v, supersampling) {
+    // constaints:
+    // 0 < rate <= 96000 (actually slightly above 96000)
+    // 0 < width <= 7680
+    // 0 < height <= 4320
+    // 1.0 <= bar_v <= 100.0
+    // 1.0 <= sono_v <= 100.0
+
     this.rate = rate;
     this.width = width;
     this.height = height;
