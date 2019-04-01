@@ -35,6 +35,7 @@
         options.brightness = 17;
         options.bass = -30;
         options.speed = 2;
+        options.interval = 1;
         options.transparent = true;
         options.visible = true;
     }
@@ -46,7 +47,8 @@
         waterfall_min: 0, waterfall_max: 40,
         brightness_min: 7, brightness_max: 49,
         bass_min: -50, bass_max: 0,
-        speed_min: 1, speed_max: 3
+        speed_min: 1, speed_max: 12,
+        interval_min: 1, interval_max: 4
     }
 
     var child_menu = {
@@ -56,6 +58,7 @@
         brightness: null,
         bass: null,
         speed: null,
+        interval: null,
         transparent: null,
         visible: null
     };
@@ -66,7 +69,8 @@
         waterfall: null,
         brightness: null,
         bass: null,
-        speed: null
+        speed: null,
+        interval: null,
     };
 
     function load_options(value) {
@@ -80,6 +84,7 @@
         check_and_set_range("brightness");
         check_and_set_range("bass");
         check_and_set_range("speed");
+        check_and_set_range("interval");
         if (value.transparent != undefined)
             options.transparent = value.transparent;
         if (value.visible != undefined)
@@ -99,6 +104,8 @@
         child_menu.bass.onchange();
         child_menu.speed.value = options.speed;
         child_menu.speed.onchange();
+        child_menu.interval.value = options.interval;
+        child_menu.interval.onchange();
         child_menu.transparent.checked = options.transparent;
         child_menu.transparent.onchange();
         child_menu.visible.checked = options.visible;
@@ -172,6 +179,7 @@
         create_child_range_menu("Brightness      ", "brightness");
         create_child_range_menu("Bass            ", "bass", function(){ iir.gain.value = options.bass; });
         create_child_range_menu("Speed           ", "speed");
+        create_child_range_menu("Interval        ", "interval");
 
         child = document.createElement("span");
         child.textContent = "Transparent      ";
@@ -303,12 +311,12 @@
     }
 
     function resize() {
-        var new_width = Math.min(Math.max(Math.floor(document.documentElement.clientWidth), 960), 1920);
-        var new_height = Math.min(Math.max(Math.floor(window.innerHeight * options.height / 100), 100), 1080);
+        var new_width = Math.min(Math.max(Math.floor(document.documentElement.clientWidth), 960), 7680);
+        var new_axis_h = Math.round(new_width * 32 / 1920);
+        var new_height = Math.min(Math.max(Math.floor(window.innerHeight * options.height / 100), 4 * new_axis_h), 4320);
         var new_sono_h = Math.round(new_height * options.waterfall / 100);
         if (new_sono_h > 0)
-            new_sono_h = Math.max(new_sono_h, 4);
-        var new_axis_h = Math.round(new_width * 32 / 1920);
+            new_sono_h = Math.max(new_sono_h, bound.speed_max + 1);
         var new_bar_h = new_height - new_sono_h - new_axis_h;
 
         if (new_width != width || new_bar_h != bar_h || new_height != height || new_axis_h != axis_h) {
@@ -335,8 +343,12 @@
         }
     }
 
+    var interval_count = 0;
     function draw() {
         requestAnimationFrame(draw);
+        if (++interval_count < options.interval)
+            return;
+        interval_count = 0;
         if (videos.length > 0 && video != videos[0]) {
             if (stream)
                 stream.disconnect();
@@ -368,18 +380,11 @@
             img_buffer.data.copyWithin(4*width*(bar_h+axis_h), 4*width*(bar_h+axis_h-speed), 4*width*(height-speed));
             var src0 = 4*width*(bar_h+axis_h);
             var src1 = 4*width*(bar_h+axis_h+speed);
-            var dst_a = 4*width*(bar_h+axis_h+1);
-            var dst_b = 4*width*(bar_h+axis_h+2);
-
-            if (speed == 2) {
-                for (var x = 0; x < width*4; x++)
-                    img_buffer.data[dst_a+x] = 0.3333 + 0.5 * (img_buffer.data[src0+x] + img_buffer.data[src1+x]);
-            }
-
-            if (speed == 3) {
+            for (var y = 1; y < speed; y++) {
+                var dst = 4*width*(bar_h+axis_h+y);
                 for (var x = 0; x < width*4; x++) {
-                    img_buffer.data[dst_a+x] = 0.3333 + 0.6667 * img_buffer.data[src0+x] + 0.3333 * img_buffer.data[src1+x];
-                    img_buffer.data[dst_b+x] = 0.3333 + 0.3333 * img_buffer.data[src0+x] + 0.6667 * img_buffer.data[src1+x];
+                    var mul = y / speed;
+                    img_buffer.data[dst+x] = (1 - mul) * img_buffer.data[src0+x] + mul * img_buffer.data[src1+x] + 0.3333;
                 }
             }
         }
