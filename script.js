@@ -60,6 +60,15 @@
         visible: null
     };
 
+    var child_text = {
+        height: null,
+        bar: null,
+        waterfall: null,
+        brightness: null,
+        bass: null,
+        speed: null
+    };
+
     function load_options(value) {
         if (value.height != undefined && value.height >= bound.height_min && value.height <= bound.height_max)
             options.height = Math.round(value.height);
@@ -81,12 +90,17 @@
 
     function reset_child_menu() {
         child_menu.height.value = options.height;
+        child_menu.height.onchange();
         child_menu.bar.value = options.bar;
+        child_menu.bar.onchange();
         child_menu.waterfall.value = options.waterfall;
+        child_menu.waterfall.onchange();
         child_menu.brightness.value = options.brightness;
+        child_menu.brightness.onchange();
         child_menu.bass.value = options.bass;
         child_menu.bass.onchange();
         child_menu.speed.value = options.speed;
+        child_menu.speed.onchange();
         child_menu.transparent.checked = options.transparent;
         child_menu.transparent.onchange();
         child_menu.visible.checked = options.visible;
@@ -140,8 +154,11 @@
         child.value = options.height;
         child.onchange = function() {
             options.height = this.value;
+            child_text.height.textContent = " " + options.height;
         }
         menu_table.appendChild(child);
+        menu_table.appendChild(child_text.height = document.createElement("span"));
+        child.onchange();
         menu_table.appendChild(document.createElement("br"));
 
         child = document.createElement("span");
@@ -155,8 +172,11 @@
         child.value = options.bar;
         child.onchange = function() {
             options.bar = this.value;
+            child_text.bar.textContent = " " + options.bar;
         }
         menu_table.appendChild(child);
+        menu_table.appendChild(child_text.bar = document.createElement("span"));
+        child.onchange();
         menu_table.appendChild(document.createElement("br"));
 
         child = document.createElement("span");
@@ -170,8 +190,11 @@
         child.value = options.waterfall;
         child.onchange = function() {
             options.waterfall = this.value;
+            child_text.waterfall.textContent = " " + options.waterfall;
         }
         menu_table.appendChild(child);
+        menu_table.appendChild(child_text.waterfall = document.createElement("span"));
+        child.onchange();
         menu_table.appendChild(document.createElement("br"));
 
         child = document.createElement("span");
@@ -185,8 +208,11 @@
         child.value = options.brightness;
         child.onchange = function() {
             options.brightness = this.value;
+            child_text.brightness.textContent = " " + options.brightness;
         }
         menu_table.appendChild(child);
+        menu_table.appendChild(child_text.brightness = document.createElement("span"));
+        child.onchange();
         menu_table.appendChild(document.createElement("br"));
 
         child = document.createElement("span");
@@ -201,9 +227,11 @@
         child.onchange = function() {
             options.bass = this.value;
             iir.gain.value = options.bass;
+            child_text.bass.textContent = " " + options.bass;
         }
-        iir.gain.value = options.bass;
         menu_table.appendChild(child);
+        menu_table.appendChild(child_text.bass = document.createElement("span"));
+        child.onchange();
         menu_table.appendChild(document.createElement("br"));
 
         child = document.createElement("span");
@@ -217,8 +245,11 @@
         child.value = options.speed;
         child.onchange = function() {
             options.speed = this.value;
+            child_text.speed.textContent = " " + options.speed;
         };
         menu_table.appendChild(child);
+        menu_table.appendChild(child_text.speed = document.createElement("span"));
+        child.onchange();
         menu_table.appendChild(document.createElement("br"));
 
         child = document.createElement("span");
