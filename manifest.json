@@ -24,7 +24,15 @@
         "default_popup" : "popup.html",
         "default_title" : "YouTube Musical Spectrum"
     },
-    "web_accessible_resources": ["/axis-1920x32.png", "/icon-24.png"],
+    "web_accessible_resources": [
+        "/axis-1920x32.png",
+        "/icon-128.png",
+        "/icon-64.png",
+        "/icon-48.png",
+        "/icon-32.png",
+        "/icon-24.png",
+        "/icon-16.png"
+    ],
     "content_scripts" : [
         {
             "runs_at"   : "document_end",
