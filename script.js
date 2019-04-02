@@ -129,9 +129,7 @@
         menu.style.left = "0px";
         menu.style.top = "0px";
         menu.style.cursor = "pointer";
-        document.body.appendChild(menu);
         var menu_is_hidden = true;
-
         var child = null;
         var menu_table = document.createElement("div");
         set_fixed_style(menu_table, 10000001);
@@ -265,6 +263,27 @@
                 menu_table.style.display = "none";
             menu_is_hidden = !menu_is_hidden;
         }
+
+        chrome.storage.local.get("hide_menu", function(value) {
+            var hide_menu = !!value.hide_menu;
+            menu.style.visibility = hide_menu ? "hidden" : "visible";
+            document.body.appendChild(menu);
+            document.addEventListener("keydown", function(key) {
+                if (key.ctrlKey && key.altKey && !key.shiftKey && !key.metaKey && key.code == "KeyH" && !key.repeat) {
+                    hide_menu = !hide_menu;
+                    if (hide_menu) {
+                        menu_is_hidden = true;
+                        menu.style.visibility = "hidden";
+                        menu_table.style.display = "none";
+                    } else {
+                        menu_is_hidden = false;
+                        menu.style.visibility = "visible";
+                        menu_table.style.display = "block";
+                    }
+                    chrome.storage.local.set({hide_menu: hide_menu});
+                }
+            });
+        });
     }
 
     function resize_canvas() {
