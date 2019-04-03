@@ -164,7 +164,7 @@
             }
             child.onchange = function() {
                 this.oninput();
-                options[name] = this.value;
+                options[name] = Math.round(this.value);
                 if (callback)
                     callback();
             }
