@@ -32,7 +32,7 @@ The available settings:
 - **Height:** Set the height of the visualizer relative (in percents) to the height of the page. The value is between `20` and `100`.
   The default value is `33`. Setting it to `100` make the visualizer cover the page entirely.
 - **Bar:** Set the bar's height. The value is between `3` and `33`. The default value is `17`.
-- **Waterfall:** Set the waterfall's height relative (in percents) to the page's height. The value is between `0` and `40`.
+- **Waterfall:** Set the waterfall's height relative (in percents) to the visualizer's height. The value is between `0` and `40`.
   The default value is `33`. Setting it to `0` make the waterfall invisible.
 - **Brightness:** Set the brightness of the visualizer. The value is between `7` and `49`. The default value is `17`.
 - **Bass:** Set the bass attenuation in dB. The value is between `-50` and `0`. The default value is `-30`.
