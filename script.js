@@ -269,18 +269,27 @@
             menu.style.visibility = hide_menu ? "hidden" : "visible";
             document.body.appendChild(menu);
             document.addEventListener("keydown", function(key) {
-                if (key.ctrlKey && key.altKey && !key.shiftKey && !key.metaKey && key.code == "KeyH" && !key.repeat) {
-                    hide_menu = !hide_menu;
-                    if (hide_menu) {
-                        menu_is_hidden = true;
-                        menu.style.visibility = "hidden";
-                        menu_table.style.display = "none";
-                    } else {
-                        menu_is_hidden = false;
-                        menu.style.visibility = "visible";
-                        menu_table.style.display = "block";
+                if (key.ctrlKey && key.altKey && !key.shiftKey && !key.metaKey && !key.repeat) {
+                    switch (key.code) {
+                    case "KeyH":
+                        hide_menu = !hide_menu;
+                        if (hide_menu) {
+                            menu_is_hidden = true;
+                            menu.style.visibility = "hidden";
+                            menu_table.style.display = "none";
+                        } else {
+                            menu_is_hidden = false;
+                            menu.style.visibility = "visible";
+                            menu_table.style.display = "block";
+                        }
+                        chrome.storage.local.set({hide_menu: hide_menu});
+                        break;
+                    case "KeyG":
+                        options.visible = !options.visible;
+                        child_menu.visible.checked = options.visible;
+                        child_menu.visible.onchange();
+                        break;
                     }
-                    chrome.storage.local.set({hide_menu: hide_menu});
                 }
             });
         });

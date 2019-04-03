@@ -25,7 +25,8 @@ Install [YouTube Musical Spectrum on Chrome Web Store](https://chrome.google.com
 If you want to change the settings, click the ![Settings](icon-24.png) icon on the top left corner of your YouTube page
 to access the menu, or if it is invisible, press Ctrl+Alt+H. Subsequent click to the ![Settings](icon-24.png) icon
 will toggle the menu's visibility. On the other hand, subsequent Ctrl+Alt+H key will toggle the menu's visibility and
-the ![Settings](icon-24.png) icon's visibility.
+the ![Settings](icon-24.png) icon's visibility. You can also toggle the visualizer's visibility by pressing
+Ctrl+Alt+G.
 
 The available settings:
 - **Height:** Set the height of the visualizer relative (in percents) to the height of the page. The value is between `20` and `100`.
