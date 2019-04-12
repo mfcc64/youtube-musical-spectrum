@@ -23,7 +23,8 @@ Install [YouTube Musical Spectrum on Chrome Web Store](https://bit.ly/youtube-mu
 ## Settings
 
 If you want to change the settings, click the ![Settings](icon-24.png) icon on the top left corner of your YouTube page
-to access the menu, or if it is invisible, press Ctrl+Alt+H. Subsequent click to the ![Settings](icon-24.png) icon
+to access the menu (don't forget to reload any YouTube pages that have been opened
+before installation), or if it is invisible, press Ctrl+Alt+H. Subsequent click to the ![Settings](icon-24.png) icon
 will toggle the menu's visibility. On the other hand, subsequent Ctrl+Alt+H key will toggle the menu's visibility and
 the ![Settings](icon-24.png) icon's visibility. You can also toggle the visualizer's visibility by pressing
 Ctrl+Alt+G.
