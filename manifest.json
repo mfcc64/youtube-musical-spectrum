@@ -35,7 +35,7 @@
     ],
     "content_scripts" : [
         {
-            "runs_at"   : "document_end",
+            "run_at"    : "document_end",
             "js"        : [ "showcqtbar.js", "script.js" ],
             "matches"   : [ "https://www.youtube.com/*" ]
         }
