@@ -11,7 +11,7 @@
     }
     resume_audio_ctx();
     var videos = document.getElementsByTagName("video");
-    var video = null, stream = null;
+    var copied_videos = [];
     var img_buffer = null, audio_data_l = null, audio_data_r = null, line = null;
     var analyser_l = audio_ctx.createAnalyser();
     var analyser_r = audio_ctx.createAnalyser();
@@ -380,17 +380,44 @@
         if (++interval_count < options.interval)
             return;
         interval_count = 0;
-        if (videos.length > 0 && video != videos[0]) {
-            if (stream)
-                stream.disconnect();
 
-            video = videos[0];
-            stream = audio_ctx.createMediaElementSource(video);
-            stream.connect(panner);
+        var need_reconnect = copied_videos.length != videos.length;
+        if (!need_reconnect) {
+            for (var m = 0; m < videos.length; m++) {
+                if (copied_videos[m] != videos[m]) {
+                    need_reconnect = 1;
+                    break;
+                }
+            }
         }
 
-        if (canvas || video)
-            resize();
+        if (need_reconnect) {
+            var tmp_copied_videos = new Array(videos.length);
+
+            for (var m = 0; m < videos.length; m++)
+                tmp_copied_videos[m] = videos[m];
+
+            for (var n = 0; n < copied_videos.length; n++) {
+                for (var m = 0; m < videos.length; m++)
+                    if (copied_videos[n] == videos[m])
+                        copied_videos[n] = null;
+
+                // the circular reference is needed.
+                if (copied_videos[n])
+                    copied_videos[n].__ytms_stream.disconnect();
+            }
+
+            for (var m = 0; m < videos.length; m++) {
+                if (!tmp_copied_videos[m].__ytms_stream)
+                    tmp_copied_videos[m].__ytms_stream = audio_ctx.createMediaElementSource(tmp_copied_videos[m]);
+
+                tmp_copied_videos[m].__ytms_stream.connect(panner);
+            }
+
+            copied_videos = tmp_copied_videos;
+        }
+
+        resize();
 
         if (!canvas || !options.visible)
             return;
