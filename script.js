@@ -419,7 +419,7 @@
 
         resize();
 
-        if (!canvas || !options.visible)
+        if (!options.visible)
             return;
 
         analyser_l.getFloatTimeDomainData(audio_data_l);
