@@ -408,8 +408,15 @@
             }
 
             for (var m = 0; m < videos.length; m++) {
-                if (!tmp_copied_videos[m].__ytms_stream)
-                    tmp_copied_videos[m].__ytms_stream = audio_ctx.createMediaElementSource(tmp_copied_videos[m]);
+                if (!tmp_copied_videos[m].__ytms_stream) {
+                    if (!tmp_copied_videos[m].crossOrigin) {
+                        tmp_copied_videos[m].crossOrigin = "anonymous";
+                        if (tmp_copied_videos[m].src && tmp_copied_videos[m].src.substring(0,4) == "http")
+                            tmp_copied_videos[m].src +=
+                                "&modified-by-youtube-musical-spectrum=setting-cross-origin-to-anonymous";
+                        tmp_copied_videos[m].__ytms_stream = audio_ctx.createMediaElementSource(tmp_copied_videos[m]);
+                    }
+                }
 
                 tmp_copied_videos[m].__ytms_stream.connect(panner);
             }
