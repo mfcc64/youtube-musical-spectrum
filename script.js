@@ -414,8 +414,9 @@
                         if (tmp_copied_videos[m].src && tmp_copied_videos[m].src.substring(0,4) == "http")
                             tmp_copied_videos[m].src +=
                                 "&modified-by-youtube-musical-spectrum=setting-cross-origin-to-anonymous";
-                        tmp_copied_videos[m].__ytms_stream = audio_ctx.createMediaElementSource(tmp_copied_videos[m]);
                     }
+
+                    tmp_copied_videos[m].__ytms_stream = audio_ctx.createMediaElementSource(tmp_copied_videos[m]);
                 }
 
                 tmp_copied_videos[m].__ytms_stream.connect(panner);
