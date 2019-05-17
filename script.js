@@ -319,7 +319,7 @@
 
         if (!axis) {
             axis = document.createElement("img");
-            axis.src = chrome.extension.getURL("/axis-1920x32.png");
+            axis.src = chrome.runtime.getURL("axis-1920x32.png");
             set_fixed_style(axis, 10000000);
             axis.style.left = "0px";
             document.body.appendChild(axis);
