@@ -34,5 +34,6 @@
             "matches"   : [ "https://www.youtube.com/*" ]
         }
     ],
+    "content_security_policy" : "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self';",
     "permissions" : [ "storage", "https://www.youtube.com/*" ]
 }
