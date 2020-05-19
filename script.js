@@ -1,5 +1,5 @@
 
-(function(){
+(async function(){
     var width = 0, height = 0, bar_h = 0, axis_h = 0, sono_h = 0;
     var canvas = null, canvas_ctx = null, axis = null, cqt = null, blocker = null, alpha_table = null;
     var audio_ctx = new window.AudioContext();
@@ -10,9 +10,10 @@
         }
     }
     resume_audio_ctx();
+    var cqt = await ShowCQT.instantiate();
     var videos = document.getElementsByTagName("video");
     var copied_videos = [];
-    var img_buffer = null, audio_data_l = null, audio_data_r = null, line = null;
+    var img_buffer = null;
     var analyser_l = audio_ctx.createAnalyser();
     var analyser_r = audio_ctx.createAnalyser();
     var splitter = audio_ctx.createChannelSplitter(2);
@@ -352,18 +353,15 @@
 
         if (new_width != width || new_bar_h != bar_h || new_height != height || new_axis_h != axis_h) {
             if (new_width != width)
-                cqt = new ShowCQTBar(audio_ctx.sampleRate, new_width, 1, 17, 17, 1);
+                cqt.init(audio_ctx.sampleRate, new_width, 1, 17, 17, 1);
             width = new_width;
             bar_h = new_bar_h;
             height = new_height;
             sono_h = new_sono_h;
             axis_h = new_axis_h;
             bar_h = new_bar_h;
-            audio_data_l = cqt.get_input_array(0);
-            audio_data_r = cqt.get_input_array(1);
             analyser_l.fftSize = cqt.fft_size;
             analyser_r.fftSize = cqt.fft_size;
-            line = cqt.get_output_array();
             resize_canvas();
 
             alpha_table = new Uint8Array(bar_h + axis_h);
@@ -430,15 +428,15 @@
         if (!options.visible)
             return;
 
-        analyser_l.getFloatTimeDomainData(audio_data_l);
-        analyser_r.getFloatTimeDomainData(audio_data_r);
+        analyser_l.getFloatTimeDomainData(cqt.inputs[0]);
+        analyser_r.getFloatTimeDomainData(cqt.inputs[1]);
         cqt.set_height(bar_h);
         cqt.set_volume(options.bar, options.brightness);
         cqt.calc();
 
         for (var y = 0; y < bar_h + axis_h; y++) {
-            cqt.render_line(y, options.transparent ? alpha_table[y] : 255);
-            img_buffer.data.set(line, 4*width*y);
+            cqt.render_line_alpha(y, options.transparent ? alpha_table[y] : 255);
+            img_buffer.data.set(cqt.output, 4*width*y);
         }
 
         if (sono_h) {
