@@ -348,7 +348,7 @@
         var new_height = Math.min(Math.max(Math.floor(window.innerHeight * options.height / 100), 4 * new_axis_h), 4320);
         var new_sono_h = Math.round(new_height * options.waterfall / 100);
         if (new_sono_h > 0)
-            new_sono_h = Math.max(new_sono_h, bound.speed_max + 1);
+            new_sono_h = Math.max(new_sono_h, options.speed + 1);
         var new_bar_h = new_height - new_sono_h - new_axis_h;
 
         if (new_width != width || new_bar_h != bar_h || new_height != height || new_axis_h != axis_h) {
