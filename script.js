@@ -435,7 +435,8 @@
         cqt.calc();
 
         for (var y = 0; y < bar_h + axis_h; y++) {
-            cqt.render_line_alpha(y, options.transparent ? alpha_table[y] : 255);
+            if (y <= bar_h)
+                cqt.render_line_alpha(y, options.transparent ? alpha_table[y] : 255);
             img_buffer.data.set(cqt.output, 4*width*y);
         }
 
