@@ -1056,16 +1056,14 @@ const wasm_simd_embedded_base64 = "" +
                     if (!wasm_simd_module_promise)
                         wasm_simd_module_promise = WebAssembly.compile(decode64(wasm_simd_embedded_base64));
                     instance = await WebAssembly.instantiate(await wasm_simd_module_promise, wasm_imports);
-                    console.log("ShowCQT: SIMD is enabled");
                 } catch(e) {
-                    console.error(e);
+                    console.warn(e);
                 }
             }
             if (!instance) {
                 if (!wasm_module_promise)
                     wasm_module_promise = WebAssembly.compile(decode64(wasm_embedded_base64));
                 instance = await WebAssembly.instantiate(await wasm_module_promise, wasm_imports);
-                console.log("ShowCQT: SIMD is disabled");
             }
             var exports = instance.exports;
             var buffer = exports.memory.buffer;
