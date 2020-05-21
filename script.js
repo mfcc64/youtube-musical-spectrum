@@ -123,7 +123,7 @@
 
     function create_menu() {
         var menu = document.createElement("img");
-        menu.src = chrome.extension.getURL("/icon-24.png");
+        menu.src = chrome.extension.getURL("icon-24.png");
         menu.width = 24;
         menu.height = 24;
         set_fixed_style(menu, 10000002);
