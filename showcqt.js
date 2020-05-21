@@ -1048,7 +1048,7 @@ const wasm_simd_embedded_base64 = "" +
     var ShowCQT = {
         instantiate: async function(opt) {
             var instance = null;
-            var simd = false;
+            var simd = true;
             if (opt && opt.simd !== undefined)
                 simd = opt.simd;
             if (simd) {
