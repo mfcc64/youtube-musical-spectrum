@@ -131,37 +131,64 @@
         menu.style.top = "0px";
         menu.style.cursor = "pointer";
         var menu_is_hidden = true;
-        var child = null;
-        var menu_table = document.createElement("div");
-        set_fixed_style(menu_table, 10000001);
-        menu_table.style.left = "0px";
-        menu_table.style.top = "0px";
-        menu_table.style.padding = "8px";
-        menu_table.style.paddingTop = "32px";
-        menu_table.style.border = "thin solid white";
-        menu_table.style.whiteSpace = "pre";
-        menu_table.style.fontFamily = "monospace";
-        menu_table.style.color = "white";
-        menu_table.style.fontSize = "8pt";
-        menu_table.style.backgroundColor = "black";
-        menu_table.style.lineHeight = "20pt";
-        menu_table.style.display = "none";
+        var menu_div = document.createElement("div");
+        var menu_table = document.createElement("table");
+        set_fixed_style(menu_div, 10000001);
+        menu_div.style.left = "0px";
+        menu_div.style.top = "0px";
+        menu_div.style.padding = "8px";
+        menu_div.style.border = "thin solid white";
+        menu_div.style.color = "white";
+        menu_div.style.fontSize = "10pt";
+        menu_div.style.backgroundColor = "#000000DD";
+        menu_div.style.verticalAlign = "middle";
+        menu_div.style.maxHeight = "90%";
+        menu_div.style.overflow = "auto";
+        menu_div.style.scrollbarWidth = "none";
+        menu_div.style.visibility = "hidden";
+
+        var current_tr = null;
+
+        function get_menu_table_tr() {
+            if (current_tr)
+                return current_tr;
+            return document.createElement("tr");
+        }
+
+        function append_menu_table_tr(tr) {
+            if (current_tr) {
+                current_tr = null;
+            } else {
+                menu_table.appendChild(tr);
+                current_tr = tr;
+            }
+        }
+
+        function set_common_tr_style(tr) {
+            tr.style.height = "32px";
+        }
+
+        function set_common_left_td_style(td) {
+            td.style.paddingLeft = "48px";
+            td.style.width       = "80px";
+        }
 
         function create_child_range_menu(title, name, callback) {
-            child = document.createElement("span");
-            child.textContent = title;
-            menu_table.appendChild(child);
-            child_menu[name] = child = document.createElement("input");
+            var tr = get_menu_table_tr();
+            set_common_tr_style(tr);
+            var td = document.createElement("td");
+            set_common_left_td_style(td);
+            td.textContent = title;
+            tr.appendChild(td);
+            td = document.createElement("td");
+            var child = child_menu[name] = document.createElement("input");
             child.type = "range";
             child.min = bound[name + "_min"];
             child.max = bound[name + "_max"];
             child.step = 1;
             child.value = options[name];
             child.oninput = function() {
-                var str = this.value.toString();
-                while (str.length < 4)
-                    str = " " + str;
-                child_text[name].textContent = str;
+                child_text[name].textContent = this.value;
             }
             child.onchange = function() {
                 this.oninput();
@@ -169,100 +196,111 @@
                 if (callback)
                     callback();
             }
-            menu_table.appendChild(child);
-            menu_table.appendChild(child_text[name] = document.createElement("span"));
+            td.appendChild(child);
+            tr.appendChild(td);
+            tr.appendChild(child_text[name] = document.createElement("td"));
+            child_text[name].style.textAlign = "right";
+            child_text[name].style.width = "32px";
             child.onchange();
-            menu_table.appendChild(document.createElement("br"));
+            append_menu_table_tr(tr);
         }
 
-        create_child_range_menu("Height          ", "height");
-        create_child_range_menu("Bar             ", "bar");
-        create_child_range_menu("Waterfall       ", "waterfall");
-        create_child_range_menu("Brightness      ", "brightness");
-        create_child_range_menu("Bass            ", "bass", function(){ iir.gain.value = options.bass; });
-        create_child_range_menu("Speed           ", "speed");
-        create_child_range_menu("Interval        ", "interval");
+        create_child_range_menu("Height", "height");
+        create_child_range_menu("Bar", "bar");
+        create_child_range_menu("Waterfall", "waterfall");
+        create_child_range_menu("Brightness", "brightness");
+        create_child_range_menu("Bass", "bass", function(){ iir.gain.value = options.bass; });
+        create_child_range_menu("Speed", "speed");
+        create_child_range_menu("Interval", "interval");
 
-        child = document.createElement("span");
-        child.textContent = "Transparent      ";
-        menu_table.appendChild(child);
-        child = child_menu.transparent = document.createElement("input");
-        child.type = "checkbox";
-        child.checked = options.transparent;
-        child.onchange = function() {
-            options.transparent = this.checked;
+        current_tr = null;
+
+        function create_child_checkbox_menu(title, name, callback) {
+            var tr = get_menu_table_tr();
+            set_common_tr_style(tr);
+            var td = document.createElement("td");
+            set_common_left_td_style(td);
+            td.textContent = title;
+            tr.appendChild(td);
+            td = document.createElement("td");
+            td.colSpan = 2;
+            var child = child_menu[name] = document.createElement("input");
+            child.type = "checkbox";
+            child.checked = options[name];
+            child.onchange = function() {
+                options[name] = this.checked;
+                if (callback)
+                    callback();
+            }
+            td.appendChild(child);
+            tr.appendChild(td);
+            append_menu_table_tr(tr);
+        }
+
+        create_child_checkbox_menu("Transparent", "transparent", function() {
             if (canvas)
                 canvas.style.pointerEvents = options.transparent ? "none" : "auto";
-        }
-        menu_table.appendChild(child);
-        menu_table.appendChild(document.createElement("br"));
+        });
 
-        child = document.createElement("span");
-        child.textContent = "Visible          ";
-        menu_table.appendChild(child);
-        child = child_menu.visible = document.createElement("input");
-        child.type = "checkbox";
-        child.checked = options.visible;
-        child.onchange = function() {
-            options.visible = this.checked;
+        create_child_checkbox_menu("Visible", "visible", function() {
             if (canvas)
                 canvas.style.visibility = options.visible ? "visible" : "hidden";
             if (axis)
                 axis.style.visibility = options.visible ? "visible" : "hidden";
             if (blocker)
                 blocker.style.visibility = options.visible ? "visible" : "hidden";
-        }
-        menu_table.appendChild(child);
-        menu_table.appendChild(document.createElement("br"));
+        });
 
-        child = document.createElement("input");
-        child.type = "button";
-        child.style.cursor = "pointer";
-        child.value = "Reset Settings";
-        child.onclick = function() {
+        current_tr = null;
+
+        function create_child_button_menu(title, callback) {
+            var tr = get_menu_table_tr();
+            //set_common_tr_style(tr);
+            var td = document.createElement("td");
+            set_common_left_td_style(td);
+            td.colSpan = 3;
+            var child = document.createElement("button");
+            child.textContent = title;
+            child.style.cursor = "pointer";
+            child.onclick = function() {
+                if (callback)
+                    callback(child);
+            }
+            td.appendChild(child);
+            tr.appendChild(td);
+            append_menu_table_tr(tr);
+        }
+
+        create_child_button_menu("Reset Settings", function() {
             chrome.storage.local.get(null, function(value) {
                 load_default_options();
                 load_options(value);
                 reset_child_menu();
             });
-        }
-        menu_table.appendChild(child);
-        menu_table.appendChild(document.createElement("br"));
+        });
 
-        child = document.createElement("input");
-        child.type = "button";
-        child.style.cursor = "pointer";
-        child.value = "Set as Default Settings";
-        child.onclick = function() {
-            var t = this;
-            t.value = "Saving...";
+        create_child_button_menu("Set as Default Settings", function(child) {
+            child.textContent = "Saving...";
             chrome.storage.local.set(options, function(){
-                window.setTimeout(function(){ t.value = "Set as Default Settings"; }, 300);
+                window.setTimeout(function(){ child.textContent = "Set as Default Settings"; }, 300);
             });
-        }
-        menu_table.appendChild(child);
-        menu_table.appendChild(document.createElement("br"));
+        });
 
-        child = document.createElement("input");
-        child.type = "button";
-        child.style.cursor = "pointer";
-        child.value = "Reset Default Settings";
-        child.onclick = function() {
-            var t = this;
-            t.value = "Resetting...";
+        create_child_button_menu("Reset Default Settings", function(child) {
+            child.textContent = "Resetting...";
             chrome.storage.local.clear(function(){
-                window.setTimeout(function(){ t.value = "Reset Default Settings"; }, 300); 
+                window.setTimeout(function(){ child.textContent = "Reset Default Settings"; }, 300); 
             });
-        }
-        menu_table.appendChild(child);
+        });
 
-        document.body.appendChild(menu_table);
+        menu_div.appendChild(menu_table);
+        document.body.appendChild(menu_div);
         menu.onclick = function() {
-            if (menu_is_hidden)
-                menu_table.style.display = "block";
-            else
-                menu_table.style.display = "none";
             menu_is_hidden = !menu_is_hidden;
+            if (menu_is_hidden)
+                menu_div.style.visibility = "hidden";
+            else
+                menu_div.style.visibility = "visible";
         }
 
         chrome.storage.local.get("hide_menu", function(value) {
@@ -277,11 +315,11 @@
                         if (hide_menu) {
                             menu_is_hidden = true;
                             menu.style.visibility = "hidden";
-                            menu_table.style.display = "none";
+                            menu_div.style.visibility = "hidden";
                         } else {
                             menu_is_hidden = false;
                             menu.style.visibility = "visible";
-                            menu_table.style.display = "block";
+                            menu_div.style.visibility = "visible";
                         }
                         chrome.storage.local.set({hide_menu: hide_menu});
                         break;
