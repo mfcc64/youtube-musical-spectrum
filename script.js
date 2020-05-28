@@ -282,20 +282,19 @@
         });
 
         menu_div.appendChild(menu_table);
-        document.body.appendChild(menu_div);
         menu.onclick = function() {
             menu_is_hidden = !menu_is_hidden;
             if (menu_is_hidden)
                 menu_div.style.visibility = "hidden";
             else
                 menu_div.style.visibility = "visible";
-            menu.blur();
         }
 
         chrome.storage.local.get("hide_menu", function(value) {
             var hide_menu = !!value.hide_menu;
             menu.style.visibility = hide_menu ? "hidden" : "visible";
-            document.body.appendChild(menu);
+            document.body.insertBefore(menu_div, document.body.firstChild);
+            document.body.insertBefore(menu, document.body.firstChild);
             document.addEventListener("keydown", function(key) {
                 if (key.ctrlKey && key.altKey && !key.shiftKey && !key.metaKey && !key.repeat) {
                     switch (key.code) {
@@ -309,6 +308,7 @@
                             menu_is_hidden = false;
                             menu.style.visibility = "visible";
                             menu_div.style.visibility = "visible";
+                            menu.focus();
                         }
                         chrome.storage.local.set({hide_menu: hide_menu});
                         break;
