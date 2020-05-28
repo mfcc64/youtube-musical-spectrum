@@ -102,14 +102,19 @@
     }
 
     function create_menu() {
-        var menu = document.createElement("img");
-        menu.src = chrome.extension.getURL("icon-24.png");
-        menu.width = 24;
-        menu.height = 24;
+        var menu = document.createElement("button");
         set_fixed_style(menu, 10000002);
         menu.style.left = "0px";
         menu.style.top = "0px";
+        menu.style.backgroundColor = "transparent";
         menu.style.cursor = "pointer";
+        menu.style.outline = "none";
+        menu.style.lineHeight = "0px";
+        menu.title = "YouTube Musical Spectrum";
+        var menu_img = document.createElement("img");
+        menu_img.src = chrome.extension.getURL("icon-24.png");
+        menu_img.alt = "Menu";
+        menu.appendChild(menu_img);
         var menu_is_hidden = true;
         var menu_div = document.createElement("div");
         var menu_table = document.createElement("table");
@@ -284,6 +289,7 @@
                 menu_div.style.visibility = "hidden";
             else
                 menu_div.style.visibility = "visible";
+            menu.blur();
         }
 
         chrome.storage.local.get("hide_menu", function(value) {
