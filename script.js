@@ -126,6 +126,7 @@
         menu_div.style.overflow = "auto";
         menu_div.style.scrollbarWidth = "none";
         menu_div.style.visibility = "hidden";
+        menu_div.style.cursor = "default";
 
         var current_tr = null;
 
@@ -162,6 +163,7 @@
             tr.appendChild(td);
             td = document.createElement("td");
             var child = child_menu[name] = document.createElement("input");
+            child.style.cursor = "pointer";
             child.type = "range";
             child.min = bound[name + "_min"];
             child.max = bound[name + "_max"];
@@ -205,6 +207,7 @@
             td = document.createElement("td");
             td.colSpan = 2;
             var child = child_menu[name] = document.createElement("input");
+            child.style.cursor = "pointer";
             child.type = "checkbox";
             child.checked = options[name];
             child.onchange = function() {
