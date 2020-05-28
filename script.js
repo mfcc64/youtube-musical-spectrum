@@ -77,7 +77,7 @@
     function load_options(value) {
         for (var name in child_menu) {
             if (value[name] != undefined) {
-                if (child_text[name] === undefined)
+                if (bound[name + "_min"] === undefined)
                     options[name] = value[name];
                 else if (value[name] >= bound[name + "_min"] && value[name] <= bound[name + "_max"])
                     options[name] = Math.round(value[name]);
@@ -86,9 +86,8 @@
     }
 
     function reset_child_menu() {
-        var checked = { transparent: 1, visible: 1 };
         for (var name in child_menu) {
-            child_menu[name][checked[name] === undefined ? "value" : "checked"] = options[name];
+            child_menu[name][child_menu[name].type != "checkbox" ? "value" : "checked"] = options[name];
             child_menu[name].onchange();
         }
     }
