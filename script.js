@@ -366,6 +366,7 @@
         }
         blocker.style.width = width + "px";
         blocker.style.height = Math.round(sono_h + axis_h + 0.1 * bar_h) + "px";
+        blocker.style.opacity = 0;
         blocker.style.visibility = options.visible ? "visible" : "hidden";
     }
 
