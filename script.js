@@ -75,42 +75,22 @@
     };
 
     function load_options(value) {
-        function check_and_set_range(name) {
-            if (value[name] != undefined && value[name] >= bound[name + "_min"] && value[name] <= bound[name + "_max"])
-                options[name] = Math.round(value[name]);
+        for (var name in child_menu) {
+            if (value[name] != undefined) {
+                if (child_text[name] === undefined)
+                    options[name] = value[name];
+                else if (value[name] >= bound[name + "_min"] && value[name] <= bound[name + "_max"])
+                    options[name] = Math.round(value[name]);
+            }
         }
-        check_and_set_range("height");
-        check_and_set_range("bar");
-        check_and_set_range("waterfall");
-        check_and_set_range("brightness");
-        check_and_set_range("bass");
-        check_and_set_range("speed");
-        check_and_set_range("interval");
-        if (value.transparent != undefined)
-            options.transparent = value.transparent;
-        if (value.visible != undefined)
-            options.visible = value.visible;
     }
 
     function reset_child_menu() {
-        child_menu.height.value = options.height;
-        child_menu.height.onchange();
-        child_menu.bar.value = options.bar;
-        child_menu.bar.onchange();
-        child_menu.waterfall.value = options.waterfall;
-        child_menu.waterfall.onchange();
-        child_menu.brightness.value = options.brightness;
-        child_menu.brightness.onchange();
-        child_menu.bass.value = options.bass;
-        child_menu.bass.onchange();
-        child_menu.speed.value = options.speed;
-        child_menu.speed.onchange();
-        child_menu.interval.value = options.interval;
-        child_menu.interval.onchange();
-        child_menu.transparent.checked = options.transparent;
-        child_menu.transparent.onchange();
-        child_menu.visible.checked = options.visible;
-        child_menu.visible.onchange();
+        var checked = { transparent: 1, visible: 1 };
+        for (var name in child_menu) {
+            child_menu[name][checked[name] === undefined ? "value" : "checked"] = options[name];
+            child_menu[name].onchange();
+        }
     }
 
     function set_fixed_style(element, z_index) {
