@@ -111,7 +111,7 @@
         menu.style.lineHeight = "0px";
         menu.title = "YouTube Musical Spectrum";
         var menu_img = document.createElement("img");
-        menu_img.src = chrome.extension.getURL("icon-24.png");
+        menu_img.src = chrome.runtime.getURL("icon-24.png");
         menu_img.alt = "Menu";
         menu.appendChild(menu_img);
         var menu_is_hidden = true;
