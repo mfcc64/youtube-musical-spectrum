@@ -64,16 +64,6 @@
         visible: null
     };
 
-    var child_text = {
-        height: null,
-        bar: null,
-        waterfall: null,
-        brightness: null,
-        bass: null,
-        speed: null,
-        interval: null,
-    };
-
     function load_options(value) {
         for (var name in child_menu) {
             if (value[name] != undefined) {
@@ -167,6 +157,7 @@
             tr.appendChild(td);
             td = document.createElement("td");
             var child = child_menu[name] = document.createElement("input");
+            var child_text = document.createElement("td");
             child.style.cursor = "pointer";
             child.type = "range";
             child.min = bound[name + "_min"];
@@ -174,7 +165,7 @@
             child.step = 1;
             child.value = options[name];
             child.oninput = function() {
-                child_text[name].textContent = this.value;
+                child_text.textContent = this.value;
             }
             child.onchange = function() {
                 this.oninput();
@@ -184,9 +175,9 @@
             }
             td.appendChild(child);
             tr.appendChild(td);
-            tr.appendChild(child_text[name] = document.createElement("td"));
-            child_text[name].style.textAlign = "right";
-            child_text[name].style.width = "32px";
+            tr.appendChild(child_text);
+            child_text.style.textAlign = "right";
+            child_text.style.width = "32px";
             child.onchange();
             append_menu_table_tr(tr);
         }
