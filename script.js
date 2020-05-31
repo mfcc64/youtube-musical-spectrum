@@ -256,6 +256,8 @@
             var child = document.createElement("button");
             child.textContent = title;
             child.style.cursor = "pointer";
+            child.style.fontFamily = "inherit";
+            child.style.fontSize = "inherit";
             child.onclick = function() {
                 if (callback)
                     callback(child);
