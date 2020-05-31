@@ -1,12 +1,13 @@
 # YouTube Musical Spectrum
 
-[YouTube Musical Spectrum](https://bit.ly/youtube-musical-spectrum) is a Chrome
+YouTube Musical Spectrum is a browser
 extension that offers audio visualization on your YouTube page with nice musical notes. It allows you to see waterfall of spectrogram
 nicely.
 
 ## Install
 
-Install [YouTube Musical Spectrum on Chrome Web Store](https://bit.ly/youtube-musical-spectrum).
+- Google Chrome: [YouTube Musical Spectrum on Chrome Web Store](https://bit.ly/youtube-musical-spectrum).
+- Mozilla Firefox: [YouTube Musical Spectrum on AMO](https://addons.mozilla.org/en-US/firefox/addon/youtube-musical-spectrum/).
 
 ## Screenshots
 
