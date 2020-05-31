@@ -1,5 +1,21 @@
 
 (async function(){
+    // Here, the scripts are injected as page scripts because Firefox can't run them correctly as content scripts.
+    var chrome = {
+        runtime: {
+            getURL: __ytms_wrapper_runtime_getURL
+        },
+        storage: {
+            local: {
+                get: (param, callback) =>
+                     __ytms_wrapper_storage_local_get(JSON.stringify(param), (result) => callback(JSON.parse(result))),
+                set: (param, callback) =>
+                     __ytms_wrapper_storage_local_set(JSON.stringify(param), callback),
+                clear: __ytms_wrapper_storage_local_clear
+            }
+        }
+    };
+
     var width = 0, height = 0, bar_h = 0, axis_h = 0, sono_h = 0;
     var canvas = null, canvas_ctx = null, axis = null, cqt = null, blocker = null, alpha_table = null;
     var audio_ctx = new window.AudioContext();
