@@ -11,12 +11,22 @@ exportFunction(storage_local_get, window, {defineAs: "__ytms_wrapper_storage_loc
 exportFunction(storage_local_set, window, {defineAs: "__ytms_wrapper_storage_local_set"});
 exportFunction(storage_local_clear, window, {defineAs: "__ytms_wrapper_storage_local_clear"});
 
-let inject_script = function(src) {
+(async function(){
     var script = document.createElement("script");
-    script.src = chrome.runtime.getURL(src);
-    script.async = false;
+    script.textContent = "(function(){\n" +
+        await (await fetch(chrome.runtime.getURL("showcqt.js"))).text() + "\n" +
+        await (await fetch(chrome.runtime.getURL("script.js"))).text() + "\n})();"
+    // wait until document.head is available
+    if (!document.head) {
+        await new Promise(function(resolve) {
+            var observer = new MutationObserver(function() {
+                if (document.head) {
+                    observer.disconnect();
+                    resolve();
+                }
+            });
+            observer.observe(document.documentElement, { childList: true });
+        });
+    }
     document.head.appendChild(script);
-}
-
-inject_script("showcqt.js");
-inject_script("script.js");
+})();
