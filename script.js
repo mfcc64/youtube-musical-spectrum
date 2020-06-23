@@ -337,7 +337,7 @@
             set_fixed_style(canvas, 9999999);
             canvas.style.bottom = "0px";
             canvas.style.left = "0px";
-            document.body.appendChild(canvas);
+            document.body.insertBefore(canvas, document.body.firstChild);
         }
         canvas.width = width;
         canvas.height = height;
@@ -358,7 +358,7 @@
             axis.src = chrome.runtime.getURL("axis-1920x32.png");
             set_fixed_style(axis, 10000000);
             axis.style.left = "0px";
-            document.body.appendChild(axis);
+            document.body.insertBefore(axis, document.body.firstChild);
         }
         axis.width = width;
         axis.height = axis_h;
@@ -370,7 +370,7 @@
             set_fixed_style(blocker, 9999998);
             blocker.style.left = "0px";
             blocker.style.bottom = "0px";
-            document.body.appendChild(blocker);
+            document.body.insertBefore(blocker, document.body.firstChild);
         }
         blocker.style.width = width + "px";
         blocker.style.height = Math.round(sono_h + axis_h + 0.1 * bar_h) + "px";
@@ -490,6 +490,19 @@
             }
         }
         canvas_ctx.putImageData(img_buffer, 0, 0);
+    }
+
+    // wait until document.body is available
+    if (!document.body) {
+        await new Promise(function(resolve) {
+            var observer = new MutationObserver(function() {
+                if (document.body) {
+                    observer.disconnect();
+                    resolve();
+                }
+            });
+            observer.observe(document.documentElement, { childList: true });
+        });
     }
 
     chrome.storage.local.get(null, function(value) {
