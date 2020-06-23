@@ -29,7 +29,7 @@
     ],
     "content_scripts" : [
         {
-            "run_at"    : "document_end",
+            "run_at"    : "document_start",
             "js"        : [ "showcqt.js", "script.js" ],
             "matches"   : [ "https://www.youtube.com/*" ]
         }

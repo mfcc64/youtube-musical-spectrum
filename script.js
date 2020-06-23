@@ -476,6 +476,19 @@
         canvas_ctx.putImageData(img_buffer, 0, 0);
     }
 
+    // wait until document.body is available
+    if (!document.body) {
+        await new Promise(function(resolve) {
+            var observer = new MutationObserver(function() {
+                if (document.body) {
+                    observer.disconnect();
+                    resolve();
+                }
+            });
+            observer.observe(document.documentElement, { childList: true });
+        });
+    }
+
     chrome.storage.local.get(null, function(value) {
         load_options(value);
         create_menu();
