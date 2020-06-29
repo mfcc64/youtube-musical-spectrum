@@ -37,6 +37,7 @@
         options.bass = -30;
         options.speed = 2;
         options.interval = 1;
+        options.codecs = 1;
         options.transparent = true;
         options.visible = true;
     }
@@ -49,7 +50,8 @@
         brightness_min: 7, brightness_max: 49,
         bass_min: -50, bass_max: 0,
         speed_min: 1, speed_max: 12,
-        interval_min: 1, interval_max: 4
+        interval_min: 1, interval_max: 4,
+        codecs_min: 0, codecs_max: 2
     }
 
     var child_menu = {
@@ -60,6 +62,7 @@
         bass: null,
         speed: null,
         interval: null,
+        codecs: null,
         transparent: null,
         visible: null
     };
@@ -189,6 +192,43 @@
         create_child_range_menu("Bass", "bass", function(){ iir.gain.value = options.bass; });
         create_child_range_menu("Speed", "speed");
         create_child_range_menu("Interval", "interval");
+
+        function inject_codecs() {
+            var script = document.createElement("script");
+            script.textContent = 'MediaSource.isTypeSupported("__ytms_codecs=' + options.codecs + '");';
+            document.head.appendChild(script);
+            script.remove();
+        }
+
+        function create_child_select_codecs() {
+            var tr = get_menu_table_tr();
+            set_common_tr_style(tr);
+            var td = document.createElement("td");
+            set_common_left_td_style(td);
+            td.textContent = "Codecs";
+            tr.appendChild(td);
+            td = document.createElement("td");
+            td.colSpan = 2;
+            var child = child_menu["codecs"] = document.createElement("select");
+            child.style.cursor = "pointer";
+            child.onchange = function() {
+                options.codecs = Math.round(this.value);
+                inject_codecs();
+            };
+            var select_opt = [ "All", "Block AV1", "Only H.264" ];
+            for (var k = 0; k < select_opt.length; k++) {
+                var opt = document.createElement("option");
+                opt.textContent = select_opt[k];
+                opt.value = k;
+                child.appendChild(opt);
+            }
+            child.value = options.codecs;
+            inject_codecs();
+            td.appendChild(child);
+            tr.appendChild(td);
+            append_menu_table_tr(tr);
+        }
+        create_child_select_codecs();
 
         current_tr = null;
 
