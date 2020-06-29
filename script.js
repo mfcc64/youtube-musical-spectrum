@@ -52,7 +52,7 @@
         speed_min: 1, speed_max: 12,
         interval_min: 1, interval_max: 4,
         codecs_min: 0, codecs_max: 2
-    }
+    };
 
     var child_menu = {
         height: null,
@@ -169,13 +169,13 @@
             child.value = options[name];
             child.oninput = function() {
                 child_text.textContent = this.value;
-            }
+            };
             child.onchange = function() {
                 this.oninput();
                 options[name] = Math.round(this.value);
                 if (callback)
                     callback();
-            }
+            };
             td.appendChild(child);
             tr.appendChild(td);
             tr.appendChild(child_text);
@@ -249,7 +249,7 @@
                 options[name] = this.checked;
                 if (callback)
                     callback();
-            }
+            };
             td.appendChild(child);
             tr.appendChild(td);
             append_menu_table_tr(tr);
@@ -285,7 +285,7 @@
             child.onclick = function() {
                 if (callback)
                     callback(child);
-            }
+            };
             td.appendChild(child);
             tr.appendChild(td);
             append_menu_table_tr(tr);
@@ -320,7 +320,7 @@
                 menu_div.style.visibility = "hidden";
             else
                 menu_div.style.visibility = "visible";
-        }
+        };
 
         chrome.storage.local.get("hide_menu", function(value) {
             var hide_menu = !!value.hide_menu;
