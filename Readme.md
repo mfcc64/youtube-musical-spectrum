@@ -43,6 +43,9 @@ The available settings:
 - **Interval:** Set the frame rate interval. The value is between `1` and `4`. The default value is `1`.
   Without frame drops, the frame rate of the visualizer is `monitor_refresh_rate / interval`. This is a useful option
   on a high refresh rate monitor (e.g 240 Hz monitor).
+- **Codecs:** Set allowed codecs to mitigate unsmooth experience. The default value is `Block AV1`. If
+  your machine is powerful enough, you probably want to set it to `All`. If your machine has H.264 accelerated
+  video playback but no VP9 accelerated playback, you probably want to set it to `Only H.264`.
 - **Transparent:** Set the transparency of the visualizer. The default value is set to `true`.
 - **Visible:** Set the visibility of the visualizer. The default value is set to `true`.
 - **Reset Settings:** Reset settings to the default values (Note that the default values can be changed).
