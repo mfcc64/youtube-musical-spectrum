@@ -1014,7 +1014,7 @@ const wasm_simd_embedded_base64 = "" +
         for (var k = 0; k < str.length; k++)
             buf[k] = str.charCodeAt(k);
         return buf;
-    }
+    };
 
     let wasm_module_promise = null;
     let wasm_simd_module_promise = null;
@@ -1029,7 +1029,7 @@ const wasm_simd_embedded_base64 = "" +
 
     let invalid_func = function() {
         throw new Error("ShowCQT is not initialized");
-    }
+    };
 
     let cqt_uninit = function(cqt) {
         cqt.fft_size = 0;
@@ -1042,7 +1042,7 @@ const wasm_simd_embedded_base64 = "" +
         cqt.render_line_opaque = invalid_func;
         cqt.set_height = invalid_func;
         cqt.set_volume = invalid_func;
-    }
+    };
 
     var ShowCQT = {
         instantiate: async function(opt) {
