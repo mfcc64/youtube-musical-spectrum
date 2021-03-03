@@ -25,12 +25,12 @@
         "default_title" : "YouTube Musical Spectrum"
     },
     "web_accessible_resources": [
-        "*.png"
+        "*.png", "codecs.js"
     ],
     "content_scripts" : [
         {
             "run_at"    : "document_start",
-            "js"        : [ "codecs.js", "showcqt.js", "script.js" ],
+            "js"        : [ "codecs-wrapper.js", "showcqt.js", "script.js" ],
             "matches"   : [ "https://www.youtube.com/*" ]
         }
     ],

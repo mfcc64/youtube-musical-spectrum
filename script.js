@@ -194,10 +194,11 @@
         create_child_range_menu("Interval", "interval");
 
         function inject_codecs() {
-            var script = document.createElement("script");
-            script.textContent = 'MediaSource.isTypeSupported("__ytms_codecs=' + options.codecs + '");';
-            document.head.appendChild(script);
-            script.remove();
+            // shared id in codecs-wrapper.js, codecs.js, script.js
+            const element_id = "__ytms_codecs_element_id";
+            var codecs_element = document.getElementById(element_id);
+            if (codecs_element)
+                codecs_element.textContent = options.codecs;
         }
 
         function create_child_select_codecs() {
