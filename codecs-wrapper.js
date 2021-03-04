@@ -24,32 +24,37 @@
  * SOFTWARE.
  */
 
-(function(){
+(async function(){
     // shared id in codecs-wrapper.js, codecs.js, script.js
     const element_id = "__ytms_codecs_element_id";
 
-    function override(obj, func_name, false_ret) {
-        let old_func = obj[func_name];
-        obj[func_name] = function(mime_type) {
-            let rejected = [ "av01" ];
-            let element = document.getElementById(element_id);
-            if (element) {
-                switch (element.textContent) {
-                    case "0": rejected = []; break;
-                    case "1": rejected = [ "av01" ]; break;
-                    case "2": rejected = [ "av01", "vp09", "vp9", "vp08", "vp8" ]; break;
-                }
-            }
+    let script = document.createElement("script");
+    script.src = chrome.runtime.getURL("codecs.js");
+    script.async = true;
 
-            for (let type of rejected) {
-                if (String(mime_type).indexOf(type) != -1)
-                    return false_ret;
-            }
+    let element = document.createElement("div");
+    element.style.display = "none";
+    element.id = element_id;
+    chrome.storage.local.get("codecs", (value) => {
+        if (value["codecs"] != undefined)
+            element.textContent = value["codecs"];
+    });
 
-            return old_func.call(this, mime_type);
+    async function wait_document(part) {
+        if (!document[part]) {
+            await new Promise((resolve) => {
+                (new MutationObserver((list, observer) => {
+                    if (document[part]) {
+                        observer.disconnect();
+                        resolve();
+                    }
+                })).observe(document.documentElement, {childList : true});
+            });
         }
     }
 
-    override(Object.getPrototypeOf(document.createElement("video")), "canPlayType", "");
-    override(MediaSource, "isTypeSupported", false);
+    await wait_document("head");
+    document.head.appendChild(script);
+    await wait_document("body");
+    document.body.appendChild(element);
 })();
