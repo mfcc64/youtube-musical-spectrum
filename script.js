@@ -1,5 +1,18 @@
 
 (async function(){
+    var chrome = {
+        runtime: {
+            getURL: (url) => "https://mfcc64.github.io/youtube-musical-spectrum/" + url
+        },
+        storage: {
+            local: {
+                get: (param, callback) => { callback({}); }
+                set: (param, callback) => { callback(); }
+                clear: () => { return; }
+            }
+        }
+    };
+
     var width = 0, height = 0, bar_h = 0, axis_h = 0, sono_h = 0;
     var canvas = null, canvas_ctx = null, axis = null, cqt = null, blocker = null, alpha_table = null;
     var audio_ctx = new window.AudioContext();

@@ -25,6 +25,19 @@
  */
 
 (async function(){
+    var chrome = {
+        runtime: {
+            getURL: (url) => "https://mfcc64.github.io/youtube-musical-spectrum/" + url
+        },
+        storage: {
+            local: {
+                get: (param, callback) => { callback({}); }
+                set: (param, callback) => { callback(); }
+                clear: () => { return; }
+            }
+        }
+    };
+
     // shared id in codecs-wrapper.js, codecs.js, script.js
     const element_id = "__ytms_codecs_element_id";
 
