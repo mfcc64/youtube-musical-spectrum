@@ -6,8 +6,8 @@
         },
         storage: {
             local: {
-                get: (param, callback) => { callback({}); }
-                set: (param, callback) => { callback(); }
+                get: (param, callback) => { callback({}); },
+                set: (param, callback) => { callback(); },
                 clear: () => { return; }
             }
         }
