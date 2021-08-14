@@ -370,13 +370,6 @@
         canvas.style.pointerEvents = options.transparent ? "none" : "auto";
         canvas_ctx = canvas.getContext("2d", {alpha: true});
         img_buffer = canvas_ctx.createImageData(width, height);
-        /* make opaque */
-        for (var k = 0; k < width * height * 4; k += 4) {
-            img_buffer.data[k] = 0;
-            img_buffer.data[k+1] = 0;
-            img_buffer.data[k+2] = 0;
-            img_buffer.data[k+3] = 255;
-        }
 
         if (!axis) {
             axis = document.createElement("img");
@@ -403,6 +396,21 @@
         blocker.style.visibility = options.visible ? "visible" : "hidden";
     }
 
+    function clear_canvas(only_alpha) {
+        var opaque_mask = options.transparent ? 0 : 255;
+        for (var y = 0; y < height; y++) {
+            for (var x = 0; x < width * 4; x += 4) {
+                if (!only_alpha) {
+                    img_buffer.data[y * width * 4 + x] = 0;
+                    img_buffer.data[y * width * 4 + x + 1] = 0;
+                    img_buffer.data[y * width * 4 + x + 2] = 0;
+                }
+                img_buffer.data[y * width * 4 + x + 3] = alpha_table[y] | opaque_mask;
+            }
+        }
+        canvas_ctx.putImageData(img_buffer, 0, 0);
+    }
+
     function resize() {
         var new_width = Math.min(Math.max(Math.floor(document.documentElement.clientWidth), 960), 7680);
         var new_axis_h = Math.round(new_width * 32 / 1920);
@@ -425,11 +433,13 @@
             analyser_r.fftSize = cqt.fft_size;
             resize_canvas();
 
-            alpha_table = new Uint8Array(bar_h + axis_h);
+            alpha_table = new Uint8Array(height);
             for (var y = 0; y < bar_h; y++)
                 alpha_table[y] = Math.round(255 * Math.sin(0.5*Math.PI*y/bar_h) * Math.sin(0.5*Math.PI*y/bar_h));
-            for (var y = bar_h; y < bar_h + axis_h; y++)
+            for (var y = bar_h; y < height; y++)
                 alpha_table[y] = 255;
+
+            clear_canvas();
         }
     }
 
@@ -488,6 +498,19 @@
 
         if (!options.visible)
             return;
+
+        // 0 = stopped, 1 = paused, 2 = played
+        var playback_status = 0;
+
+        for (var m = 0; m < copied_videos.length; m++)
+            if ((copied_videos[m].src && copied_videos[m].src != "") || copied_videos[m].srcObject && !copied_videos[m].stopped)
+                playback_status = Math.max(playback_status, copied_videos[m].paused ? 1 : 2);
+
+        if (playback_status == 1) {
+            if (options.transparent != !(img_buffer.data[3] == 255))
+                clear_canvas(true);
+            return;
+        }
 
         analyser_l.getFloatTimeDomainData(cqt.inputs[0]);
         analyser_r.getFloatTimeDomainData(cqt.inputs[1]);
