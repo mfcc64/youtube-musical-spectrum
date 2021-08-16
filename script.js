@@ -397,15 +397,19 @@
     }
 
     function clear_canvas(only_alpha) {
-        var opaque_mask = options.transparent ? 0 : 255;
         for (var y = 0; y < height; y++) {
-            for (var x = 0; x < width * 4; x += 4) {
-                if (!only_alpha) {
-                    img_buffer.data[y * width * 4 + x] = 0;
-                    img_buffer.data[y * width * 4 + x + 1] = 0;
-                    img_buffer.data[y * width * 4 + x + 2] = 0;
+            var alpha = options.transparent ? alpha_table[y] : 255;
+            var line = y * width * 4;
+            if (only_alpha) {
+                for (var x = 0; x < width * 4; x += 4)
+                    img_buffer.data[line + x + 3] = alpha;
+            } else {
+                for (var x = 0; x < width * 4; x += 4) {
+                    img_buffer.data[line + x] = 0;
+                    img_buffer.data[line + x + 1] = 0;
+                    img_buffer.data[line + x + 2] = 0;
+                    img_buffer.data[line + x + 3] = alpha;
                 }
-                img_buffer.data[y * width * 4 + x + 3] = alpha_table[y] | opaque_mask;
             }
         }
         canvas_ctx.putImageData(img_buffer, 0, 0);
