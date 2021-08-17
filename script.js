@@ -396,6 +396,8 @@
         blocker.style.visibility = options.visible ? "visible" : "hidden";
     }
 
+    const cleared_sono_line_offset = 100;
+    var cleared_sono_line = 0;
     function clear_canvas(only_alpha) {
         for (var y = 0; y < height; y++) {
             var alpha = options.transparent ? alpha_table[y] : 255;
@@ -413,6 +415,8 @@
             }
         }
         canvas_ctx.putImageData(img_buffer, 0, 0);
+        if (!only_alpha)
+            cleared_sono_line = sono_h + cleared_sono_line_offset;
     }
 
     function resize() {
@@ -514,6 +518,18 @@
             if (options.transparent != !(img_buffer.data[3] == 255))
                 clear_canvas(true);
             return;
+        }
+
+        if (playback_status == 0) {
+            if (cleared_sono_line >= sono_h + cleared_sono_line_offset ) {
+                if (options.transparent != !(img_buffer.data[3] == 255))
+                    clear_canvas(true);
+                return;
+            }
+
+            cleared_sono_line += options.speed;
+        } else {
+            cleared_sono_line = 0;
         }
 
         analyser_l.getFloatTimeDomainData(cqt.inputs[0]);
