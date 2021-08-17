@@ -451,6 +451,7 @@
         }
     }
 
+    var is_dirty_canvas = false;
     var interval_count = 0;
     function draw() {
         requestAnimationFrame(draw);
@@ -504,8 +505,14 @@
 
         resize();
 
-        if (!options.visible)
+        if (!options.visible) {
+            if (is_dirty_canvas)
+                clear_canvas();
+            is_dirty_canvas = false;
             return;
+        }
+
+        is_dirty_canvas = true;
 
         // 0 = stopped, 1 = paused, 2 = played
         var playback_status = 0;
