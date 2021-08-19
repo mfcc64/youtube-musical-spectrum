@@ -518,7 +518,7 @@
         var playback_status = 0;
 
         for (var m = 0; m < copied_videos.length; m++)
-            if ((copied_videos[m].src && copied_videos[m].src != "") || copied_videos[m].srcObject && !copied_videos[m].stopped)
+            if (((copied_videos[m].src && copied_videos[m].src != "") || copied_videos[m].srcObject) && !copied_videos[m].ended)
                 playback_status = Math.max(playback_status, copied_videos[m].paused ? 1 : 2);
 
         if (playback_status == 1) {
