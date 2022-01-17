@@ -1,9 +1,9 @@
 {
-    "manifest_version" : 2,
+    "manifest_version" : 3,
     "name" : "YouTube Musical Spectrum",
     "short_name" : "YTMS",
     "description" : "Audio visualizer for YouTube with musical notes.",
-    "version" : "1.5.1",
+    "version" : "2.0.0",
     "icons" : {
         "128" : "icon-128.png",
         "64"  : "icon-64.png",
@@ -12,7 +12,7 @@
         "24"  : "icon-24.png",
         "16"  : "icon-16.png"
     },
-    "browser_action" : {
+    "action" : {
         "default_icon" : {
             "128" : "icon-128.png",
             "64"  : "icon-64.png",
@@ -25,7 +25,10 @@
         "default_title" : "YouTube Musical Spectrum"
     },
     "web_accessible_resources": [
-        "*.png", "codecs.js"
+        {
+            "matches"   : [ "https://www.youtube.com/*" ],
+            "resources" : [ "*.png", "codecs.js" ]
+        }
     ],
     "content_scripts" : [
         {
@@ -34,6 +37,8 @@
             "matches"   : [ "https://www.youtube.com/*" ]
         }
     ],
-    "content_security_policy" : "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self';",
-    "permissions" : [ "storage", "https://www.youtube.com/*" ]
+    "content_security_policy" : {
+        "extension_pages" : "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self';"
+    },
+    "permissions" : [ "storage" ]
 }
