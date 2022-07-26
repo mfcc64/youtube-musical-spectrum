@@ -1,7 +1,7 @@
 
 (async function(){
     var width = 0, height = 0, bar_h = 0, axis_h = 0, sono_h = 0;
-    var canvas = null, canvas_ctx = null, axis = null, cqt = null, blocker = null, alpha_table = null;
+    var canvas = null, canvas_ctx = null, axis = null, cqt = null, blocker = null, af_links = null, alpha_table = null;
     var audio_ctx = new window.AudioContext();
     function resume_audio_ctx() {
         if (audio_ctx.state === "suspended") {
@@ -268,6 +268,8 @@
                 axis.style.visibility = options.visible ? "visible" : "hidden";
             if (blocker)
                 blocker.style.visibility = options.visible ? "visible" : "hidden";
+            if (af_links)
+                af_links.style.visibility = options.visible ? "visible" : "hidden";
         });
 
         current_tr = null;
@@ -394,6 +396,35 @@
         blocker.style.height = Math.round(sono_h + axis_h + 0.1 * bar_h) + "px";
         blocker.style.opacity = 0;
         blocker.style.visibility = options.visible ? "visible" : "hidden";
+
+        if (!af_links) {
+            af_links = document.createElement("div");
+            const style = document.createElement("style");
+            style.textContent = `
+                .__ytms_class_af_links { opacity: 0; }
+                .__ytms_class_af_links_at_the_beginning { opacity: 1; }
+                .__ytms_class_af_links:hover { opacity: 1; }
+            `;
+            document.head.appendChild(style);
+            af_links.className = "__ytms_class_af_links_at_the_beginning";
+            setTimeout(function(){ af_links.className = "__ytms_class_af_links"; }, 15000);
+            set_fixed_style(af_links, 10000001);
+            af_links.style.right = "8px";
+            af_links.style.padding = "8px";
+            af_links.style.border = "thin solid white";
+            af_links.style.backgroundColor = "#000000DD";
+            af_links.style.color = "#FFFFFF";
+            af_links.style.fontSize = "10pt";
+            af_links.innerHTML = `Support me on
+                <a href="https://www.youtube.com/c/mfcc64" target="_blank">YouTube</a>
+                <a href="https://www.patreon.com/mfcc64" target="_blank">Patreon</a>
+                <a href="https://github.com/mfcc64" target="_blank">GitHub</a>
+                <a href="https://paypal.me/mfcc64" target="_blank">PayPal</a>
+            `;
+            document.body.insertBefore(af_links, document.body.firstChild);
+        }
+        af_links.style.bottom = (sono_h + axis_h + 4) + "px";
+        af_links.style.visibility = options.visible ? "visible" : "hidden";
     }
 
     const cleared_sono_line_offset = 100;
