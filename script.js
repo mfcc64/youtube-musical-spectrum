@@ -439,6 +439,7 @@
                 <a href="https://www.patreon.com/mfcc64" target="_blank">Patreon</a>
                 <a href="https://github.com/mfcc64" target="_blank">GitHub</a>
                 <a href="https://paypal.me/mfcc64" target="_blank">PayPal</a>
+                <a href="https://saweria.co/mfcc64" target="_blank">Saweria</a>
             `;
             document.body.insertBefore(af_links, document.body.firstChild);
         }
