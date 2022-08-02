@@ -404,6 +404,8 @@
                 .__ytms_class_af_links { opacity: 0; }
                 .__ytms_class_af_links_at_the_beginning { opacity: 1; }
                 .__ytms_class_af_links:hover { opacity: 1; }
+                .__ytms_class_af_links img { vertical-align: middle; }
+                .__ytms_class_af_links_at_the_beginning img { vertical-align: middle; }
             `;
             document.head.appendChild(style);
             af_links.className = "__ytms_class_af_links_at_the_beginning";
@@ -415,7 +417,8 @@
             af_links.style.backgroundColor = "#000000DD";
             af_links.style.color = "#FFFFFF";
             af_links.style.fontSize = "10pt";
-            af_links.innerHTML = `Support me on
+            af_links.innerHTML = `<img src="${chrome.runtime.getURL("icon-16.png")}" alt="YTMS"/>
+                Support me on
                 <a href="https://www.youtube.com/c/mfcc64" target="_blank">YouTube</a>
                 <a href="https://www.patreon.com/mfcc64" target="_blank">Patreon</a>
                 <a href="https://github.com/mfcc64" target="_blank">GitHub</a>
