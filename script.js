@@ -280,8 +280,9 @@
             var td = document.createElement("td");
             set_common_left_td_style(td);
             td.colSpan = 3;
-            var child = document.createElement("button");
-            child.textContent = title;
+            var child = document.createElement("input");
+            child.type = "button";
+            child.value = title;
             child.style.cursor = "pointer";
             child.style.fontFamily = "inherit";
             child.style.fontSize = "inherit";
@@ -303,16 +304,16 @@
         });
 
         create_child_button_menu("Set as Default Settings", function(child) {
-            child.textContent = "Saving...";
+            child.value = "Saving...";
             chrome.storage.local.set(options, function(){
-                window.setTimeout(function(){ child.textContent = "Set as Default Settings"; }, 300);
+                window.setTimeout(function(){ child.value = "Set as Default Settings"; }, 300);
             });
         });
 
         create_child_button_menu("Reset Default Settings", function(child) {
-            child.textContent = "Resetting...";
+            child.value = "Resetting...";
             chrome.storage.local.clear(function(){
-                window.setTimeout(function(){ child.textContent = "Reset Default Settings"; }, 300); 
+                window.setTimeout(function(){ child.value = "Reset Default Settings"; }, 300);
             });
         });
 
