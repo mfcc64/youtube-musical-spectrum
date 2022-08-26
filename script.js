@@ -10,6 +10,7 @@
         }
     }
     resume_audio_ctx();
+    const { ShowCQT } = await import(chrome.runtime.getURL("modules/showcqt.mjs"));
     var cqt = await ShowCQT.instantiate();
     var videos = document.getElementsByTagName("video");
     var copied_videos = [];

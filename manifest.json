@@ -27,13 +27,13 @@
     "web_accessible_resources": [
         {
             "matches"   : [ "https://www.youtube.com/*" ],
-            "resources" : [ "*.png", "codecs.js" ]
+            "resources" : [ "*.png", "/codecs.js", "/modules/*.mjs" ]
         }
     ],
     "content_scripts" : [
         {
             "run_at"    : "document_start",
-            "js"        : [ "codecs-wrapper.js", "showcqt.js", "script.js" ],
+            "js"        : [ "codecs-wrapper.js", "script.js" ],
             "matches"   : [ "https://www.youtube.com/*" ]
         }
     ],
