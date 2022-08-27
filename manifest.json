@@ -32,7 +32,7 @@
     ],
     "content_scripts" : [
         {
-            "run_at"    : "document_start",
+            "run_at"    : "document_end",
             "js"        : [ "codecs-wrapper.js", "script.js" ],
             "matches"   : [ "https://www.youtube.com/*" ]
         }

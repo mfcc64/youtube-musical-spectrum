@@ -40,21 +40,6 @@
             element.textContent = value["codecs"];
     });
 
-    async function wait_document(part) {
-        if (!document[part]) {
-            await new Promise((resolve) => {
-                (new MutationObserver((list, observer) => {
-                    if (document[part]) {
-                        observer.disconnect();
-                        resolve();
-                    }
-                })).observe(document.documentElement, {childList : true});
-            });
-        }
-    }
-
-    await wait_document("head");
     document.head.appendChild(script);
-    await wait_document("body");
     document.body.appendChild(element);
 })();
