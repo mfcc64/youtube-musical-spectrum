@@ -30,61 +30,43 @@
     panner.connect(audio_ctx.destination);
 
     var options = {};
-    function load_default_options() {
-        options.height = 33;
-        options.bar = 17;
-        options.waterfall = 33;
-        options.brightness = 17;
-        options.bass = -30;
-        options.speed = 2;
-        options.interval = 1;
-        options.codecs = 1;
-        options.transparent = true;
-        options.visible = true;
+
+    const defaults = {
+        height:     { def: 33, min: 20, max:100 },
+        bar:        { def: 17, min:  3, max: 33 },
+        waterfall:  { def: 33, min:  0, max: 40 },
+        brightness: { def: 17, min:  7, max: 49 },
+        bass:       { def:-30, min:-50, max:  0 },
+        speed:      { def:  2, min:  1, max: 12 },
+        interval:   { def:  1, min:  1, max:  4 },
+        codecs:     { def:  1, min:  0, max:  2 },
+        transparent:{ def:  1, min:  0, max:  1 },
+        visible:    { def:  1, min:  0, max:  1 }
+    };
+
+    const opt_prefix = "__youtube_musical_spectrum_opt_";
+    function get_opt(name) {
+        var value = localStorage.getItem(opt_prefix + name);
+        if (!defaults[name])
+            return value;
+        if (!value)
+            return defaults[name].def;
+        value = Math.round(value);
+        return Math.max(defaults[name].min, Math.min(defaults[name].max, isNaN(value) ? defaults[name].def : value));
     }
-    load_default_options();
 
-    var bound = {
-        height_min: 20, height_max: 100,
-        bar_min: 3, bar_max: 33,
-        waterfall_min: 0, waterfall_max: 40,
-        brightness_min: 7, brightness_max: 49,
-        bass_min: -50, bass_max: 0,
-        speed_min: 1, speed_max: 12,
-        interval_min: 1, interval_max: 4,
-        codecs_min: 0, codecs_max: 2
-    };
-
-    var child_menu = {
-        height: null,
-        bar: null,
-        waterfall: null,
-        brightness: null,
-        bass: null,
-        speed: null,
-        interval: null,
-        codecs: null,
-        transparent: null,
-        visible: null
-    };
-
-    function load_options(value) {
-        for (var name in child_menu) {
-            if (value[name] != undefined) {
-                if (bound[name + "_min"] === undefined)
-                    options[name] = value[name];
-                else if (value[name] >= bound[name + "_min"] && value[name] <= bound[name + "_max"])
-                    options[name] = Math.round(value[name]);
-            }
+    function set_opt(name, value) {
+        value = Math.round(value);
+        if (defaults[name])
+            value = Math.max(defaults[name].min, Math.min(defaults[name].max, isNaN(value) ? defaults[name].def : value));
+        try {
+            localStorage.setItem(opt_prefix + name, value);
+        } catch(e) {
+            console.warn(`Unable to store option ${name}.`, e);
         }
     }
 
-    function reset_child_menu() {
-        for (var name in child_menu) {
-            child_menu[name][child_menu[name].type != "checkbox" ? "value" : "checked"] = options[name];
-            child_menu[name].onchange();
-        }
-    }
+    var child_menu = {};
 
     function set_fixed_style(element, z_index) {
         element.style.position = "fixed";
@@ -164,10 +146,10 @@
             var child_text = document.createElement("td");
             child.style.cursor = "pointer";
             child.type = "range";
-            child.min = bound[name + "_min"];
-            child.max = bound[name + "_max"];
+            child.min = defaults[name].min;
+            child.max = defaults[name].max;
             child.step = 1;
-            child.value = options[name];
+            child.value = get_opt(name);
             child.oninput = function() {
                 child_text.textContent = this.value;
             };
@@ -224,8 +206,8 @@
                 opt.value = k;
                 child.appendChild(opt);
             }
-            child.value = options.codecs;
-            inject_codecs();
+            child.value = get_opt("codecs");
+            child.onchange();
             td.appendChild(child);
             tr.appendChild(td);
             append_menu_table_tr(tr);
@@ -246,12 +228,13 @@
             var child = child_menu[name] = document.createElement("input");
             child.style.cursor = "pointer";
             child.type = "checkbox";
-            child.checked = options[name];
+            child.checked = get_opt(name);
             child.onchange = function() {
                 options[name] = this.checked;
                 if (callback)
                     callback();
             };
+            child.onchange();
             td.appendChild(child);
             tr.appendChild(td);
             append_menu_table_tr(tr);
@@ -297,25 +280,30 @@
         }
 
         create_child_button_menu("Reset Settings", function() {
-            chrome.storage.local.get(null, function(value) {
-                load_default_options();
-                load_options(value);
-                reset_child_menu();
-            });
+            for (const name in child_menu) {
+                if (child_menu[name].type == "checkbox")
+                    child_menu[name].checked = get_opt(name);
+                else
+                    child_menu[name].value = get_opt(name);
+            }
         });
 
         create_child_button_menu("Set as Default Settings", function(child) {
             child.value = "Saving...";
-            chrome.storage.local.set(options, function(){
-                window.setTimeout(function(){ child.value = "Set as Default Settings"; }, 300);
-            });
+            for (const name in child_menu) {
+                if (child_menu[name].type == "checkbox")
+                    set_opt(name, child_menu[name].checked)
+                else
+                    set_opt(name, child_menu[name].value);
+            }
+            setTimeout(function(){ child.value = "Set as Default Settings"; }, 300);
         });
 
         create_child_button_menu("Reset Default Settings", function(child) {
             child.value = "Resetting...";
-            chrome.storage.local.clear(function(){
-                window.setTimeout(function(){ child.value = "Reset Default Settings"; }, 300);
-            });
+            for (const name in defaults)
+                set_opt(name, defaults[name].value);
+            setTimeout(function(){ child.value = "Reset Default Settings"; }, 300);
         });
 
         menu_div.appendChild(menu_table);
@@ -327,36 +315,33 @@
                 menu_div.style.visibility = "visible";
         };
 
-        chrome.storage.local.get("hide_menu", function(value) {
-            var hide_menu = !!value.hide_menu;
-            menu.style.visibility = hide_menu ? "hidden" : "visible";
-            document.body.insertBefore(menu_div, document.body.firstChild);
-            document.body.insertBefore(menu, document.body.firstChild);
-            document.addEventListener("keydown", function(key) {
-                if (key.ctrlKey && key.altKey && !key.shiftKey && !key.metaKey && !key.repeat) {
-                    switch (key.code) {
-                    case "KeyH":
-                        hide_menu = !hide_menu;
-                        if (hide_menu) {
-                            menu_is_hidden = true;
-                            menu.style.visibility = "hidden";
-                            menu_div.style.visibility = "hidden";
-                        } else {
-                            menu_is_hidden = false;
-                            menu.style.visibility = "visible";
-                            menu_div.style.visibility = "visible";
-                            menu.focus();
-                        }
-                        chrome.storage.local.set({hide_menu: hide_menu});
-                        break;
-                    case "KeyG":
-                        options.visible = !options.visible;
-                        child_menu.visible.checked = options.visible;
-                        child_menu.visible.onchange();
-                        break;
+        var hide_menu = !!(get_opt("hide_menu") * 1);
+        menu.style.visibility = hide_menu ? "hidden" : "visible";
+        document.body.insertBefore(menu_div, document.body.firstChild);
+        document.body.insertBefore(menu, document.body.firstChild);
+        document.addEventListener("keydown", function(key) {
+            if (key.ctrlKey && key.altKey && !key.shiftKey && !key.metaKey && !key.repeat) {
+                switch (key.code) {
+                case "KeyH":
+                    hide_menu = !hide_menu;
+                    if (hide_menu) {
+                        menu_is_hidden = true;
+                        menu.style.visibility = "hidden";
+                        menu_div.style.visibility = "hidden";
+                    } else {
+                        menu_is_hidden = false;
+                        menu.style.visibility = "visible";
+                        menu_div.style.visibility = "visible";
+                        menu.focus();
                     }
+                    set_opt("hide_menu", hide_menu * 1);
+                    break;
+                case "KeyG":
+                    child_menu.visible.checked = !child_menu.visible.checked;
+                    child_menu.visible.onchange();
+                    break;
                 }
-            });
+            }
         });
     }
 
@@ -604,10 +589,6 @@
         canvas_ctx.putImageData(img_buffer, 0, 0);
     }
 
-    chrome.storage.local.get(null, function(value) {
-        load_options(value);
-        create_menu();
-        requestAnimationFrame(draw);
-    });
-
+    create_menu();
+    requestAnimationFrame(draw);
 })();
