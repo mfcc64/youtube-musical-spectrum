@@ -209,7 +209,7 @@
             td.appendChild(child);
             tr.appendChild(td);
             append_menu_table_tr(tr);
-
+            child.onchange = function() {};
             const old_func = MediaSource.isTypeSupported;
             MediaSource.isTypeSupported = function (mime_type) {
                 let rejected = [ "av01" ];
@@ -243,7 +243,7 @@
             var child = child_menu[name] = document.createElement("input");
             child.style.cursor = "pointer";
             child.type = "checkbox";
-            child.checked = get_opt(name);
+            child.checked = get_opt(name) * 1;
             child.onchange = function() {
                 if (callback)
                     callback(child);
@@ -284,9 +284,10 @@
         create_child_button_menu("Reset Settings", function() {
             for (const name in child_menu) {
                 if (child_menu[name].type == "checkbox")
-                    child_menu[name].checked = get_opt(name);
+                    child_menu[name].checked = get_opt(name) * 1;
                 else
                     child_menu[name].value = get_opt(name);
+                child_menu[name].onchange();
             }
         });
 
