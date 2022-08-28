@@ -1,5 +1,6 @@
 
 (async function(){
+    const current_script = document.currentScript.src;
     var width = 0, height = 0, bar_h = 0, axis_h = 0, sono_h = 0;
     var canvas = null, canvas_ctx = null, axis = null, cqt = null, blocker = null, af_links = null, alpha_table = null;
     var audio_ctx = new window.AudioContext();
@@ -10,7 +11,7 @@
         }
     }
     resume_audio_ctx();
-    const { ShowCQT } = await import(chrome.runtime.getURL("modules/showcqt.mjs"));
+    const { ShowCQT } = await import(new URL("modules/showcqt.mjs", current_script));
     var cqt = await ShowCQT.instantiate();
     var videos = document.getElementsByTagName("video");
     var copied_videos = [];
@@ -87,7 +88,7 @@
         menu.style.lineHeight = "0px";
         menu.title = "YouTube Musical Spectrum";
         var menu_img = document.createElement("img");
-        menu_img.src = chrome.runtime.getURL("icon-24.png");
+        menu_img.src = new URL("icon-24.png", current_script);
         menu_img.alt = "Menu";
         menu.appendChild(menu_img);
         var menu_is_hidden = true;
@@ -362,7 +363,7 @@
 
         if (!axis) {
             axis = document.createElement("img");
-            axis.src = chrome.runtime.getURL("axis-1920x32.png");
+            axis.src = new URL("axis-1920x32.png", current_script);
             set_fixed_style(axis, 10000000);
             axis.style.left = "0px";
             document.body.insertBefore(axis, document.body.firstChild);
@@ -404,7 +405,7 @@
             af_links.style.backgroundColor = "#000000DD";
             af_links.style.color = "#FFFFFF";
             af_links.style.fontSize = "10pt";
-            af_links.innerHTML = `<img src="${chrome.runtime.getURL("icon-16.png")}" alt="YTMS"/>
+            af_links.innerHTML = `<img alt="YTMS"/>
                 Support me on
                 <a href="https://www.youtube.com/c/mfcc64" target="_blank">YouTube</a>
                 <a href="https://www.patreon.com/mfcc64" target="_blank">Patreon</a>
@@ -413,6 +414,7 @@
                 <a href="https://saweria.co/mfcc64" target="_blank">Saweria</a>
             `;
             document.body.insertBefore(af_links, document.body.firstChild);
+            af_links.querySelector("img").src = new URL("icon-16.png", current_script);
         }
         af_links.style.bottom = (sono_h + axis_h + 4) + "px";
         af_links.style.visibility = options.visible ? "visible" : "hidden";
