@@ -212,6 +212,23 @@
             td.appendChild(child);
             tr.appendChild(td);
             append_menu_table_tr(tr);
+
+            const old_func = MediaSource.isTypeSupported;
+            MediaSource.isTypeSupported = function (mime_type) {
+                let rejected = [ "av01" ];
+                switch (child.value) {
+                    case "0": rejected = []; break;
+                    case "1": rejected = [ "av01" ]; break;
+                    case "2": rejected = [ "av01", "vp09", "vp9", "vp08", "vp8" ]; break;
+                }
+
+                for (const type of rejected) {
+                    if (String(mime_type).indexOf(type) >= 0)
+                        return false;
+                }
+
+                return old_func.call(this, mime_type);
+            }
         }
         create_child_select_codecs();
 
