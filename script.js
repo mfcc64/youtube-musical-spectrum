@@ -74,15 +74,17 @@
             }
         }
 
+        const stop_height = this.clientHeight * this.dataset.waterfall / 100;
         switch (state) {
             case 1: this.render_pause(); break;
             case 2: this.render_play(); stop_count = 0; break;
+            case 0:
+                if (stop_count - 20 > stop_height)
+                    this.render_pause();
+                else
+                    this.render_play();
         }
-
-        const stop_height = this.clientHeight * this.dataset.waterfall / 100;
-        if (stop_count - 20 > stop_height)
-            this.render_pause();
-        stop_count = Math.min(stop_count, 2 * stop_height);
+        stop_count = Math.min(stop_count, 1000000);
     };
 
     cqt.actual_render_callback = function() {
