@@ -49,6 +49,34 @@
         element.style.zIndex = z_index;
     }
 
+    const af_links = document.createElement("div");
+    set_fixed_style(af_links, 10000001);
+    af_links.className = "__ytms_class_af_links_at_the_beginning";
+    af_links.style.padding = "8px";
+    af_links.style.border = "thin solid white";
+    af_links.style.backgroundColor = "#000000DD";
+    af_links.style.color = "#FFFFFF";
+    af_links.style.fontSize = "10pt";
+    af_links.style.right = "8px";
+    af_links.style.bottom = "8px";
+    af_links.innerHTML = `<img alt="YTMS"/> Support me on
+        <a href="https://www.youtube.com/c/mfcc64" target="_blank">YouTube</a>
+        <a href="https://www.patreon.com/mfcc64" target="_blank">Patreon</a>
+        <a href="https://github.com/mfcc64" target="_blank">GitHub</a>
+        <a href="https://paypal.me/mfcc64" target="_blank">PayPal</a>
+        <a href="https://saweria.co/mfcc64" target="_blank">Saweria</a>`;
+    setTimeout(() => af_links.className = "__ytms_class_af_links", 15000);
+    {
+        const style = document.createElement("style");
+        style.textContent = `
+            .__ytms_class_af_links { opacity: 0; }
+            .__ytms_class_af_links_at_the_beginning { opacity: 1; }
+            .__ytms_class_af_links:hover { opacity: 1; }
+            .__ytms_class_af_links img { vertical-align: middle; }
+            .__ytms_class_af_links_at_the_beginning img { vertical-align: middle; }`;
+        document.head.appendChild(style);
+    }
+
     const cqt = document.createElement("div", {is: "showcqt-element"});
     set_fixed_style(cqt, 9999999);
     cqt.style.left = cqt.style.bottom = 0;
@@ -259,7 +287,7 @@
 
         create_child_checkbox_menu("Transparent", "transparent", (child) => cqt.dataset.opacity = child.checked ? "transparent" : "opaque");
 
-        create_child_checkbox_menu("Visible", "visible", (child) => cqt.style.display = child.checked ? "block" : "none");
+        create_child_checkbox_menu("Visible", "visible", (child) => af_links.style.display = cqt.style.display = child.checked ? "block" : "none");
 
         current_tr = null;
 
@@ -353,4 +381,6 @@
 
     create_menu();
     document.body.appendChild(cqt);
+    document.body.appendChild(af_links);
+    af_links.querySelector("img").src = new URL("icon-16.png", current_script);
 })();
