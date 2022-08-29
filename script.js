@@ -1,3 +1,4 @@
+"use strict";
 
 (async function(){
     const current_script = document.currentScript.src;

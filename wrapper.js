@@ -1,3 +1,4 @@
+"use strict";
 
 (function() {
     function run_script() {
