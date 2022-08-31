@@ -287,6 +287,7 @@ class ShowCQTElement extends HTMLDivElement {
     #render_count = 0;
     #canvas_is_dirty = false;
     #is_paused = false;
+    #sono_dirty_h = 0;
 
     #render() {
         if (this.#is_active_render)
@@ -384,12 +385,21 @@ class ShowCQTElement extends HTMLDivElement {
             }
         }
 
+        this.#sono_dirty_h = 0;
         this.#canvas_is_dirty = true;
     }
 
     #cqt_render() {
         this.#analyser[0].getFloatTimeDomainData(this.#cqt.inputs[0]);
         this.#analyser[1].getFloatTimeDomainData(this.#cqt.inputs[1]);
+
+        let is_silent = true;
+        for (let k = 0; k < this.#cqt.fft_size && is_silent; k++)
+            is_silent = (this.#cqt.inputs[0][k] **2 + this.#cqt.inputs[1][k] **2 < 1e-14);
+
+        if (is_silent && this.#sono_dirty_h <= 0)
+            return;
+
         this.#cqt.set_height(this.#bar_h);
         this.#cqt.set_volume(this.#bar, this.#brightness);
         this.#cqt.calc();
@@ -420,6 +430,7 @@ class ShowCQTElement extends HTMLDivElement {
             }
         }
 
+        this.#sono_dirty_h = is_silent ? this.#sono_dirty_h - this.#speed : this.#sono_h + 2 * this.#speed;
         this.#canvas_is_dirty = true;
     }
 }
