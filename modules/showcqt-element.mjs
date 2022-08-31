@@ -53,10 +53,10 @@ class ShowCQTElement extends HTMLDivElement {
 
     constructor() {
         super();
-        this.style.pointerEvents = "none";
         const shadow = this.attachShadow({mode: "open"});
         shadow.innerHTML =
             `<style>
+                :host { width: 960px; height: 240px; pointer-events: none; }
                 * {
                     margin: 0; padding: 0; border: 0;
                     pointer-events: none;
@@ -305,15 +305,13 @@ class ShowCQTElement extends HTMLDivElement {
             this.render_callback();
 
         const width = this.#container.clientWidth;
-        let height = this.#container.clientHeight;
+        const height = this.#container.clientHeight;
 
         if (width <= 0 || height <= 0)
             return;
 
         if (width !== this.#width || height !== this.#height || this.#layout_changed) {
             if (width !== this.#width) {
-                this.#container.style.minHeight = Math.round(Math.max(32, width * 0.05)) + "px";
-                height = this.#container.clientHeight;
                 this.#cqt.init(this.#audio_ctx.sampleRate, width, height, 4, 4, 4, true);
                 this.#analyser[0].fftSize = this.#cqt.fft_size;
                 this.#analyser[1].fftSize = this.#cqt.fft_size;
