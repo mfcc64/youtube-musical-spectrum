@@ -31,7 +31,6 @@ const DEFAULT_SPEED         = 2,    MIN_SPEED       = 1,    MAX_SPEED       = 12
 const DEFAULT_OPACITY       = "opaque";
 
 const OBSERVED_ATTRIBUTES = [
-    "data-inputs",
     "data-axis",
     "data-waterfall",
     "data-brightness",
@@ -48,7 +47,7 @@ class ShowCQTElement extends HTMLDivElement {
     static global_audio_context;
 
     static get observedAttributes() {
-        return OBSERVED_ATTRIBUTES;
+        return [...OBSERVED_ATTRIBUTES, "data-inputs"];
     }
 
     constructor() {
@@ -118,14 +117,14 @@ class ShowCQTElement extends HTMLDivElement {
         this.#splitter.connect(this.#analyser[1], 1);
 
         for (const attr of OBSERVED_ATTRIBUTES)
-            this.attributeChangedCallback(attr, -1);
+            this.#update_attribute(attr);
     }
 
     attributeChangedCallback(name, old_val, val) {
         if (name == "data-inputs")
             return this.#update_input_elements(val);
         else
-            return this.#update_attribute(name, old_val, val);
+            return this.#update_attribute(name, val);
     }
 
     #update_input_elements(val) {
@@ -165,7 +164,7 @@ class ShowCQTElement extends HTMLDivElement {
         this.#i_elems = new_elems;
     }
 
-    #update_attribute(name, old_val, val) {
+    #update_attribute(name, val) {
         val = val ? val : undefined;
         switch (name) {
             case "data-axis":
