@@ -1,8 +1,7 @@
-"use strict";
+import "./modules/showcqt-element.mjs";
 
 (async function(){
-    const current_script = document.currentScript.src;
-    await import(new URL("modules/showcqt-element.mjs", current_script));
+    const current_script = import.meta.url;
 
     const defaults = {
         height:     { def: 33, min: 20, max:100 },
