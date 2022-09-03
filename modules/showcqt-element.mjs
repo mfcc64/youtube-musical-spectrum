@@ -41,7 +41,10 @@ const OBSERVED_ATTRIBUTES = [
     "data-opacity"
 ];
 
-class ShowCQTElement extends HTMLDivElement {
+// HTMLElement, customElements.get, customElements.define are hijacked by youtube custom-elements-es5-adapter.js
+// Hopefully nobody hijacks HTMLDivElement
+const HTMLElement = Object.getPrototypeOf(HTMLDivElement);
+class ShowCQTElement extends HTMLElement {
     static version = "1.0.0";
 
     static global_audio_context;
@@ -55,7 +58,7 @@ class ShowCQTElement extends HTMLDivElement {
         const shadow = this.attachShadow({mode: "open"});
         shadow.innerHTML =
             `<style>
-                :host { width: 960px; height: 240px; pointer-events: none; }
+                :host { display: block; width: 960px; height: 240px; pointer-events: none; }
                 * {
                     margin: 0; padding: 0; border: 0;
                     pointer-events: none;
@@ -429,4 +432,4 @@ class ShowCQTElement extends HTMLDivElement {
 if (CustomElementRegistry.prototype.get.call(customElements, "showcqt-element"))
     console.warn("multiple definition of showcqt-element");
 else
-    CustomElementRegistry.prototype.define.call(customElements, "showcqt-element", ShowCQTElement, {extends: "div"});
+    CustomElementRegistry.prototype.define.call(customElements, "showcqt-element", ShowCQTElement);

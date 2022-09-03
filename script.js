@@ -77,7 +77,7 @@
         document.head.appendChild(style);
     }
 
-    const cqt = document.createElement("div", {is: "showcqt-element"});
+    const cqt = document.createElement("showcqt-element");
     set_fixed_style(cqt, 9999999);
     cqt.style.left = cqt.style.bottom = 0;
     cqt.style.width = "100%";
