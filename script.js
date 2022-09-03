@@ -1,8 +1,7 @@
-"use strict";
+import "./modules/showcqt-element.mjs";
 
 (async function(){
-    const current_script = document.currentScript.src;
-    await import(new URL("modules/showcqt-element.mjs", current_script));
+    const current_script = import.meta.url;
 
     const defaults = {
         height:     { def: 33, min: 20, max:100 },
@@ -77,7 +76,7 @@
         document.head.appendChild(style);
     }
 
-    const cqt = document.createElement("div", {is: "showcqt-element"});
+    const cqt = document.createElement("showcqt-element");
     set_fixed_style(cqt, 9999999);
     cqt.style.left = cqt.style.bottom = 0;
     cqt.style.width = "100%";

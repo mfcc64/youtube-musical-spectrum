@@ -31,7 +31,6 @@ const DEFAULT_SPEED         = 2,    MIN_SPEED       = 1,    MAX_SPEED       = 12
 const DEFAULT_OPACITY       = "opaque";
 
 const OBSERVED_ATTRIBUTES = [
-    "data-inputs",
     "data-axis",
     "data-waterfall",
     "data-brightness",
@@ -42,13 +41,16 @@ const OBSERVED_ATTRIBUTES = [
     "data-opacity"
 ];
 
-class ShowCQTElement extends HTMLDivElement {
+// HTMLElement, customElements.get, customElements.define are hijacked by youtube custom-elements-es5-adapter.js
+// Hopefully nobody hijacks HTMLDivElement
+const HTMLElement = Object.getPrototypeOf(HTMLDivElement);
+class ShowCQTElement extends HTMLElement {
     static version = "1.0.0";
 
     static global_audio_context;
 
     static get observedAttributes() {
-        return OBSERVED_ATTRIBUTES;
+        return [...OBSERVED_ATTRIBUTES, "data-inputs"];
     }
 
     constructor() {
@@ -56,7 +58,7 @@ class ShowCQTElement extends HTMLDivElement {
         const shadow = this.attachShadow({mode: "open"});
         shadow.innerHTML =
             `<style>
-                :host { width: 960px; height: 240px; pointer-events: none; }
+                :host { display: block; width: 960px; height: 240px; pointer-events: none; }
                 * {
                     margin: 0; padding: 0; border: 0;
                     pointer-events: none;
@@ -118,14 +120,14 @@ class ShowCQTElement extends HTMLDivElement {
         this.#splitter.connect(this.#analyser[1], 1);
 
         for (const attr of OBSERVED_ATTRIBUTES)
-            this.attributeChangedCallback(attr, -1, this.getAttribute(attr));
+            this.#update_attribute(attr);
     }
 
     attributeChangedCallback(name, old_val, val) {
         if (name == "data-inputs")
             return this.#update_input_elements(val);
         else
-            return this.#update_attribute(name, old_val, val);
+            return this.#update_attribute(name, val);
     }
 
     #update_input_elements(val) {
@@ -165,37 +167,33 @@ class ShowCQTElement extends HTMLDivElement {
         this.#i_elems = new_elems;
     }
 
-    #update_attribute(name, old_val, val) {
-        if (old_val === val)
-            return;
-
+    #update_attribute(name, val) {
         val = val ? val : undefined;
-        let r_val;
         switch (name) {
             case "data-axis":
-                r_val = this.#axis.src = val ? val : DEFAULT_AXIS_SRC;
+                this.#axis.src = val ? val : DEFAULT_AXIS_SRC;
                 break;
             case "data-waterfall":
-                r_val = this.#waterfall = Math.max(MIN_WATERFALL, Math.min(MAX_WATERFALL, isNaN(val*1) ? DEFAULT_WATERFALL : val*1));
+                this.#waterfall = Math.max(MIN_WATERFALL, Math.min(MAX_WATERFALL, isNaN(val*1) ? DEFAULT_WATERFALL : val*1));
                 this.#layout_changed = true;
                 break;
             case "data-brightness":
-                r_val = this.#brightness = Math.max(MIN_BRIGHTNESS, Math.min(MAX_BRIGHTNESS, isNaN(val*1) ? DEFAULT_BRIGHTNESS : val*1));
+                this.#brightness = Math.max(MIN_BRIGHTNESS, Math.min(MAX_BRIGHTNESS, isNaN(val*1) ? DEFAULT_BRIGHTNESS : val*1));
                 break;
             case "data-bar":
-                r_val = this.#bar = Math.max(MIN_BAR, Math.min(MAX_BAR, isNaN(val*1) ? DEFAULT_BAR : val*1));
+                this.#bar = Math.max(MIN_BAR, Math.min(MAX_BAR, isNaN(val*1) ? DEFAULT_BAR : val*1));
                 break;
             case "data-bass":
-                r_val = this.#iir.gain.value = Math.max(MIN_BASS, Math.min(MAX_BASS, isNaN(val*1) ? DEFAULT_BASS : val*1));
+                this.#iir.gain.value = Math.max(MIN_BASS, Math.min(MAX_BASS, isNaN(val*1) ? DEFAULT_BASS : val*1));
                 break;
             case "data-interval":
-                r_val = this.#interval = Math.max(MIN_INTERVAL, Math.min(MAX_INTERVAL, isNaN(val*1) ? DEFAULT_INTERVAL : Math.round(val*1)));
+                this.#interval = Math.max(MIN_INTERVAL, Math.min(MAX_INTERVAL, isNaN(val*1) ? DEFAULT_INTERVAL : Math.round(val*1)));
                 break;
             case "data-speed":
-                r_val = this.#speed = Math.max(MIN_SPEED, Math.min(MAX_SPEED, isNaN(val*1) ? DEFAULT_SPEED : Math.round(val*1)));
+                this.#speed = Math.max(MIN_SPEED, Math.min(MAX_SPEED, isNaN(val*1) ? DEFAULT_SPEED : Math.round(val*1)));
                 break;
             case "data-opacity":
-                r_val = this.#opacity = (val == "transparent" || val == "opaque") ? val : DEFAULT_OPACITY;
+                this.#opacity = (val == "transparent" || val == "opaque") ? val : DEFAULT_OPACITY;
                 this.#canvas.style.pointerEvents = (this.#opacity == "opaque") ? "auto" : "none";
                 this.#create_alpha_table();
                 this.#clear_canvas();
@@ -203,8 +201,6 @@ class ShowCQTElement extends HTMLDivElement {
             default:
                 throw new Error("unreached");
         }
-
-        this.setAttribute(name, r_val);
     }
 
     connectedCallback() {
@@ -436,4 +432,4 @@ class ShowCQTElement extends HTMLDivElement {
 if (CustomElementRegistry.prototype.get.call(customElements, "showcqt-element"))
     console.warn("multiple definition of showcqt-element");
 else
-    CustomElementRegistry.prototype.define.call(customElements, "showcqt-element", ShowCQTElement, {extends: "div"});
+    CustomElementRegistry.prototype.define.call(customElements, "showcqt-element", ShowCQTElement);
