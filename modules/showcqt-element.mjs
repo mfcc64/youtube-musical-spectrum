@@ -45,7 +45,7 @@ const OBSERVED_ATTRIBUTES = [
 // Hopefully nobody hijacks HTMLDivElement
 const HTMLElement = Object.getPrototypeOf(HTMLDivElement);
 class ShowCQTElement extends HTMLElement {
-    static version = "1.0.0";
+    static version = "1.0.1";
 
     static global_audio_context;
 
@@ -66,31 +66,31 @@ class ShowCQTElement extends HTMLElement {
                     position: absolute; left: 0; bottom: 0;
                 }
 
-                [data-id=container] {
+                #container {
                     position: relative;
                     min-height: 32px; min-width: 256px;
                     width: 100%; height: 100%;
                 }
 
-                [data-id=blocker] {
+                #blocker {
                     pointer-events: auto;
                 }
 
-                [data-id=canvas] {
+                #canvas {
                     width: auto; height: auto;
                 }
             </style>
-            <div data-id="container">
-                <div data-id="blocker"></div>
-                <canvas data-id="canvas" width="0" height="0"></canvas>
-                <img data-id="axis"/>
+            <div id="container">
+                <div id="blocker"></div>
+                <canvas id="canvas" width="0" height="0"></canvas>
+                <img id="axis"/>
             </div>`;
 
         (async () => { this.#cqt = await ShowCQT.instantiate(); })();
-        this.#container = shadow.querySelector("[data-id=container]");
-        this.#blocker   = shadow.querySelector("[data-id=blocker]");
-        this.#canvas    = shadow.querySelector("[data-id=canvas]");
-        this.#axis      = shadow.querySelector("[data-id=axis]");
+        this.#container = shadow.getElementById("container");
+        this.#blocker   = shadow.getElementById("blocker");
+        this.#canvas    = shadow.getElementById("canvas");
+        this.#axis      = shadow.getElementById("axis");
         this.#canvas_ctx = this.#canvas.getContext("2d");
 
 
@@ -387,9 +387,7 @@ class ShowCQTElement extends HTMLElement {
         this.#analyser[0].getFloatTimeDomainData(this.#cqt.inputs[0]);
         this.#analyser[1].getFloatTimeDomainData(this.#cqt.inputs[1]);
 
-        let is_silent = true;
-        for (let k = 0; k < this.#cqt.fft_size && is_silent; k++)
-            is_silent = (this.#cqt.inputs[0][k] **2 + this.#cqt.inputs[1][k] **2 < 1e-14);
+        const is_silent = this.#cqt.detect_silence(1e-14);
 
         if (is_silent && this.#sono_dirty_h <= 0)
             return;
