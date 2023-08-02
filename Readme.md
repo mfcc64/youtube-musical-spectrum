@@ -23,12 +23,11 @@ YouTube page with nice musical notes. It allows you to see waterfall of spectrog
 
 ## Settings
 
-If you want to change the settings, click the ![Settings](icon-24.png) icon on the top left corner of your YouTube page
-to access the menu (don't forget to reload any YouTube pages that have been opened
-before installation), or if it is invisible, press Ctrl+Alt+H. Subsequent click to the ![Settings](icon-24.png) icon
-will toggle the menu's visibility. On the other hand, subsequent Ctrl+Alt+H key will toggle the menu's visibility and
-the ![Settings](icon-24.png) icon's visibility. You can also toggle the visualizer's visibility by pressing
-Ctrl+Alt+G.
+Basic usage:
+- Click the ![Settings](icon-16.png) icon at the top left corner to open/close settings.
+- Press **Ctrl+Alt+H** to open/close settings and show/hide the ![Settings](icon-16.png) icon.
+- Press **Ctrl+Alt+G** as a shortcut to show/hide visualization.
+- If you want to make your change persistent, click **Set as Default Settings** button.
 
 The available settings:
 - **Height:** Set the height of the visualizer relative (in percents) to the height of the page. The value is between `20` and `100`.
