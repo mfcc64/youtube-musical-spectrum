@@ -81,7 +81,7 @@ import "./modules/showcqt-element.mjs";
         <div style="text-align: right;">
             <img alt="YTMS" src="${icon_16}" style="cursor: pointer;" id="open_message"/>
             Support me on
-            <a href="https://www.youtube.com/c/mfcc64" target="_blank">YouTube</a>
+            <a href="https://www.youtube.com/@mfcc64" target="_blank">YouTube</a>
             <a href="https://www.patreon.com/mfcc64" target="_blank">Patreon</a>
             <a href="https://github.com/mfcc64" target="_blank">GitHub</a>
             <a href="https://paypal.me/mfcc64" target="_blank">PayPal</a>
