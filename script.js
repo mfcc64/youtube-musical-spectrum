@@ -61,7 +61,7 @@ import "./modules/showcqt-element.mjs";
     af_links.style.opacity = 1;
     af_links.attachShadow({mode: "open"}).innerHTML =
         `<style>
-            :host { opacity: 0; max-width: 500px; }
+            :host { opacity: 0; max-width: 700px; }
             :host(:hover) { opacity: 1; }
             img { vertical-align: middle; }
         </style>
@@ -71,6 +71,7 @@ import "./modules/showcqt-element.mjs";
                 <li>Click the <img alt="YTMS" src="${icon_16}"/> icon at the top left corner to open/close settings.</li>
                 <li>Press <b>Ctrl+Alt+H</b> to open/close settings and show/hide the <img alt="YTMS" src="${icon_16}"/> icon.</li>
                 <li>Press <b>Ctrl+Alt+G</b> as a shortcut to show/hide visualization.</li>
+                <li>If you want to make your change persistent, click <b>Set as Default Settings</b> button.</li>
                 <li><a href="https://github.com/mfcc64/youtube-musical-spectrum#settings" target="_blank">Read more...</a></li>
             </ul>
             <p>
@@ -89,7 +90,7 @@ import "./modules/showcqt-element.mjs";
         </div>`;
     setTimeout(() => af_links.style.opacity = "", 15000);
 
-    const message_version = 1;
+    const message_version = 2;
     af_links.shadowRoot.getElementById("message").style.display = get_opt("message_version") == message_version ? "none" : "block";
     af_links.shadowRoot.getElementById("close_message").addEventListener("click", function() {
         set_opt("message_version", message_version);
