@@ -48,6 +48,7 @@ import "./modules/showcqt-element.mjs";
         element.style.zIndex = z_index;
     }
 
+    const icon_16 = `${new URL("icon-16.png", current_script)}`;
     const af_links = document.createElement("div");
     set_fixed_style(af_links, 10000001);
     af_links.style.padding = "8px";
@@ -60,17 +61,43 @@ import "./modules/showcqt-element.mjs";
     af_links.style.opacity = 1;
     af_links.attachShadow({mode: "open"}).innerHTML =
         `<style>
-            :host { opacity: 0; }
+            :host { opacity: 0; max-width: 500px; }
             :host(:hover) { opacity: 1; }
             img { vertical-align: middle; }
         </style>
-        <img alt="YTMS" src="${new URL("icon-16.png", current_script)}"/> Support me on
-        <a href="https://www.youtube.com/c/mfcc64" target="_blank">YouTube</a>
-        <a href="https://www.patreon.com/mfcc64" target="_blank">Patreon</a>
-        <a href="https://github.com/mfcc64" target="_blank">GitHub</a>
-        <a href="https://paypal.me/mfcc64" target="_blank">PayPal</a>
-        <a href="https://saweria.co/mfcc64" target="_blank">Saweria</a>`;
+        <div id="message">
+            <h3>YouTube Musical Spectrum</h3>
+            <ul>
+                <li>Click the <img alt="YTMS" src="${icon_16}"/> icon at the top left corner to open/close settings.</li>
+                <li>Press <b>Ctrl+Alt+H</b> to open/close settings and show/hide the <img alt="YTMS" src="${icon_16}"/> icon.</li>
+                <li>Press <b>Ctrl+Alt+G</b> as a shortcut to show/hide visualization.</li>
+                <li><a href="https://github.com/mfcc64/youtube-musical-spectrum#settings" target="_blank">Read more...</a></li>
+            </ul>
+            <p>
+                <button id="close_message" style="cursor: pointer;">Close</button>
+                (Click the <img alt="YTMS" src="${icon_16}"/> icon below to reopen again)
+            </p>
+        </div>
+        <div style="text-align: right;">
+            <img alt="YTMS" src="${icon_16}" style="cursor: pointer;" id="open_message"/>
+            Support me on
+            <a href="https://www.youtube.com/c/mfcc64" target="_blank">YouTube</a>
+            <a href="https://www.patreon.com/mfcc64" target="_blank">Patreon</a>
+            <a href="https://github.com/mfcc64" target="_blank">GitHub</a>
+            <a href="https://paypal.me/mfcc64" target="_blank">PayPal</a>
+            <a href="https://saweria.co/mfcc64" target="_blank">Saweria</a>
+        </div>`;
     setTimeout(() => af_links.style.opacity = "", 15000);
+
+    const message_version = 1;
+    af_links.shadowRoot.getElementById("message").style.display = get_opt("message_version") == message_version ? "none" : "block";
+    af_links.shadowRoot.getElementById("close_message").addEventListener("click", function() {
+        set_opt("message_version", message_version);
+        af_links.shadowRoot.getElementById("message").style.display = "none";
+    });
+    af_links.shadowRoot.getElementById("open_message").addEventListener("click", function() {
+        af_links.shadowRoot.getElementById("message").style.display = "block";
+    });
 
     const cqt = document.createElement("showcqt-element");
     set_fixed_style(cqt, 9999999);
