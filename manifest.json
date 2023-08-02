@@ -12,18 +12,6 @@
         "24"  : "icon-24.png",
         "16"  : "icon-16.png"
     },
-    "action" : {
-        "default_icon" : {
-            "128" : "icon-128.png",
-            "64"  : "icon-64.png",
-            "48"  : "icon-48.png",
-            "32"  : "icon-32.png",
-            "24"  : "icon-24.png",
-            "16"  : "icon-16.png"
-        },
-        "default_popup" : "popup.html",
-        "default_title" : "YouTube Musical Spectrum"
-    },
     "web_accessible_resources": [
         {
             "matches"   : [ "https://www.youtube.com/*" ],
