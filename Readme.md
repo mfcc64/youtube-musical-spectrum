@@ -27,6 +27,7 @@ Basic usage:
 - Click the ![Settings](icon-16.png) icon at the top left corner to open/close settings.
 - Press **Ctrl+Alt+H** to open/close settings and show/hide the ![Settings](icon-16.png) icon.
 - Press **Ctrl+Alt+G** as a shortcut to show/hide visualization.
+- If you want to change the axis, click it.
 - If you want to make your change persistent, click **Set as Default Settings** button.
 
 The available settings:

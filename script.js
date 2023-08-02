@@ -2,6 +2,10 @@ import "./modules/showcqt-element.mjs";
 
 (async function(){
     const current_script = import.meta.url;
+    const axis_list = [
+        "",
+        `${new URL("axis-hz-1920x32.png", current_script)}`
+    ];
 
     const defaults = {
         height:     { def: 33, min: 20, max:100 },
@@ -13,7 +17,8 @@ import "./modules/showcqt-element.mjs";
         interval:   { def:  1, min:  1, max:  4 },
         codecs:     { def:  1, min:  0, max:  2 },
         transparent:{ def:  1, min:  0, max:  1 },
-        visible:    { def:  1, min:  0, max:  1 }
+        visible:    { def:  1, min:  0, max:  1 },
+        axis:       { def:  0, min:  0, max: axis_list.length - 1 }
     };
 
     const opt_prefix = "__youtube_musical_spectrum_opt_";
@@ -71,6 +76,7 @@ import "./modules/showcqt-element.mjs";
                 <li>Click the <img alt="YTMS" src="${icon_16}"/> icon at the top left corner to open/close settings.</li>
                 <li>Press <b>Ctrl+Alt+H</b> to open/close settings and show/hide the <img alt="YTMS" src="${icon_16}"/> icon.</li>
                 <li>Press <b>Ctrl+Alt+G</b> as a shortcut to show/hide visualization.</li>
+                <li>If you want to change the axis, click it.</li>
                 <li>If you want to make your change persistent, click <b>Set as Default Settings</b> button.</li>
                 <li><a href="https://github.com/mfcc64/youtube-musical-spectrum#settings" target="_blank">Read more...</a></li>
             </ul>
@@ -90,7 +96,7 @@ import "./modules/showcqt-element.mjs";
         </div>`;
     setTimeout(() => af_links.style.opacity = "", 15000);
 
-    const message_version = 2;
+    const message_version = 3;
     af_links.shadowRoot.getElementById("message").style.display = get_opt("message_version") == message_version ? "none" : "block";
     af_links.shadowRoot.getElementById("close_message").addEventListener("click", function() {
         set_opt("message_version", message_version);
@@ -123,6 +129,14 @@ import "./modules/showcqt-element.mjs";
 
         (state == 1) ? this.render_pause() : this.render_play();
     };
+
+    child_menu.axis = { value: get_opt("axis") };
+    child_menu.axis.onchange = function() { cqt.dataset.axis = axis_list[child_menu.axis.value]; };
+    cqt.shadowRoot.getElementById("axis").addEventListener("click", function() {
+        child_menu.axis.value = (child_menu.axis.value + 1) % axis_list.length;
+        child_menu.axis.onchange();
+    });
+    child_menu.axis.onchange();
 
     function create_menu() {
         var menu = document.createElement("button");
