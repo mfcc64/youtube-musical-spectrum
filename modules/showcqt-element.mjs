@@ -45,7 +45,7 @@ const OBSERVED_ATTRIBUTES = [
 // Hopefully nobody hijacks HTMLDivElement
 const HTMLElement = Object.getPrototypeOf(HTMLDivElement);
 class ShowCQTElement extends HTMLElement {
-    static version = "1.0.1";
+    static version = "1.0.2";
 
     static global_audio_context;
 
@@ -72,7 +72,7 @@ class ShowCQTElement extends HTMLElement {
                     width: 100%; height: 100%;
                 }
 
-                #blocker {
+                #axis, #blocker {
                     pointer-events: auto;
                 }
 
@@ -130,8 +130,10 @@ class ShowCQTElement extends HTMLElement {
             return this.#update_attribute(name, val);
     }
 
+    #showcqt_element_input_source = Symbol("showcqt_element_input_source");
+
     #update_input_elements(val) {
-        const src = "__showcqt_element_input_source";
+        const src = this.#showcqt_element_input_source;
         val = val ? val : "";
         const new_elems = [];
         try {
