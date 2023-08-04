@@ -14,6 +14,8 @@ import "./modules/showcqt-element.mjs";
         brightness: { def: 17, min:  7, max: 49 },
         bass:       { def:-30, min:-50, max:  0 },
         speed:      { def:  2, min:  1, max: 12 },
+        mic:        { def:  0, min:  0, max: 20 },
+        mic_pan:    { def:  0, min:-10, max: 10 },
         interval:   { def:  1, min:  1, max:  4 },
         codecs:     { def:  1, min:  0, max:  2 },
         transparent:{ def:  1, min:  0, max:  1 },
@@ -78,6 +80,7 @@ import "./modules/showcqt-element.mjs";
                 <li>Press <b>Ctrl+Alt+G</b> as a shortcut to show/hide visualization.</li>
                 <li>If you want to change the axis, click it.</li>
                 <li>If you want to make your change persistent, click <b>Set as Default Settings</b> button.</li>
+                <li><b>New Features:</b> Hz-scale axis, microphone support.</li>
                 <li><a href="https://github.com/mfcc64/youtube-musical-spectrum#settings" target="_blank">Read more...</a></li>
             </ul>
             <p>
@@ -96,7 +99,7 @@ import "./modules/showcqt-element.mjs";
         </div>`;
     setTimeout(() => af_links.style.opacity = "", 15000);
 
-    const message_version = 3;
+    const message_version = 4;
     af_links.shadowRoot.getElementById("message").style.display = get_opt("message_version") == message_version ? "none" : "block";
     af_links.shadowRoot.getElementById("close_message").addEventListener("click", function() {
         set_opt("message_version", message_version);
@@ -229,12 +232,38 @@ import "./modules/showcqt-element.mjs";
             append_menu_table_tr(tr);
         }
 
+        let mic_gain = null;
+        const mic_pan = cqt.audio_context.createStereoPanner();
+        mic_pan.connect(cqt.audio_input);
+
         create_child_range_menu("Height", "height", (child) => cqt.style.height = child.value + "%");
         create_child_range_menu("Bar", "bar", (child) => cqt.dataset.bar = child.value);
         create_child_range_menu("Waterfall", "waterfall", (child) => cqt.dataset.waterfall = child.value);
         create_child_range_menu("Brightness", "brightness", (child) => cqt.dataset.brightness = child.value);
         create_child_range_menu("Bass", "bass", (child) => cqt.dataset.bass = child.value);
         create_child_range_menu("Speed", "speed", (child) => cqt.dataset.speed = child.value);
+        create_child_range_menu("Mic", "mic", async (child) => {
+            if (!mic_gain) {
+                if (child.value == 0)
+                    return;
+                mic_gain = cqt.audio_context.createGain();
+                mic_gain.connect(mic_pan);
+                const media_params = {
+                    audio: {
+                        echoCancellation: false,
+                        autoGainControl: false,
+                        noiseSuppression: false,
+                        latency: 0,
+                        channelCount: 2,
+                        sampleRate: cqt.audio_context.sampleRate
+                    }
+                };
+                cqt.audio_context.createMediaStreamSource(await navigator.mediaDevices.getUserMedia(media_params)).connect(mic_gain);
+            }
+
+            mic_gain.gain.value = child.value / 10;
+        });
+        create_child_range_menu("Mic Pan", "mic_pan", (child) => mic_pan.pan.value = child.value / 10);
         create_child_range_menu("Interval", "interval", (child) => cqt.dataset.interval = child.value);
 
         function create_child_select_codecs() {

@@ -3,6 +3,7 @@
 YouTube Musical Spectrum is a browser extension powered by [showcqt-js](https://github.com/mfcc64/showcqt-js)
 and [showcqt-element](https://github.com/mfcc64/showcqt-element) that offers audio visualization on your
 YouTube page with nice musical notes. It allows you to see waterfall of spectrogram nicely.
+You can see not only spectrogram of YouTube video but also spectrogram of your microphone.
 
 ## Install
 
@@ -40,6 +41,8 @@ The available settings:
 - **Bass:** Set the bass attenuation in dB. The value is between `-50` and `0`. The default value is `-30`.
 - **Speed:** Set the speed of the waterfall. The value is between `1` and `12`. The default value is `2`.
   Without frame drops, the speed of the waterfall is `speed * monitor_refresh_rate / interval` pixels/s.
+- **Mic:** Allow microphone input. The value of `20` means `2x` gain. The default value is `0 (disabled)`.
+- **Mic Pan:** Pan microphone input to the left `(-10)` or right `(10)`. The default value is `0`.
 - **Interval:** Set the frame rate interval. The value is between `1` and `4`. The default value is `1`.
   Without frame drops, the frame rate of the visualizer is `monitor_refresh_rate / interval`. This is a useful option
   on a high refresh rate monitor (e.g 240 Hz monitor).
