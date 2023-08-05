@@ -9,7 +9,7 @@ import "./modules/showcqt-element.mjs";
 
     const defaults = {
         height:     { def: 33, min: 20, max:100 },
-        bar:        { def: 17, min:  3, max: 33 },
+        bar:        { def: 17, min:  1, max: 33 },
         waterfall:  { def: 33, min:  0, max: 40 },
         brightness: { def: 17, min:  7, max: 49 },
         bass:       { def:-30, min:-50, max:  0 },
