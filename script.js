@@ -232,9 +232,11 @@ import "./modules/showcqt-element.mjs";
             append_menu_table_tr(tr);
         }
 
-        let mic_gain = null;
-        const mic_pan = cqt.audio_context.createStereoPanner();
-        mic_pan.connect(cqt.audio_input);
+        const mic = { };
+        mic.pan = cqt.audio_context.createStereoPanner();
+        mic.gain = cqt.audio_context.createGain();
+        mic.pan.connect(cqt.audio_input);
+        mic.gain.connect(mic.pan);
 
         create_child_range_menu("Height", "height", (child) => cqt.style.height = child.value + "%");
         create_child_range_menu("Bar", "bar", (child) => cqt.dataset.bar = child.value);
@@ -243,11 +245,10 @@ import "./modules/showcqt-element.mjs";
         create_child_range_menu("Bass", "bass", (child) => cqt.dataset.bass = child.value);
         create_child_range_menu("Speed", "speed", (child) => cqt.dataset.speed = child.value);
         create_child_range_menu("Mic", "mic", async (child) => {
-            if (!mic_gain) {
+            mic.gain.gain.value = child.value / 10;
+            if (!mic.promise) {
                 if (child.value == 0)
                     return;
-                mic_gain = cqt.audio_context.createGain();
-                mic_gain.connect(mic_pan);
                 const media_params = {
                     audio: {
                         echoCancellation: false,
@@ -258,12 +259,20 @@ import "./modules/showcqt-element.mjs";
                         sampleRate: cqt.audio_context.sampleRate
                     }
                 };
-                cqt.audio_context.createMediaStreamSource(await navigator.mediaDevices.getUserMedia(media_params)).connect(mic_gain);
+                mic.promise = navigator.mediaDevices.getUserMedia(media_params);
+                mic.stream = await mic.promise;
+                mic.source = cqt.audio_context.createMediaStreamSource(mic.stream);
+                mic.source.connect(mic.gain);
             }
 
-            mic_gain.gain.value = child.value / 10;
+            if (mic.source && child.value == 0) {
+                mic.source.disconnect(mic.gain);
+                for (const track of mic.stream.getTracks())
+                    track.stop();
+                mic.source = mic.stream = mic.promise = null;
+            }
         });
-        create_child_range_menu("Mic Pan", "mic_pan", (child) => mic_pan.pan.value = child.value / 10);
+        create_child_range_menu("Mic Pan", "mic_pan", (child) => mic.pan.pan.value = child.value / 10);
         create_child_range_menu("Interval", "interval", (child) => cqt.dataset.interval = child.value);
 
         function create_child_select_codecs() {
