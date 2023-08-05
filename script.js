@@ -14,7 +14,7 @@ import "./modules/showcqt-element.mjs";
         brightness: { def: 17, min:  7, max: 49 },
         bass:       { def:-30, min:-50, max:  0 },
         speed:      { def:  2, min:  1, max: 12 },
-        mic:        { def:  0, min:  0, max: 20 },
+        mic:        { def:  0, min:  0, max: 30 },
         mic_pan:    { def:  0, min:-10, max: 10 },
         interval:   { def:  1, min:  1, max:  4 },
         codecs:     { def:  1, min:  0, max:  2 },
@@ -245,7 +245,7 @@ import "./modules/showcqt-element.mjs";
         create_child_range_menu("Bass", "bass", (child) => cqt.dataset.bass = child.value);
         create_child_range_menu("Speed", "speed", (child) => cqt.dataset.speed = child.value);
         create_child_range_menu("Mic", "mic", async (child) => {
-            mic.gain.gain.value = child.value / 10;
+            mic.gain.gain.value = child.value * child.value / 100;
             if (!mic.promise) {
                 if (child.value == 0)
                     return;
