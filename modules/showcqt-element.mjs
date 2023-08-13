@@ -45,7 +45,7 @@ const OBSERVED_ATTRIBUTES = [
 // Hopefully nobody hijacks HTMLDivElement
 const HTMLElement = Object.getPrototypeOf(HTMLDivElement);
 class ShowCQTElement extends HTMLElement {
-    static version = "1.0.2";
+    static version = "1.1.0";
 
     static global_audio_context;
 
@@ -107,17 +107,18 @@ class ShowCQTElement extends HTMLElement {
             resume_audio();
         }
 
-        this.#analyser = [ this.#audio_ctx.createAnalyser(), this.#audio_ctx.createAnalyser() ];
-        this.#splitter = this.#audio_ctx.createChannelSplitter(2);
         this.#iir = this.#audio_ctx.createBiquadFilter();
         this.#iir.type = "peaking";
         this.#iir.frequency.value = 10;
         this.#iir.Q.value = 0.33;
         this.#panner = this.#audio_ctx.createStereoPanner();
         this.#panner.connect(this.#iir);
-        this.#iir.connect(this.#splitter);
-        this.#splitter.connect(this.#analyser[0], 0);
-        this.#splitter.connect(this.#analyser[1], 1);
+        (async () => {
+            await this.#audio_ctx.audioWorklet.addModule(new URL("audio-worklet.mjs", import.meta.url));
+            const worklet = new AudioWorkletNode(this.#audio_ctx, "send-frame");
+            this.#iir.connect(worklet);
+            worklet.port.onmessage = (msg) => this.#ring_buffer ? this.#ring_buffer_write(msg.data) : 0;
+        })().catch(e => console.error(e));
 
         for (const attr of OBSERVED_ATTRIBUTES)
             this.#update_attribute(attr);
@@ -274,8 +275,6 @@ class ShowCQTElement extends HTMLElement {
     // context
     #cqt;
     #audio_ctx;
-    #analyser;
-    #splitter;
     #iir;
     #panner;
 
@@ -287,7 +286,9 @@ class ShowCQTElement extends HTMLElement {
     #is_paused = false;
     #sono_dirty_h = 0;
 
-    #render() {
+    #last_time = NaN;
+
+    #render(time) {
         if (this.#is_active_render)
             requestAnimationFrame(this.#render.bind(this));
 
@@ -299,8 +300,7 @@ class ShowCQTElement extends HTMLElement {
         if (this.#render_count)
             return;
 
-        if (this.render_callback)
-            this.render_callback();
+        this.render_callback?.();
 
         const width = this.#container.clientWidth;
         const height = this.#container.clientHeight;
@@ -311,8 +311,16 @@ class ShowCQTElement extends HTMLElement {
         if (width !== this.#width || height !== this.#height || this.#layout_changed) {
             if (width !== this.#width) {
                 this.#cqt.init(this.#audio_ctx.sampleRate, width, height, 4, 4, 4, true);
-                this.#analyser[0].fftSize = this.#cqt.fft_size;
-                this.#analyser[1].fftSize = this.#cqt.fft_size;
+                if (!this.#ring_buffer) {
+                    this.#ring_size = 4 * this.#cqt.fft_size;
+                    this.#ring_buffer = [
+                        new Float32Array(this.#ring_size),
+                        new Float32Array(this.#ring_size)
+                    ];
+                    this.#ring_read = 0;
+                    this.#ring_write = this.#cqt.fft_size;
+                    this.#ring_mask = this.#ring_size - 1;
+                }
             }
 
             this.#layout_changed = false;
@@ -345,8 +353,10 @@ class ShowCQTElement extends HTMLElement {
             this.#clear_canvas();
         }
 
-        if (!this.#is_paused)
-            this.#cqt_render();
+        if (!this.#is_paused) {
+            this.#cqt_render(time - this.#last_time);
+            this.#last_time = time;
+        }
 
         if (this.#canvas_is_dirty)
             this.#canvas_ctx.putImageData(this.#canvas_buffer, 0, 0);
@@ -357,11 +367,9 @@ class ShowCQTElement extends HTMLElement {
     #create_alpha_table() {
         if (this.#height > 0) {
             this.#alpha_table = new Uint8Array(this.#height);
-            for (let y = 0; y < this.#bar_h; y++)
-                this.#alpha_table[y] = (this.#opacity == "opaque") ? 255 :
-                    Math.round(255 * Math.pow(Math.sin(0.5 * Math.PI * y / this.#bar_h), 2));
-            for (let y = this.#bar_h; y < this.#height; y++)
-                this.#alpha_table[y] = 255;
+            for (let y = 0; y < this.#height; y++)
+                this.#alpha_table[y] = (this.#opacity == "opaque" || y >= this.#bar_h) ? 255 :
+                    Math.round(255 * Math.sin(0.5 * Math.PI * y / this.#bar_h)**2);
         }
     }
 
@@ -385,9 +393,19 @@ class ShowCQTElement extends HTMLElement {
         this.#canvas_is_dirty = true;
     }
 
-    #cqt_render() {
-        this.#analyser[0].getFloatTimeDomainData(this.#cqt.inputs[0]);
-        this.#analyser[1].getFloatTimeDomainData(this.#cqt.inputs[1]);
+    #calc_delta(buffer_delta, ideal_delta) {
+        const ratio = buffer_delta / ideal_delta;
+        const scale = (ratio < 1.5) ? 1 - 0.4 * (1.5 - ratio)**2 : 1 + 0.01 * (ratio - 1.5)**3;
+        return Math.min(buffer_delta, Math.round(ideal_delta * scale));
+    }
+
+    #cqt_render(delta_time) {
+        const buffer_delta = (this.#ring_write - this.#cqt.fft_size - this.#ring_read) & this.#ring_mask;
+        const ideal_delta = delta_time !== delta_time ? buffer_delta : delta_time * this.#audio_ctx.sampleRate / 1000;
+        const delta = this.#calc_delta(buffer_delta, ideal_delta);
+
+        this.#ring_read = (this.#ring_read + delta) & this.#ring_mask;
+        this.#ring_buffer_read(this.#ring_read);
 
         const is_silent = this.#cqt.detect_silence(1e-14);
 
@@ -397,8 +415,7 @@ class ShowCQTElement extends HTMLElement {
         this.#cqt.set_height(this.#bar_h);
         this.#cqt.set_volume(this.#bar, this.#brightness);
         this.#cqt.calc();
-        if (this.actual_render_callback)
-            this.actual_render_callback(this.#cqt.color);
+        this.actual_render_callback?.(this.#cqt.color);
 
         const data = this.#canvas_buffer.data;
 
@@ -415,17 +432,56 @@ class ShowCQTElement extends HTMLElement {
                 data.copyWithin(line_target * 4 * this.#width, line_start * 4 * this.#width);
             data.set(this.#cqt.output, 4 * this.#width * line_start);
             for (let y = 1; y < this.#speed && line_start + y < this.#height; y++) {
-                const mul = y / this.#speed;
-                for (let x = 0; x < 4 * this.#width; x++) {
-                    data[4 * this.#width * (line_start + y) + x] =
-                        (1 - mul) * data[4 * this.#width * line_start + x] +
-                        mul * data[4 * this.#width * line_target + x] + 0.33;
-                }
+                this.#ring_buffer_read(Math.round(this.#ring_read - y * delta / this.#speed) & this.#ring_mask);
+                this.#cqt.calc();
+                this.actual_render_callback?.(this.#cqt.color);
+                this.#cqt.render_line_opaque(this.#bar_h);
+                data.set(this.#cqt.output, 4 * this.#width * (line_start + y));
             }
         }
 
         this.#sono_dirty_h = is_silent ? this.#sono_dirty_h - this.#speed : this.#sono_h + 2 * this.#speed;
         this.#canvas_is_dirty = true;
+    }
+
+    // ring buffer
+    #ring_buffer;
+    #ring_size;
+    #ring_write;
+    #ring_read;
+    #ring_mask;
+
+    #ring_buffer_write(data) {
+        const len = data[0].length, size = this.#ring_size;
+        const w = this.#ring_write, mask = this.#ring_mask, buf = this.#ring_buffer;
+
+        if (w + len <= size) {
+            buf[0].set(data[0], w);
+            buf[1].set(data[1], w);
+        } else {
+            for (let c = 0; c < 2; c++) {
+                buf[c].set(data[c].subarray(0, size - w), w);
+                buf[c].set(data[c].subarray(size - w), 0);
+            }
+        }
+
+        this.#ring_write = (w + len) & mask;
+
+    }
+
+    #ring_buffer_read(idx) {
+        const len = this.#cqt.fft_size, size = this.#ring_size;
+        const mask = this.#ring_mask, buf = this.#ring_buffer, dst = this.#cqt.inputs;
+
+        if (idx + len <= size) {
+            dst[0].set(buf[0].subarray(idx, idx+len));
+            dst[1].set(buf[1].subarray(idx, idx+len));
+        } else {
+            for (let c = 0; c < 2; c++) {
+                dst[c].set(buf[c].subarray(idx, size));
+                dst[c].set(buf[c].subarray(0, idx + len - size), size - idx);
+            }
+        }
     }
 }
 
