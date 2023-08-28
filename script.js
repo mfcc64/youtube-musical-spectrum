@@ -11,7 +11,7 @@ import "./modules/showcqt-element.mjs";
         height:     { def: 33, min: 20, max:100 },
         bar:        { def: 17, min:  1, max: 33 },
         waterfall:  { def: 33, min:  0, max: 70 },
-        brightness: { def: 17, min:  7, max: 49 },
+        brightness: { def: 17, min:  1, max: 70 },
         bass:       { def:-30, min:-50, max:  0 },
         speed:      { def:  2, min:  1, max: 12 },
         mic:        { def:  0, min:  0, max: 30 },

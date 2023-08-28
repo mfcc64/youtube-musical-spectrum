@@ -37,7 +37,7 @@ The available settings:
 - **Bar:** Set the bar's height. The value is between `1` and `33`. The default value is `17`.
 - **Waterfall:** Set the waterfall's height relative (in percents) to the visualizer's height. The value is between `0` and `70`.
   The default value is `33`. Setting it to `0` make the waterfall invisible.
-- **Brightness:** Set the brightness of the visualizer. The value is between `7` and `49`. The default value is `17`.
+- **Brightness:** Set the brightness of the visualizer. The value is between `1` and `70`. The default value is `17`.
 - **Bass:** Set the bass attenuation in dB. The value is between `-50` and `0`. The default value is `-30`.
 - **Speed:** Set the speed of the waterfall. The value is between `1` and `12`. The default value is `2`.
   Without frame drops, the speed of the waterfall is `speed * monitor_refresh_rate / interval` pixels/s.
