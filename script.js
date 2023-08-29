@@ -80,7 +80,7 @@ import "./modules/showcqt-element.mjs";
                 <li>Press <b>Ctrl+Alt+G</b> as a shortcut to show/hide visualization.</li>
                 <li>If you want to change the axis, click it.</li>
                 <li>If you want to make your change persistent, click <b>Set as Default Settings</b> button.</li>
-                <li><b>New Features:</b> Hz-scale axis, microphone support.</li>
+                <li><b>New Features:</b> Hz-scale axis, microphone support, YT Music support.</li>
                 <li><a href="https://github.com/mfcc64/youtube-musical-spectrum#settings" target="_blank">Read more...</a></li>
             </ul>
             <p>
@@ -99,7 +99,7 @@ import "./modules/showcqt-element.mjs";
         </div>`;
     setTimeout(() => af_links.style.opacity = "", 15000);
 
-    const message_version = 4;
+    const message_version = 5;
     af_links.shadowRoot.getElementById("message").style.display = get_opt("message_version") == message_version ? "none" : "block";
     af_links.shadowRoot.getElementById("close_message").addEventListener("click", function() {
         set_opt("message_version", message_version);
@@ -132,6 +132,31 @@ import "./modules/showcqt-element.mjs";
 
         (state == 1) ? this.render_pause() : this.render_play();
     };
+
+    function ytmusic_layout() {
+        const style = document.createElement("style");
+        style.textContent = "ytmusic-player-bar { z-index: 12 !important; }";
+        document.head.appendChild(style);
+        af_links.style.zIndex = 11;
+        af_links.style.bottom = "calc(var(--ytmusic-player-bar-height, 0) + 8px)";
+        cqt.style.zIndex = 10;
+
+        function update_cqt_bottom() {
+            if (document.fullscreenElement) {
+                cqt.style.bottom = 0;
+                af_links.style.visibility = "hidden";
+            } else {
+                cqt.style.bottom = "var(--ytmusic-player-bar-height, 0)";
+                af_links.style.visibility = "visible";
+            }
+        }
+
+        addEventListener("fullscreenchange", update_cqt_bottom);
+        update_cqt_bottom();
+    }
+
+    if (document.location.hostname == "music.youtube.com")
+        ytmusic_layout();
 
     child_menu.axis = { value: get_opt("axis") };
     child_menu.axis.onchange = function() { cqt.dataset.axis = axis_list[child_menu.axis.value]; };
@@ -439,4 +464,4 @@ import "./modules/showcqt-element.mjs";
     create_menu();
     document.body.appendChild(cqt);
     document.body.appendChild(af_links);
-})();
+})().catch(e => console.error(e));
