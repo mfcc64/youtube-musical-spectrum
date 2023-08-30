@@ -45,7 +45,7 @@ const OBSERVED_ATTRIBUTES = [
 // Hopefully nobody hijacks HTMLDivElement
 const HTMLElement = Object.getPrototypeOf(HTMLDivElement);
 class ShowCQTElement extends HTMLElement {
-    static version = "1.1.1";
+    static version = "1.1.2";
 
     static global_audio_context;
 
@@ -133,7 +133,7 @@ class ShowCQTElement extends HTMLElement {
 
     #showcqt_element_input_source = Symbol("showcqt_element_input_source");
 
-    #update_input_elements(val) {
+    #update_input_elements = (val) => {
         const src = this.#showcqt_element_input_source;
         val = val ? val : "";
         const new_elems = [];
@@ -168,9 +168,9 @@ class ShowCQTElement extends HTMLElement {
                 elem[src].disconnect();
 
         this.#i_elems = new_elems;
-    }
+    };
 
-    #update_attribute(name, val) {
+    #update_attribute = (name, val) => {
         val = val ? val : undefined;
         switch (name) {
             case "data-axis":
@@ -199,16 +199,16 @@ class ShowCQTElement extends HTMLElement {
                 this.#opacity = (val == "transparent" || val == "opaque") ? val : DEFAULT_OPACITY;
                 this.#canvas.style.pointerEvents = (this.#opacity == "opaque") ? "auto" : "none";
                 this.#create_alpha_table();
-                this.#clear_canvas();
+                this.#clear_bar();
                 break;
             default:
                 throw new Error("unreached");
         }
-    }
+    };
 
     connectedCallback() {
         if (this.isConnected) {
-            !this.#is_active_render ? requestAnimationFrame(this.#render.bind(this)) : 0;
+            !this.#is_active_render ? requestAnimationFrame(this.#render) : 0;
             this.#is_active_render = true;
         } else {
             this.#is_active_render = false;
@@ -288,9 +288,9 @@ class ShowCQTElement extends HTMLElement {
 
     #last_time = NaN;
 
-    #render(time) {
+    #render = (time) => {
         if (this.#is_active_render)
-            requestAnimationFrame(this.#render.bind(this));
+            requestAnimationFrame(this.#render);
 
         if (!this.#cqt)
             return;
@@ -362,44 +362,47 @@ class ShowCQTElement extends HTMLElement {
             this.#canvas_ctx.putImageData(this.#canvas_buffer, 0, 0);
 
         this.#canvas_is_dirty = false;
-    }
+    };
 
-    #create_alpha_table() {
+    #create_alpha_table = () => {
         if (this.#height > 0) {
             this.#alpha_table = new Uint8Array(this.#height);
             for (let y = 0; y < this.#height; y++)
                 this.#alpha_table[y] = (this.#opacity == "opaque" || y >= this.#bar_h) ? 255 :
                     Math.round(255 * Math.sin(0.5 * Math.PI * y / this.#bar_h)**2);
         }
-    }
+    };
 
-    #clear_canvas() {
+    #clear_bar = () => {
         if (!this.#canvas_buffer)
             return;
 
-        const data = this.#canvas_buffer.data;
-        for (let y = 0; y < this.#height; y++) {
-            const alpha = this.#alpha_table[y];
-            const line = 4 * y * this.#width;
-            for (let x = 0; x < 4 * this.#width; x += 4) {
-                data[line + x] = 0;
-                data[line + x + 1] = 0;
-                data[line + x + 2] = 0;
-                data[line + x + 3] = alpha;
-            }
-        }
+        for (let y = 0, data = this.#canvas_buffer.data, addr = 3; y < this.#bar_h; y++)
+            for (let x = 0, alpha = this.#alpha_table[y]; x < this.#width; x++, addr += 4)
+                data[addr] = alpha;
+
+        this.#canvas_is_dirty = true;
+    };
+
+    #clear_canvas = () => {
+        if (!this.#canvas_buffer)
+            return;
+
+        const data = new Uint32Array(this.#canvas_buffer.data.buffer, this.#canvas_buffer.data.byteOffset, this.#width * this.#height);
+        for (let y = 0; y < this.#height; y++)
+            data.fill(this.#alpha_table[y] << 24, y * this.#width, (y + 1) * this.#width);
 
         this.#sono_dirty_h = 0;
         this.#canvas_is_dirty = true;
-    }
+    };
 
-    #calc_delta(buffer_delta, ideal_delta) {
+    #calc_delta = (buffer_delta, ideal_delta) => {
         const ratio = buffer_delta / ideal_delta;
         const scale = (ratio < 1.5) ? 1 - 0.4 * (1.5 - ratio)**2 : 1 + 0.01 * (ratio - 1.5)**3;
         return Math.min(buffer_delta, Math.round(ideal_delta * scale));
-    }
+    };
 
-    #cqt_render(delta_time) {
+    #cqt_render = (delta_time) => {
         const buffer_delta = (this.#ring_write - this.#cqt.fft_size - this.#ring_read) & this.#ring_mask;
         const ideal_delta = delta_time !== delta_time ? buffer_delta : delta_time * this.#audio_ctx.sampleRate / 1000;
         const delta = this.#calc_delta(buffer_delta, ideal_delta);
@@ -442,7 +445,7 @@ class ShowCQTElement extends HTMLElement {
 
         this.#sono_dirty_h = is_silent ? this.#sono_dirty_h - this.#speed : this.#sono_h + 2 * this.#speed;
         this.#canvas_is_dirty = true;
-    }
+    };
 
     // ring buffer
     #ring_buffer;
@@ -451,7 +454,7 @@ class ShowCQTElement extends HTMLElement {
     #ring_read;
     #ring_mask;
 
-    #ring_buffer_write(data) {
+    #ring_buffer_write = (data) => {
         const len = data[0].length, size = this.#ring_size;
         const w = this.#ring_write, mask = this.#ring_mask, buf = this.#ring_buffer;
 
@@ -467,9 +470,9 @@ class ShowCQTElement extends HTMLElement {
 
         this.#ring_write = (w + len) & mask;
 
-    }
+    };
 
-    #ring_buffer_read(idx) {
+    #ring_buffer_read = (idx) => {
         const len = this.#cqt.fft_size, size = this.#ring_size;
         const mask = this.#ring_mask, buf = this.#ring_buffer, dst = this.#cqt.inputs;
 
@@ -482,7 +485,7 @@ class ShowCQTElement extends HTMLElement {
                 dst[c].set(buf[c].subarray(0, idx + len - size), size - idx);
             }
         }
-    }
+    };
 }
 
 if (CustomElementRegistry.prototype.get.call(customElements, "showcqt-element"))
