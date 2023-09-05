@@ -40,12 +40,16 @@ The available settings:
 - **Brightness:** Set the brightness of the visualizer. The value is between `1` and `70`. The default value is `17`.
 - **Bass:** Set the bass attenuation in dB. The value is between `-50` and `0`. The default value is `-30`.
 - **Speed:** Set the speed of the waterfall. The value is between `1` and `12`. The default value is `2`.
-  Without frame drops, the speed of the waterfall is `speed * monitor_refresh_rate / interval` pixels/s.
+  Without frame drops, the speed of the waterfall is `speed * monitor_refresh_rate / interval * 100 / scale_y` pixels/s.
 - **Mic:** Allow microphone input. The value of `20` means `4x` gain, `30` means `9x` gain. The default value is `0 (disabled)`.
 - **Mic Pan:** Pan microphone input to the left `(-10)` or right `(10)`. The default value is `0`.
 - **Interval:** Set the frame rate interval. The value is between `1` and `4`. The default value is `1`.
   Without frame drops, the frame rate of the visualizer is `monitor_refresh_rate / interval`. This is a useful option
   on a high refresh rate monitor (e.g 240 Hz monitor).
+- **Scale X:** Set canvas horizontal scale (in percents). Lower value reduces CPU usage but image quality is also reduced.
+  The value is between `30` and `100`. The default value is `100`.
+- **Scale Y:** Set canvas vertical scale (in percents). Lower value reduces CPU usage but image quality is also reduced.
+  This also affects waterfall speed. The value is between `30` and `100`. The default value is `100`.
 - **Codecs:** Set allowed codecs to mitigate unsmooth experience. The default value is `Block AV1`. If
   your machine is powerful enough, you probably want to set it to `All`. If your machine has H.264 accelerated
   video playback but no VP9 accelerated playback, you probably want to set it to `Only H.264`.

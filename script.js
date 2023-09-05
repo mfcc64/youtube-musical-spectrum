@@ -16,6 +16,8 @@ import "./modules/showcqt-element.mjs";
         speed:      { def:  2, min:  1, max: 12 },
         mic:        { def:  0, min:  0, max: 30 },
         mic_pan:    { def:  0, min:-10, max: 10 },
+        scale_x:    { def:100, min: 30, max:100 },
+        scale_y:    { def:100, min: 30, max:100 },
         interval:   { def:  1, min:  1, max:  4 },
         codecs:     { def:  1, min:  0, max:  2 },
         transparent:{ def:  1, min:  0, max:  1 },
@@ -80,7 +82,8 @@ import "./modules/showcqt-element.mjs";
                 <li>Press <b>Ctrl+Alt+G</b> as a shortcut to show/hide visualization.</li>
                 <li>If you want to change the axis, click it.</li>
                 <li>If you want to make your change persistent, click <b>Set as Default Settings</b> button.</li>
-                <li><b>New Features:</b> Hz-scale axis, microphone support, YT Music support.</li>
+                <li><b>New Features:</b> Hz-scale axis, microphone support, YT Music support, scale options to
+                reduce CPU usage.</li>
                 <li><a href="https://github.com/mfcc64/youtube-musical-spectrum#settings" target="_blank">Read more...</a></li>
             </ul>
             <p>
@@ -99,7 +102,7 @@ import "./modules/showcqt-element.mjs";
         </div>`;
     setTimeout(() => af_links.style.opacity = "", 15000);
 
-    const message_version = 5;
+    const message_version = 6;
     af_links.shadowRoot.getElementById("message").style.display = get_opt("message_version") == message_version ? "none" : "block";
     af_links.shadowRoot.getElementById("close_message").addEventListener("click", function() {
         set_opt("message_version", message_version);
@@ -298,6 +301,8 @@ import "./modules/showcqt-element.mjs";
             }
         });
         create_child_range_menu("Mic Pan", "mic_pan", (child) => mic.pan.pan.value = child.value / 10);
+        create_child_range_menu("Scale X", "scale_x", (child) => cqt.dataset.scaleX = child.value);
+        create_child_range_menu("Scale Y", "scale_y", (child) => cqt.dataset.scaleY = child.value);
         create_child_range_menu("Interval", "interval", (child) => cqt.dataset.interval = child.value);
 
         function create_child_select_codecs() {
