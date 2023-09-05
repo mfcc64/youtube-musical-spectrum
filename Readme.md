@@ -12,15 +12,15 @@ You can see not only spectrogram of YouTube video but also spectrogram of your m
 
 ## Screenshots
 
-![screenshot](screenshots/00.jpg)
+![screenshot](screenshots/00.png)
 
-![screenshot](screenshots/01.jpg)
+![screenshot](screenshots/01.png)
 
-![screenshot](screenshots/02.jpg)
+![screenshot](screenshots/02.png)
 
-![screenshot](screenshots/03.jpg)
+![screenshot](screenshots/03.png)
 
-![screenshot](screenshots/04.jpg)
+![screenshot](screenshots/04.png)
 
 ## Settings
 
