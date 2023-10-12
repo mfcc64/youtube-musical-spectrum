@@ -16,7 +16,8 @@
     "browser_specific_settings": {
         "gecko": {
             "id": "{1e41b6c3-1ae3-41eb-89fc-f5c5eb5c1301}"
-        }
+        },
+        "gecko_android": {}
     },
     "web_accessible_resources": [
         {
