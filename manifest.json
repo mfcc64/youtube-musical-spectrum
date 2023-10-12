@@ -12,6 +12,7 @@
         "24"  : "icon-24.png",
         "16"  : "icon-16.png"
     },
+    "action" : {},
     "browser_specific_settings": {
         "gecko": {
             "id": "{1e41b6c3-1ae3-41eb-89fc-f5c5eb5c1301}"
