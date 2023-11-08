@@ -38,7 +38,7 @@ const OBSERVED_ATTRIBUTES = {
 // Hopefully nobody hijacks HTMLDivElement
 const HTMLElement = Object.getPrototypeOf(HTMLDivElement);
 class ShowCQTElement extends HTMLElement {
-    static version = "1.2.1";
+    static version = "1.2.2";
 
     static global_audio_context;
 
@@ -179,7 +179,7 @@ class ShowCQTElement extends HTMLElement {
             case "data-scale-y":
                 val = Math.max(attr[name].min, Math.min(attr[name].max, isNaN(val*1) ? attr[name].def : val*1));
                 if (prop == "interval" || prop == "speed") val = Math.round(val);
-                if (prop == "waterfall" || prop == "scale-x" || prop == "scale-y") p.layout_changed = (p[prop] !== val);
+                if (prop == "waterfall" || prop == "scale-x" || prop == "scale-y") p.layout_changed = p.layout_changed || (p[prop] !== val);
                 (prop == "bass") ? p.iir.gain.value = val : p[prop] = val;
                 break;
             case "data-opacity":
