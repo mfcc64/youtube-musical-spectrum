@@ -19,7 +19,7 @@
 // https://github.com/mfcc64/showcqt-element
 
 // FIXME
-import ShowCQT from "./showcqt.mjs";
+import ShowCQT from "../showcqt@1.2.1/showcqt.mjs";
 
 const OBSERVED_ATTRIBUTES = {
     "data-axis":        { def: String(new URL("axis-1920x32.png", import.meta.url)) },
@@ -38,7 +38,7 @@ const OBSERVED_ATTRIBUTES = {
 // Hopefully nobody hijacks HTMLDivElement
 const HTMLElement = Object.getPrototypeOf(HTMLDivElement);
 class ShowCQTElement extends HTMLElement {
-    static version = "1.2.2";
+    static version = "1.2.3";
 
     static global_audio_context;
 
