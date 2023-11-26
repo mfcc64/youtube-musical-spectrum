@@ -1,4 +1,4 @@
-import "./modules/showcqt-element@1.2.3/showcqt-element.mjs";
+import "./modules/showcqt-element@1.3.0/showcqt-element.mjs";
 
 (async function(){
     const current_script = import.meta.url;

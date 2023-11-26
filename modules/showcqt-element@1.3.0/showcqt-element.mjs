@@ -38,7 +38,7 @@ const OBSERVED_ATTRIBUTES = {
 // Hopefully nobody hijacks HTMLDivElement
 const HTMLElement = Object.getPrototypeOf(HTMLDivElement);
 class ShowCQTElement extends HTMLElement {
-    static version = "1.2.3";
+    static version = "1.3.0";
 
     static global_audio_context;
 
@@ -98,16 +98,11 @@ class ShowCQTElement extends HTMLElement {
             resume_audio();
         }
 
-        p.iir = p.audio_ctx.createBiquadFilter();
-        p.iir.type = "peaking";
-        p.iir.frequency.value = 10;
-        p.iir.Q.value = 0.33;
         p.panner = p.audio_ctx.createStereoPanner();
-        p.panner.connect(p.iir);
         (async () => {
             await p.audio_ctx.audioWorklet.addModule(new URL("audio-worklet.mjs", import.meta.url));
             const worklet = new AudioWorkletNode(p.audio_ctx, "send-frame");
-            p.iir.connect(worklet);
+            p.panner.connect(worklet);
             worklet.port.onmessage = (msg) => p.ring_buffer ? this.#ring_buffer_write(msg.data) : 0;
         })().catch(e => console.error(e));
 
@@ -180,7 +175,7 @@ class ShowCQTElement extends HTMLElement {
                 val = Math.max(attr[name].min, Math.min(attr[name].max, isNaN(val*1) ? attr[name].def : val*1));
                 if (prop == "interval" || prop == "speed") val = Math.round(val);
                 if (prop == "waterfall" || prop == "scale-x" || prop == "scale-y") p.layout_changed = p.layout_changed || (p[prop] !== val);
-                (prop == "bass") ? p.iir.gain.value = val : p[prop] = val;
+                (prop == "bass") ? this.#gen_iir_coeffs(val) : p[prop] = val;
                 break;
             case "data-opacity":
                 val = (val == "transparent" || val == "opaque") ? val : attr[name].def;
@@ -412,22 +407,29 @@ class ShowCQTElement extends HTMLElement {
         p.canvas_is_dirty = true;
     };
 
+    #gen_iir_coeffs = (dB) => {
+        const p = this.#private;
+        const sqrt_A = 10 ** (dB/40);
+        const unit = 2 * Math.PI * (33 / p.audio_ctx.sampleRate);
+        p.iir_coeffs[0] = -1 + unit * sqrt_A;
+        p.iir_coeffs[1] = -1 + unit / sqrt_A;
+    };
+
     #ring_buffer_write = (data) => {
         const p = this.#private;
         const len = data[0].length, size = p.ring_size;
-        const w = p.ring_write, mask = p.ring_mask, buf = p.ring_buffer;
+        const mask = p.ring_mask, buf = p.ring_buffer;
+        const ic = p.iir_coeffs;
+        let w = p.ring_write;
 
-        if (w + len <= size) {
-            buf[0].set(data[0], w);
-            buf[1].set(data[1], w);
-        } else {
-            for (let c = 0; c < 2; c++) {
-                buf[c].set(data[c].subarray(0, size - w), w);
-                buf[c].set(data[c].subarray(size - w), 0);
-            }
+        for (let x = 0; x < len; x++, w = (w + 1) & mask) {
+            buf[0][w] = ic[4] = data[0][x] + (ic[0] * ic[2] - ic[1] * ic[4]);
+            buf[1][w] = ic[5] = data[1][x] + (ic[0] * ic[3] - ic[1] * ic[5]);
+            ic[2] = data[0][x];
+            ic[3] = data[1][x];
         }
 
-        p.ring_write = (w + len) & mask;
+        p.ring_write = w;
 
     };
 
@@ -480,7 +482,6 @@ class ShowCQTElement extends HTMLElement {
         // context
         cqt: null,
         audio_ctx: null,
-        iir: null,
         panner: null,
 
         // render state
@@ -494,6 +495,7 @@ class ShowCQTElement extends HTMLElement {
         last_time: NaN,
 
         // ring buffer
+        iir_coeffs: new Float64Array(6),
         ring_buffer: null,
         ring_size: 0,
         ring_write: 0,
