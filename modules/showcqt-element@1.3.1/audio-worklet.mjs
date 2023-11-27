@@ -17,9 +17,11 @@
  */
 
 class SendFrameProcessor extends AudioWorkletProcessor {
-    process(inputs) {
+    process(inputs, outputs) {
         if (inputs?.[0]?.[1]?.length)
             this.port.postMessage(inputs[0]);
+        else if (outputs?.[0]?.[1]?.length)
+            this.port.postMessage(outputs[0]);
         return true;
     }
 }

@@ -38,7 +38,7 @@ const OBSERVED_ATTRIBUTES = {
 // Hopefully nobody hijacks HTMLDivElement
 const HTMLElement = Object.getPrototypeOf(HTMLDivElement);
 class ShowCQTElement extends HTMLElement {
-    static version = "1.3.0";
+    static version = "1.3.1";
 
     static global_audio_context;
 
@@ -101,7 +101,7 @@ class ShowCQTElement extends HTMLElement {
         p.panner = p.audio_ctx.createStereoPanner();
         (async () => {
             await p.audio_ctx.audioWorklet.addModule(new URL("audio-worklet.mjs", import.meta.url));
-            const worklet = new AudioWorkletNode(p.audio_ctx, "send-frame");
+            const worklet = new AudioWorkletNode(p.audio_ctx, "send-frame", { outputChannelCount: [2] });
             p.panner.connect(worklet);
             worklet.port.onmessage = (msg) => p.ring_buffer ? this.#ring_buffer_write(msg.data) : 0;
         })().catch(e => console.error(e));
