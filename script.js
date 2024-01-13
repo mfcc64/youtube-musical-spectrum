@@ -138,7 +138,10 @@ import "./modules/showcqt-element@1.3.1/showcqt-element.mjs";
 
     function ytmusic_layout() {
         const style = document.createElement("style");
-        style.textContent = "ytmusic-player-bar { z-index: 12 !important; }";
+        style.textContent = `
+            ytmusic-player-bar { z-index: 12 !important; }
+            #main-panel { align-items: flex-start !important; }
+            #player { margin-top: 0 !important; }`;
         document.head.appendChild(style);
         af_links.style.zIndex = 11;
         af_links.style.bottom = "calc(var(--ytmusic-player-bar-height, 0) + 8px)";
