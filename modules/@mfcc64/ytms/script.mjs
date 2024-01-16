@@ -1,10 +1,11 @@
-import "./modules/showcqt-element@1.3.1/showcqt-element.mjs";
+import "../../showcqt-element@1.3.1/showcqt-element.mjs";
 
 (async function(){
     const current_script = import.meta.url;
+    const get_asset = (name) => String(new URL(`../ytms-assets@1.0.0/${name}`, current_script));
     const axis_list = [
         "",
-        `${new URL("axis-hz-1920x32.png", current_script)}`
+        get_asset("axis-hz-1920x32.png")
     ];
 
     const defaults = {
@@ -57,7 +58,7 @@ import "./modules/showcqt-element@1.3.1/showcqt-element.mjs";
         element.style.zIndex = z_index;
     }
 
-    const icon_16 = `${new URL("icon-16.png", current_script)}`;
+    const icon_16 = get_asset("icon-16.png");
     const af_links = document.createElement("div");
     set_fixed_style(af_links, 10000001);
     af_links.style.padding = "8px";
@@ -183,7 +184,7 @@ import "./modules/showcqt-element@1.3.1/showcqt-element.mjs";
         menu.style.lineHeight = "0px";
         menu.title = "YouTube Musical Spectrum";
         var menu_img = document.createElement("img");
-        menu_img.src = new URL("icon-24.png", current_script);
+        menu_img.src = get_asset("icon-24.png");
         menu_img.alt = "Menu";
         menu.appendChild(menu_img);
         var menu_is_hidden = true;

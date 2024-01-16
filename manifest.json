@@ -5,12 +5,12 @@
     "description" : "Audio visualizer for YouTube and YT Music with musical notes.",
     "version" : "7.2.0",
     "icons" : {
-        "128" : "icon-128.png",
-        "64"  : "icon-64.png",
-        "48"  : "icon-48.png",
-        "32"  : "icon-32.png",
-        "24"  : "icon-24.png",
-        "16"  : "icon-16.png"
+        "128" : "modules/@mfcc64/ytms-assets@1.0.0/icon-128.png",
+        "64"  : "modules/@mfcc64/ytms-assets@1.0.0/icon-64.png",
+        "48"  : "modules/@mfcc64/ytms-assets@1.0.0/icon-48.png",
+        "32"  : "modules/@mfcc64/ytms-assets@1.0.0/icon-32.png",
+        "24"  : "modules/@mfcc64/ytms-assets@1.0.0/icon-24.png",
+        "16"  : "modules/@mfcc64/ytms-assets@1.0.0/icon-16.png"
     },
     "action" : {},
     "browser_specific_settings": {
