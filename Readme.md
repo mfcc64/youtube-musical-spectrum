@@ -33,8 +33,8 @@ You can see not only spectrogram of YouTube video but also spectrogram of your m
 ## Settings
 
 Basic usage:
-- Click the ![Settings](icon-16.png) icon at the top left corner to open/close settings.
-- Press **Ctrl+Alt+H** to open/close settings and show/hide the ![Settings](icon-16.png) icon.
+- Click the ![Settings](modules/@mfcc64/ytms-assets@1.0.0/icon-16.png) icon at the top left corner to open/close settings.
+- Press **Ctrl+Alt+H** to open/close settings and show/hide the ![Settings](modules/@mfcc64/ytms-assets@1.0.0/icon-16.png) icon.
 - Press **Ctrl+Alt+G** as a shortcut to show/hide visualization.
 - If you want to change the axis, click it.
 - If you want to make your change persistent, click **Set as Default Settings** button.
