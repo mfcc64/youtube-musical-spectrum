@@ -22,7 +22,7 @@
     "web_accessible_resources": [
         {
             "matches"   : [ "https://www.youtube.com/*", "https://music.youtube.com/*" ],
-            "resources" : [ "*.png", "/script.js", "/modules/*.mjs" ]
+            "resources" : [ "*.png", "/modules/*.mjs", "/modules/*.wasm" ]
         }
     ],
     "content_scripts" : [

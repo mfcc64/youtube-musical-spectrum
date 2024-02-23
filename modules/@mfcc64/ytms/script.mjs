@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-import "../../showcqt-element@1.3.1/showcqt-element.mjs";
+import "../../showcqt-element@2/showcqt-element.mjs";
 
 (async function(){
     const current_script = import.meta.url;
