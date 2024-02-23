@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-import "../../showcqt-element@2/showcqt-element.mjs";
+import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/showcqt-element.mjs";
 
 (async function(){
     const current_script = import.meta.url;
@@ -131,7 +131,7 @@ import "../../showcqt-element@2/showcqt-element.mjs";
         af_links.shadowRoot.getElementById("message").style.display = "block";
     });
 
-    const cqt = document.createElement("showcqt-element");
+    const cqt = new ShowCQTElement(new AutoResumeAudioContext({sampleRate: 48000}));
     set_fixed_style(cqt, 9999999);
     cqt.style.left = cqt.style.bottom = 0;
     cqt.style.width = "100%";
