@@ -25,7 +25,7 @@ const IMPORT = m => import(m);
 async function compile(url) {
     var buf;
     try { buf = await (await fetch(url)).arrayBuffer(); }
-    catch (e) { buf = await (await IMPORT("node:fs/promises")).readFile(url.pathname); }
+    catch (e) { buf = await (await IMPORT("node:fs/promises")).readFile(url); }
     return WebAssembly.compile(buf);
 }
 
@@ -105,6 +105,6 @@ var ShowCQT = {
     }
 };
 
-ShowCQT.version = "2.0.1";
+ShowCQT.version = "2.0.2";
 export { ShowCQT };
 export default ShowCQT;
