@@ -37,6 +37,9 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
         mic_pan:    { def:  0, min:-10, max: 10 },
         scale_x:    { def:100, min: 30, max:100 },
         scale_y:    { def:100, min: 30, max:100 },
+        left_color: { def:0xdcb900, min:0, max:0xffffff },
+        right_color:{ def:0x00b9dc, min:0, max:0xffffff },
+        mid_color:  { def:0xdcdcdc, min:0, max:0xffffff },
         interval:   { def:  1, min:  1, max:  4 },
         codecs:     { def:  1, min:  0, max:  2 },
         transparent:{ def:  1, min:  0, max:  1 },
@@ -102,7 +105,7 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
                 <li>If you want to change the axis, click it.</li>
                 <li>If you want to make your change persistent, click <b>Set as Default Settings</b> button.</li>
                 <li><b>New Features:</b> Hz-scale axis, microphone support, YT Music support, scale options to
-                reduce CPU usage.</li>
+                reduce CPU usage, custom color.</li>
                 <li><a href="https://github.com/mfcc64/youtube-musical-spectrum#settings" target="_blank">Read more...</a></li>
             </ul>
             <p>
@@ -121,7 +124,7 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
         </div>`;
     setTimeout(() => af_links.style.opacity = "", 15000);
 
-    const message_version = 6;
+    const message_version = 7;
     af_links.shadowRoot.getElementById("message").style.display = get_opt("message_version") == message_version ? "none" : "block";
     af_links.shadowRoot.getElementById("close_message").addEventListener("click", function() {
         set_opt("message_version", message_version);
@@ -224,20 +227,15 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
         menu_div.style.cursor = "default";
 
         var current_tr = null;
+        var current_tr_count = 0;
 
         function get_menu_table_tr() {
-            if (current_tr)
-                return current_tr;
-            return document.createElement("tr");
-        }
-
-        function append_menu_table_tr(tr) {
-            if (current_tr) {
-                current_tr = null;
-            } else {
-                menu_table.appendChild(tr);
-                current_tr = tr;
-            }
+            if (current_tr && current_tr_count < 3)
+                return current_tr_count++, current_tr;
+            current_tr_count = 1;
+            current_tr = document.createElement("tr");
+            menu_table.appendChild(current_tr);
+            return current_tr;
         }
 
         function set_common_tr_style(tr) {
@@ -279,7 +277,6 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
             child_text.style.textAlign = "right";
             child_text.style.width = "32px";
             child.onchange();
-            append_menu_table_tr(tr);
         }
 
         const mic = { };
@@ -323,9 +320,70 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
             }
         });
         create_child_range_menu("Mic Pan", "mic_pan", (child) => mic.pan.pan.value = child.value / 10);
+        create_child_range_menu("Interval", "interval", (child) => cqt.dataset.interval = child.value);
         create_child_range_menu("Scale X", "scale_x", (child) => cqt.dataset.scaleX = child.value);
         create_child_range_menu("Scale Y", "scale_y", (child) => cqt.dataset.scaleY = child.value);
-        create_child_range_menu("Interval", "interval", (child) => cqt.dataset.interval = child.value);
+        create_child_select_codecs();
+
+        const number2color = n => "#" + (n|0).toString(16).padStart(6, "0");
+        const color2number = c => Number.parseInt(c.slice(1), 16);
+        const color_int = [ 0, 0, 0 ];
+        const color_table = new Array(9);
+
+        function create_child_color_menu(title, name, callback) {
+            var tr = get_menu_table_tr();
+            set_common_tr_style(tr);
+            var td = document.createElement("td");
+            set_common_left_td_style(td);
+            td.textContent = title;
+            tr.appendChild(td);
+            td = document.createElement("td");
+            td.colSpan = 2;
+            var child = child_menu[name] = document.createElement("input");
+            child.style.cursor = "pointer";
+            child.type = "color";
+            child.value = number2color(get_opt(name));
+            child.onchange = function() {
+                callback?.(child);
+                update_color_table();
+            };
+            child.oninput = child.onchange;
+            td.appendChild(child);
+            tr.appendChild(td);
+            child.onchange();
+        }
+
+        function update_color_table() {
+            const k = 0xb9/0xdc;
+            const color_tmp = new Array(9);
+            for (let x = 0; x < 3; x++) {
+                color_tmp[3*x] = ((color_int[x] >> 16) & 0xff) / 0xdc;
+                color_tmp[3*x+1] = ((color_int[x] >> 8) & 0xff) / 0xdc;
+                color_tmp[3*x+2] = (color_int[x] & 0xff) / 0xdc;
+            }
+
+            for (let x = 0; x < 3; x++) {
+                color_table[3+x] = (color_tmp[0+x] + color_tmp[6+x] - color_tmp[3+x]) / (2 * k - 1);
+                color_table[0+x] = color_tmp[0+x] - k * color_table[3+x];
+                color_table[6+x] = color_tmp[6+x] - k * color_table[3+x];
+            }
+        }
+
+        create_child_color_menu("Left Color", "left_color", child => color_int[0] = color2number(child.value));
+        create_child_color_menu("Mid Color", "mid_color", child => color_int[1] = color2number(child.value));
+        create_child_color_menu("Right Color", "right_color", child => color_int[2] = color2number(child.value));
+
+        cqt.actual_render_callback = function(color) {
+            if (color_int[0] == 0xdcb900 && color_int[1] == 0xdcdcdc && color_int[2] == 0x00b9dc)
+                return;
+
+            for (let x = 0; x < color.length; x += 4) {
+                const left = color[x], mid = color[x+1], right = color[x+2];
+                color[x  ] = color_table[0] * left + color_table[3] * mid + color_table[6] * right;
+                color[x+1] = color_table[1] * left + color_table[4] * mid + color_table[7] * right;
+                color[x+2] = color_table[2] * left + color_table[5] * mid + color_table[8] * right;
+            }
+        }
 
         function create_child_select_codecs() {
             var tr = get_menu_table_tr();
@@ -348,7 +406,6 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
             child.value = get_opt("codecs");
             td.appendChild(child);
             tr.appendChild(td);
-            append_menu_table_tr(tr);
             child.onchange = function() {};
             const old_func = MediaSource.isTypeSupported;
             MediaSource.isTypeSupported = function (mime_type) {
@@ -367,9 +424,6 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
                 return old_func.call(this, mime_type);
             }
         }
-        create_child_select_codecs();
-
-        current_tr = null;
 
         function create_child_checkbox_menu(title, name, callback) {
             var tr = get_menu_table_tr();
@@ -391,13 +445,13 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
             child.onchange();
             td.appendChild(child);
             tr.appendChild(td);
-            append_menu_table_tr(tr);
         }
 
         create_child_checkbox_menu("Transparent", "transparent", (child) => cqt.dataset.opacity = child.checked ? "transparent" : "opaque");
-
         create_child_checkbox_menu("Visible", "visible", (child) => af_links.style.display = cqt.style.display = child.checked ? "block" : "none");
 
+        current_tr = null;
+        set_common_tr_style(get_menu_table_tr());
         current_tr = null;
 
         function create_child_button_menu(title, callback) {
@@ -418,13 +472,14 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
             };
             td.appendChild(child);
             tr.appendChild(td);
-            append_menu_table_tr(tr);
         }
 
         create_child_button_menu("Reset Settings", function() {
             for (const name in child_menu) {
                 if (child_menu[name].type == "checkbox")
                     child_menu[name].checked = get_opt(name) * 1;
+                else if(child_menu[name].type == "color")
+                    child_menu[name].value = number2color(get_opt(name));
                 else
                     child_menu[name].value = get_opt(name);
                 child_menu[name].onchange();
@@ -435,7 +490,9 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
             child.value = "Saving...";
             for (const name in child_menu) {
                 if (child_menu[name].type == "checkbox")
-                    set_opt(name, child_menu[name].checked)
+                    set_opt(name, child_menu[name].checked);
+                else if (child_menu[name].type == "color")
+                    set_opt(name, color2number(child_menu[name].value));
                 else
                     set_opt(name, child_menu[name].value);
             }
