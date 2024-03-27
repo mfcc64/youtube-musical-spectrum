@@ -61,6 +61,9 @@ The available settings:
 - **Codecs:** Set allowed codecs to mitigate unsmooth experience. The default value is `Block AV1`. If
   your machine is powerful enough, you probably want to set it to `All`. If your machine has H.264 accelerated
   video playback but no VP9 accelerated playback, you probably want to set it to `Only H.264`.
+- **Left Color:** Set left color. The default value is `#dcb900`.
+- **Mid Color:** Set middle color. The default value is `#dcdcdc`.
+- **Right Color:** Set right color. The default value is `#00b9dc`.
 - **Transparent:** Set the transparency of the visualizer. The default value is set to `true`.
 - **Visible:** Set the visibility of the visualizer. The default value is set to `true`.
 - **Reset Settings:** Reset settings to the default values (Note that the default values can be changed).
