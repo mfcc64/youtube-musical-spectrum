@@ -466,24 +466,25 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
         set_common_tr_style(get_menu_table_tr());
         current_tr = null;
 
+        var child_buttons_td = document.createElement("td");
+        child_buttons_td.colSpan = 4 * 3;
+        child_buttons_td.style.textAlign = "right";
+        get_menu_table_tr().appendChild(child_buttons_td);
+
         function create_child_button_menu(title, callback) {
-            var tr = get_menu_table_tr();
-            //set_common_tr_style(tr);
-            var td = document.createElement("td");
-            set_common_left_td_style(td);
-            td.colSpan = 4;
             var child = document.createElement("input");
             child.type = "button";
             child.value = title;
             child.style.cursor = "pointer";
             child.style.fontFamily = "inherit";
             child.style.fontSize = "inherit";
+            child.style.marginLeft = "8px";
+            child.style.width = "180px";
             child.onclick = function() {
                 if (callback)
                     callback(child);
             };
-            td.appendChild(child);
-            tr.appendChild(td);
+            child_buttons_td.appendChild(child);
         }
 
         create_child_button_menu("Reset Settings", function() {
