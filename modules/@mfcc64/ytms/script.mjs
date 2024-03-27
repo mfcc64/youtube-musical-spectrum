@@ -255,9 +255,12 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
             td.textContent = title;
             tr.appendChild(td);
             td = document.createElement("td");
+            td.style.width = "120px";
+            td.colSpan = 2;
             var child = child_menu[name] = document.createElement("input");
             var child_text = document.createElement("td");
             child.style.cursor = "pointer";
+            child.style.width = "100%";
             child.type = "range";
             child.min = defaults[name].min;
             child.max = defaults[name].max;
@@ -338,18 +341,25 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
             td.textContent = title;
             tr.appendChild(td);
             td = document.createElement("td");
-            td.colSpan = 2;
+            td.style.width = "80px";
+            var child_text = document.createElement("td");
+            child_text.style.textAlign = "right";
+            child_text.colSpan = 2;
             var child = child_menu[name] = document.createElement("input");
             child.style.cursor = "pointer";
+            child.style.width = "100%";
             child.type = "color";
             child.value = number2color(get_opt(name));
             child.onchange = function() {
+                child_text.textContent = child.value;
+                child.textContent = child.value;
                 callback?.(child);
                 update_color_table();
             };
             child.oninput = child.onchange;
             td.appendChild(child);
             tr.appendChild(td);
+            tr.appendChild(child_text);
             child.onchange();
         }
 
@@ -396,6 +406,7 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
             td.colSpan = 2;
             var child = child_menu["codecs"] = document.createElement("select");
             child.style.cursor = "pointer";
+            child.style.width = "100%";
             var select_opt = [ "All", "Block AV1", "Only H.264" ];
             for (var k = 0; k < select_opt.length; k++) {
                 var opt = document.createElement("option");
@@ -406,6 +417,7 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
             child.value = get_opt("codecs");
             td.appendChild(child);
             tr.appendChild(td);
+            tr.appendChild(document.createElement("td"));
             child.onchange = function() {};
             const old_func = MediaSource.isTypeSupported;
             MediaSource.isTypeSupported = function (mime_type) {
@@ -433,7 +445,7 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
             td.textContent = title;
             tr.appendChild(td);
             td = document.createElement("td");
-            td.colSpan = 2;
+            td.colSpan = 3;
             var child = child_menu[name] = document.createElement("input");
             child.style.cursor = "pointer";
             child.type = "checkbox";
@@ -459,7 +471,7 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
             //set_common_tr_style(tr);
             var td = document.createElement("td");
             set_common_left_td_style(td);
-            td.colSpan = 3;
+            td.colSpan = 4;
             var child = document.createElement("input");
             child.type = "button";
             child.value = title;
