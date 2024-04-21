@@ -7,8 +7,8 @@ You can see not only spectrogram of YouTube video but also spectrogram of your m
 
 ## Install
 
-- Google Chrome: [YouTube Musical Spectrum on Chrome Web Store](https://bit.ly/youtube-musical-spectrum).
-- Mozilla Firefox: [YouTube Musical Spectrum on AMO](https://addons.mozilla.org/en-US/firefox/addon/youtube-musical-spectrum/).
+- Google Chrome: [YouTube Musical Spectrum on Chrome Web Store](https://mfcc64.github.io/ytms/#chrome).
+- Mozilla Firefox: [YouTube Musical Spectrum on AMO](https://mfcc64.github.io/ytms/#firefox).
 - Bookmarklet, on platform that doesn't support browser extension (such as Google Chrome Android),
   you can run YouTube Musical Spectrum using one of these bookmarklets:
     ```
