@@ -31,14 +31,6 @@ async function compile(url) {
 
 let wasm_module_promise = null;
 let wasm_simd_module_promise = compile(new URL("showcqt-simd.wasm", import.meta.url));
-let wasm_imports = {
-    env: {
-        cos: Math.cos,
-        sin: Math.sin,
-        log: Math.log,
-        exp: Math.exp
-    }
-};
 
 let invalid_func = function() {
     throw new Error("ShowCQT is not initialized");
@@ -64,9 +56,18 @@ var ShowCQT = {
         var simd = true;
         if (opt && opt.simd !== undefined)
             simd = opt.simd;
+
+        var env = {
+            cos: Math.cos,
+            sin: Math.sin,
+            log: Math.log,
+            exp: Math.exp,
+            memory_expand
+        };
+
         if (simd) {
             try {
-                instance = await WebAssembly.instantiate(await wasm_simd_module_promise, wasm_imports);
+                instance = await WebAssembly.instantiate(await wasm_simd_module_promise, {env});
             } catch(e) {
                 console.warn(`Failed to instantiate SIMD code. ${e.name}: ${e.message}. Fallback to legacy code.`);
             }
@@ -74,10 +75,29 @@ var ShowCQT = {
         if (!instance) {
             if (!wasm_module_promise)
                 wasm_module_promise = compile(new URL("showcqt.wasm", import.meta.url));
-            instance = await WebAssembly.instantiate(await wasm_module_promise, wasm_imports);
+            instance = await WebAssembly.instantiate(await wasm_module_promise, {env});
         }
         var exports = instance.exports;
-        var buffer = exports.memory.buffer;
+        var memory = exports.memory;
+        var start_ptr = memory.buffer.byteLength;
+        var curr_ptr = start_ptr;
+        var avail_size = 0;
+
+        function memory_expand(size) {
+            if (size < 0) {
+                avail_size += curr_ptr - start_ptr;
+                curr_ptr = start_ptr;
+                return 0;
+            }
+
+            while (avail_size < size)
+                memory.grow(1), avail_size += 65536;
+
+            var ret_ptr = curr_ptr;
+            curr_ptr += size;
+            avail_size -= size;
+            return ret_ptr;
+        }
 
         var retval = {
             init: function(rate, width, height, bar_v, sono_v, supersampling) {
@@ -87,11 +107,11 @@ var ShowCQT = {
                     throw new Error("ShowCQT init: cannot initialize ShowCQT");
                 this.width = width;
                 this.inputs = [
-                    new Float32Array(buffer, exports.get_input_array(0), this.fft_size),
-                    new Float32Array(buffer, exports.get_input_array(1), this.fft_size)
+                    new Float32Array(memory.buffer, exports.get_input_array(0), this.fft_size),
+                    new Float32Array(memory.buffer, exports.get_input_array(1), this.fft_size)
                 ];
-                this.color = new Float32Array(buffer, exports.get_color_array(), this.width * 4);
-                this.output = new Uint8ClampedArray(buffer, exports.get_output_array(), this.width * 4);
+                this.color = new Float32Array(memory.buffer, exports.get_color_array(), this.width * 4);
+                this.output = new Uint8ClampedArray(memory.buffer, exports.get_output_array(), this.width * 4);
                 this.calc = exports.calc;
                 this.render_line_alpha = exports.render_line_alpha;
                 this.render_line_opaque = exports.render_line_opaque;
@@ -105,6 +125,6 @@ var ShowCQT = {
     }
 };
 
-ShowCQT.version = "2.1.0";
+ShowCQT.version = "2.2.0";
 export { ShowCQT };
 export default ShowCQT;
