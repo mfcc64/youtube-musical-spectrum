@@ -23,10 +23,8 @@
 
 const IMPORT = m => import(m);
 async function compile(url) {
-    var buf;
-    try { buf = await (await fetch(url)).arrayBuffer(); }
-    catch (e) { buf = await (await IMPORT("node:fs/promises")).readFile(url); }
-    return WebAssembly.compile(buf);
+    try { return WebAssembly.compileStreaming(await fetch(url)); }
+    catch { return WebAssembly.compile((await IMPORT("node:fs")).readFileSync(url)); }
 }
 
 let wasm_module_promise = null;
@@ -125,6 +123,6 @@ var ShowCQT = {
     }
 };
 
-ShowCQT.version = "2.2.0";
+ShowCQT.version = "2.2.1";
 export { ShowCQT };
 export default ShowCQT;
