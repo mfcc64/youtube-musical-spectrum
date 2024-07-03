@@ -48,7 +48,7 @@ const OBSERVED_ATTRIBUTES = {
 // Hopefully nobody hijacks HTMLDivElement
 const HTMLElement = Object.getPrototypeOf(HTMLDivElement);
 class ShowCQTElement extends HTMLElement {
-    static version = "2.0.0";
+    static version = "2.0.1";
 
     static global_audio_context;
 
@@ -100,7 +100,7 @@ class ShowCQTElement extends HTMLElement {
         p.panner = p.audio_ctx.createStereoPanner();
         (async () => {
             await p.audio_ctx.audioWorklet.addModule(new URL("audio-worklet.mjs", import.meta.url));
-            const worklet = new AudioWorkletNode(p.audio_ctx, "send-frame", { outputChannelCount: [2] });
+            const worklet = new AudioWorkletNode(p.audio_ctx, "showcqt-element--send-frame", { outputChannelCount: [2] });
             p.panner.connect(worklet);
             worklet.port.onmessage = (msg) => p.ring_buffer ? this.#ring_buffer_write(msg.data) : 0;
         })().catch(e => console.error(e));
@@ -501,22 +501,15 @@ class ShowCQTElement extends HTMLElement {
         ring_read: 0,
         ring_mask: 0
     };
+
+    static #name = (() => {
+        for (let m = 0; m < 100; m++) {
+            const name = `showcqt-element${ m ? "--" + m : "" }`;
+            try { CustomElementRegistry.prototype.define.call(customElements, name, this); return name; }
+            catch { m || console.warn("multiple definition of showcqt-element"); }
+        }
+        throw new Error("unable to register showcqt-element");
+    })();
 }
-
-let is_defined = false;
-for (let m = 0; m < 100; m++) {
-    let name = `showcqt-element${ m ? "--" + m : "" }`;
-
-    if (!CustomElementRegistry.prototype.get.call(customElements, name)) {
-        CustomElementRegistry.prototype.define.call(customElements, name, ShowCQTElement);
-        is_defined = true;
-        break;
-    }
-
-    m || console.warn("multiple definition of showcqt-element");
-}
-
-if (!is_defined)
-    throw new Error("Unable to register showcqt-element");
 
 export {ShowCQTElement, AutoResumeAudioContext};

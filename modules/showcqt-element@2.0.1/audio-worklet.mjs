@@ -26,4 +26,4 @@ class SendFrameProcessor extends AudioWorkletProcessor {
     }
 }
 
-registerProcessor("send-frame", SendFrameProcessor);
+registerProcessor("showcqt-element--send-frame", SendFrameProcessor);
