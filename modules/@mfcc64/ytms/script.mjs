@@ -90,38 +90,51 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
     af_links.style.right = "8px";
     af_links.style.bottom = "8px";
     af_links.style.opacity = 1;
-    af_links.attachShadow({mode: "open"}).innerHTML =
-        `<style>
-            :host { opacity: 0; max-width: 700px; }
-            :host(:hover) { opacity: 1; }
-            img { vertical-align: middle; }
-        </style>
-        <div id="message">
-            <h3>YouTube Musical Spectrum</h3>
-            <ul>
-                <li>Click the <img alt="YTMS" src="${icon_16}"/> icon at the top left corner to open/close settings.</li>
-                <li>Press <b>Ctrl+Alt+H</b> to open/close settings and show/hide the <img alt="YTMS" src="${icon_16}"/> icon.</li>
-                <li>Press <b>Ctrl+Alt+G</b> as a shortcut to show/hide visualization.</li>
-                <li>If you want to change the axis, click it.</li>
-                <li>If you want to make your change persistent, click <b>Set as Default Settings</b> button.</li>
-                <li><b>New Features:</b> Hz-scale axis, microphone support, YT Music support, scale options to
-                reduce CPU usage, custom color.</li>
-                <li><a href="https://github.com/mfcc64/youtube-musical-spectrum#settings" target="_blank">Read more...</a></li>
-            </ul>
-            <p>
-                <button id="close_message" style="cursor: pointer;">Close</button>
-                (Click the <img alt="YTMS" src="${icon_16}"/> icon below to reopen again)
-            </p>
-        </div>
-        <div style="text-align: right;">
-            <img alt="YTMS" src="${icon_16}" style="cursor: pointer;" id="open_message"/>
-            Support me on
-            <a href="https://www.youtube.com/@mfcc64" target="_blank">YouTube</a>
-            <a href="https://www.patreon.com/mfcc64" target="_blank">Patreon</a>
-            <a href="https://github.com/mfcc64" target="_blank">GitHub</a>
-            <a href="https://paypal.me/mfcc64" target="_blank">PayPal</a>
-            <a href="https://saweria.co/mfcc64" target="_blank">Saweria</a>
-        </div>`;
+    af_links.style.display = "none";
+    {
+        const e = (name, ...args) => {
+            const v = document.createElement(name);
+            for (const arg of args)
+                if (typeof arg == "object" && !(arg instanceof Object.getPrototypeOf(HTMLDivElement)))
+                    v.setAttribute(...Object.entries(arg)[0])
+                else
+                    v.append(arg);
+            return v;
+        };
+        af_links.attachShadow({mode: "open"}).append(
+            e("style",
+              `:host { opacity: 0; max-width: 700px; }
+              :host(:hover) { opacity: 1; }
+              img { vertical-align: middle; }`),
+            e("div", {id: "message"},
+              e("h3", "YouTube Musical Spectrum"),
+              e("ul",
+                e("li", "Click the, ", e("img", {alt: "YTMS"}, {src: icon_16}), " icon at the top left corner to open/close settings."),
+                e("li", "Press ", e("b", "Ctrl+Alt+H"), " to open/close settings and show/hide the ", e("img", {alt: "YTMS"}, {src: icon_16}), " icon."),
+                e("li", "Press ", e("b", "Ctrl+Alt+G"), " as a shortcut to show/hide visualization."),
+                e("li", "If you want to change the axis, click it."),
+                e("li", "If you want to make your change persistent, click ", e("b", "Set as Default Settings"), " button."),
+                e("li", e("b", "New Features:"), " Hz-scale axis, microphone support, YT Music support, scale options to " +
+                    "reduce CPU usage, custom color."),
+                e("li", e("a", {href: "https://github.com/mfcc64/youtube-musical-spectrum#settings"}, {target: "_blank"}, "Read more..."))
+              ),
+              e("p",
+                e("button", {id: "close_message"}, {style: "cursor: pointer;"}, "Close"),
+                " (Click the ", e("img", {alt: "YTMS"}, {src: icon_16}), " icon below to reopen again)"
+              )
+            ),
+            e("div", {style: "text-align: right;"},
+              e("img", {alt: "YTMS"}, {src: icon_16}, {style: "curson: pointer;"}, {id: "open_message"}),
+              " Support me on ",
+              e("a", {href: "https://www.youtube.com/@mfcc64"}, {target: "_blank"}, "Youtube"), " ",
+              e("a", {href: "https://www.patreon.com/mfcc64"}, {target: "_blank"}, "Patreon"), " ",
+              e("a", {href: "https://github.com/mfcc64"}, {target: "_blank"}, "GitHub"), " ",
+              e("a", {href: "https://paypal.me/mfcc64"}, {target: "_blank"}, "PayPal"), " ",
+              e("a", {href: "https://saweria.co/mfcc64"}, {target: "_blank"}, "Saweria")
+            )
+        );
+    }
+
     setTimeout(() => af_links.style.opacity = "", 15000);
 
     const message_version = 7;
