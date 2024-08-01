@@ -48,7 +48,7 @@ const OBSERVED_ATTRIBUTES = {
 // Hopefully nobody hijacks HTMLDivElement
 const HTMLElement = Object.getPrototypeOf(HTMLDivElement);
 class ShowCQTElement extends HTMLElement {
-    static version = "2.0.1";
+    static version = "2.0.2";
 
     static global_audio_context;
 
@@ -60,39 +60,40 @@ class ShowCQTElement extends HTMLElement {
         super();
         const p = Object.seal(this.#private);
         const shadow = this.attachShadow({mode: "open"});
-        shadow.innerHTML =
-            `<style>
-                :host { display: block; width: 960px; height: 240px; pointer-events: none; }
-                * {
-                    margin: 0; padding: 0; border: 0;
-                    pointer-events: none;
-                    width: 0; height: 0;
-                    position: absolute; left: 0; bottom: 0;
-                }
+        const style = document.createElement("style");
+        style.textContent = `
+            :host { display: block; width: 960px; height: 240px; pointer-events: none; }
+            * {
+                margin: 0; padding: 0; border: 0;
+                pointer-events: none;
+                width: 0; height: 0;
+                position: absolute; left: 0; bottom: 0;
+            }
 
-                #container {
-                    position: relative;
-                    min-height: 32px; min-width: 256px;
-                    width: 100%; height: 100%;
-                }
+            #container {
+                position: relative;
+                min-height: 32px; min-width: 256px;
+                width: 100%; height: 100%;
+            }
 
-                #axis, #blocker {
-                    pointer-events: auto;
-                }
+            #axis, #blocker {
+                pointer-events: auto;
+            }
 
-                #canvas {
-                    width: auto; height: auto;
-                }
-            </style>
-            <div id="container">
-                <div id="blocker"></div>
-                <canvas id="canvas" width="0" height="0"></canvas>
-                <img id="axis"/>
-            </div>`;
+            #canvas {
+                width: auto; height: auto;
+            }`;
+        p.container = document.createElement("div"), p.container.id = "container";
+        p.blocker = document.createElement("div"), p.blocker.id = "blocker";
+        p.canvas = document.createElement("canvas"), p.canvas.id = "canvas";
+        p.axis = document.createElement("img"), p.axis.id = "axis";
+
+        p.canvas.width = p.canvas.height = 0;
+        p.container.append(p.blocker, p.canvas, p.axis);
+        shadow.append(style, p.container);
 
         (async () => { p.cqt = await ShowCQT.instantiate(); })();
-        for (const id of ["container", "blocker", "canvas", "axis"])
-            p[id] = shadow.getElementById(id);
+
         p.canvas_ctx = p.canvas.getContext("2d");
 
         p.audio_ctx = custom_ctx || ShowCQTElement.global_audio_context || new AutoResumeAudioContext();
