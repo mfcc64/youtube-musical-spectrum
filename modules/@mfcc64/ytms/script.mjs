@@ -109,7 +109,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
             e("div", {id: "message"},
               e("h3", "YouTube Musical Spectrum"),
               e("ul",
-                e("li", "Click the, ", e("img", {alt: "YTMS"}, {src: icon_16}), " icon at the top left corner to open/close settings."),
+                e("li", "Click the ", e("img", {alt: "YTMS"}, {src: icon_16}), " icon at the top left corner to open/close settings."),
                 e("li", "Press ", e("b", "Ctrl+Alt+H"), " to open/close settings and show/hide the ", e("img", {alt: "YTMS"}, {src: icon_16}), " icon."),
                 e("li", "Press ", e("b", "Ctrl+Alt+G"), " as a shortcut to show/hide visualization."),
                 e("li", "If you want to change the axis, click it."),
