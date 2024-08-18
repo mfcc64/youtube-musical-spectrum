@@ -43,7 +43,8 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         interval:   { def:  1, min:  1, max:  4 },
         codecs:     { def:  1, min:  0, max:  2 },
         transparent:{ def:  1, min:  0, max:  1 },
-        visible:    { def:  1, min:  0, max:  1 },
+        visible:    { def: document.location.hostname == "music.youtube.com" ? 1 : 0,
+                               min:  0, max:  1 },
         axis:       { def:  0, min:  0, max: axis_list.length - 1 }
     };
 
@@ -90,7 +91,6 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
     af_links.style.right = "8px";
     af_links.style.bottom = "8px";
     af_links.style.opacity = 1;
-    af_links.style.display = "none";
     {
         const e = (name, ...args) => {
             const v = document.createElement(name);
@@ -135,7 +135,16 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         );
     }
 
-    setTimeout(() => af_links.style.opacity = "", 15000);
+    let af_links_timeout = false;
+    setTimeout(() => {
+        af_links.style.opacity = "";
+        af_links_timeout = true,
+        update_af_links();
+    }, 15000);
+
+    function update_af_links() {
+        af_links.style.display = !af_links_timeout || (child_menu.visible?.checked ?? true) ? "block" : "none";
+    }
 
     const message_version = 7;
     af_links.shadowRoot.getElementById("message").style.display = get_opt("message_version") == message_version ? "none" : "block";
@@ -473,7 +482,10 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         }
 
         create_child_checkbox_menu("Transparent", "transparent", (child) => cqt.dataset.opacity = child.checked ? "transparent" : "opaque");
-        create_child_checkbox_menu("Visible", "visible", (child) => af_links.style.display = cqt.style.display = child.checked ? "block" : "none");
+        create_child_checkbox_menu("Visible", "visible", (child) => {
+            cqt.style.display = child.checked ? "block" : "none";
+            update_af_links();
+        });
 
         current_tr = null;
         set_common_tr_style(get_menu_table_tr());
