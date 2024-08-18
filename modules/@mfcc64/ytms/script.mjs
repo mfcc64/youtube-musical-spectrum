@@ -95,7 +95,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         const e = (name, ...args) => {
             const v = document.createElement(name);
             for (const arg of args)
-                if (typeof arg == "object" && !(arg instanceof Object.getPrototypeOf(HTMLDivElement)))
+                if (typeof arg == "object" && !(arg instanceof Node))
                     v.setAttribute(...Object.entries(arg)[0])
                 else
                     v.append(arg);
