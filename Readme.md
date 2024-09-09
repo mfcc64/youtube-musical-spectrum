@@ -34,9 +34,9 @@ You can see not only spectrogram of YouTube video but also spectrogram of your m
 
 Basic usage:
 - By default, the visualization is visible on YT Music page but hidden on YouTube page.
+- Press **Ctrl+Alt+G** as a shortcut to show/hide visualization. This is equivalent to check/uncheck **Visible** setting.
 - Click the ![Settings](modules/@mfcc64/ytms-assets@1.0.0/icon-16.png) icon at the top left corner to open/close settings.
 - Press **Ctrl+Alt+H** to open/close settings and show/hide the ![Settings](modules/@mfcc64/ytms-assets@1.0.0/icon-16.png) icon.
-- Press **Ctrl+Alt+G** as a shortcut to show/hide visualization. This is equivalent to check/uncheck **Visible** setting.
 - If you want to change the axis, click it.
 - If you want to make your change persistent, click **Set as Default Settings** button.
 
@@ -66,7 +66,7 @@ The available settings:
 - **Mid Color:** Set middle color. The default value is `#dcdcdc`.
 - **Right Color:** Set right color. The default value is `#00b9dc`.
 - **Transparent:** Set the transparency of the visualizer. The default value is set to `true`.
-- **Visible:** Set the visibility of the visualizer. The default value is set to `true`.
+- **Visible:** Set the visibility of the visualizer. The default value is set to `true` on YT Music and `false` on YouTube.
 - **Reset Settings:** Reset settings to the default values (Note that the default values can be changed).
 - **Set as Default Settings:** Set the current setttings as the default settings. Subsequent `Reset Settings` or new pages
   will load these settings.
