@@ -110,9 +110,9 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
               e("h3", "YouTube Musical Spectrum"),
               e("ul",
                 e("li", "By default, the visualization is visible on YT Music page but hidden on YouTube page."),
+                e("li", "Press ", e("b", "Ctrl+Alt+G"), " as a shortcut to show/hide visualization. This is equivalent to check/uncheck ", e("b", "Visible"), " setting."),
                 e("li", "Click the ", e("img", {alt: "YTMS"}, {src: icon_16}), " icon at the top left corner to open/close settings."),
                 e("li", "Press ", e("b", "Ctrl+Alt+H"), " to open/close settings and show/hide the ", e("img", {alt: "YTMS"}, {src: icon_16}), " icon."),
-                e("li", "Press ", e("b", "Ctrl+Alt+G"), " as a shortcut to show/hide visualization. This is equivalent to check/uncheck ", e("b", "Visible"), " setting."),
                 e("li", "If you want to change the axis, click it."),
                 e("li", "If you want to make your change persistent, click ", e("b", "Set as Default Settings"), " button."),
                 e("li", e("b", "New Features:"), " Hz-scale axis, microphone support, YT Music support, scale options to " +
