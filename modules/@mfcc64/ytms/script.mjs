@@ -37,6 +37,8 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         mic_pan:    { def:  0, min:-10, max: 10 },
         scale_x:    { def:100, min: 30, max:100 },
         scale_y:    { def:100, min: 30, max:100 },
+        base_note:  { def: 16, min: 16, max:100 },
+        semitones:  { def:120, min: 36, max:120 },
         left_color: { def:0xdcb900, min:0, max:0xffffff },
         right_color:{ def:0x00b9dc, min:0, max:0xffffff },
         mid_color:  { def:0xdcdcdc, min:0, max:0xffffff },
@@ -116,7 +118,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
                 e("li", "If you want to change the axis, click it."),
                 e("li", "If you want to make your change persistent, click ", e("b", "Set as Default Settings"), " button."),
                 e("li", e("b", "New Features:"), " Hz-scale axis, microphone support, YT Music support, scale options to " +
-                    "reduce CPU usage, custom color."),
+                    "reduce CPU usage, custom color, custom range."),
                 e("li", e("a", {href: "https://github.com/mfcc64/youtube-musical-spectrum#settings"}, {target: "_blank"}, "Read more..."))
               ),
               e("p",
@@ -147,7 +149,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         af_links.style.display = !af_links_timeout || (child_menu.visible?.checked ?? true) ? "block" : "none";
     }
 
-    const message_version = 8;
+    const message_version = 9;
     af_links.shadowRoot.getElementById("message").style.display = get_opt("message_version") == message_version ? "none" : "block";
     af_links.shadowRoot.getElementById("close_message").addEventListener("click", function() {
         set_opt("message_version", message_version);
@@ -350,6 +352,20 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         create_child_range_menu("Scale X", "scale_x", (child) => cqt.dataset.scaleX = child.value);
         create_child_range_menu("Scale Y", "scale_y", (child) => cqt.dataset.scaleY = child.value);
         create_child_select_codecs();
+
+        function update_range() {
+            if (!child_menu.base_note || !child_menu.semitones)
+                return;
+
+            const width = child_menu.semitones.value * 1;
+            const base = Math.min(child_menu.base_note.value - 16, 120 - width);
+            cqt.style.left = -base / width * 100 + "%";
+            cqt.style.width = 12000 / width + "%";
+        }
+
+        create_child_range_menu("Base Note", "base_note", update_range);
+        create_child_range_menu("Semitones", "semitones", update_range);
+        get_menu_table_tr();
 
         const number2color = n => "#" + (n|0).toString(16).padStart(6, "0");
         const color2number = c => Number.parseInt(c.slice(1), 16);
