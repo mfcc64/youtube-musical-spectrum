@@ -39,6 +39,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         scale_y:    { def:100, min: 30, max:100 },
         base_note:  { def: 16, min: 16, max:100 },
         semitones:  { def:120, min: 36, max:120 },
+        peak_color: { def:0xffffff, min:0, max:0xffffff },
         left_color: { def:0xdcb900, min:0, max:0xffffff },
         right_color:{ def:0x00b9dc, min:0, max:0xffffff },
         mid_color:  { def:0xdcdcdc, min:0, max:0xffffff },
@@ -118,7 +119,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
                 e("li", "If you want to change the axis, click it."),
                 e("li", "If you want to make your change persistent, click ", e("b", "Set as Default Settings"), " button."),
                 e("li", e("b", "New Features:"), " Hz-scale axis, microphone support, YT Music support, scale options to " +
-                    "reduce CPU usage, custom color, custom range."),
+                    "reduce CPU usage, custom color, custom range, peak color."),
                 e("li", e("a", {href: "https://github.com/mfcc64/youtube-musical-spectrum#settings"}, {target: "_blank"}, "Read more..."))
               ),
               e("p",
@@ -365,12 +366,12 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
 
         create_child_range_menu("Base Note", "base_note", update_range);
         create_child_range_menu("Semitones", "semitones", update_range);
-        get_menu_table_tr();
 
         const number2color = n => "#" + (n|0).toString(16).padStart(6, "0");
         const color2number = c => Number.parseInt(c.slice(1), 16);
-        const color_int = [ 0, 0, 0 ];
+        const color_int = [ 0, 0, 0, 0 ];
         const color_table = new Array(9);
+        const peak_color = new Array(3);
 
         function create_child_color_menu(title, name, callback) {
             var tr = get_menu_table_tr();
@@ -402,6 +403,22 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
             child.onchange();
         }
 
+        create_child_color_menu("Peak Color", "peak_color", child => color_int[3] = color2number(child.value));
+
+        function detect_peak(color) {
+            if (color_int[3] == 0xffffff)
+                return;
+
+            for (let k = 4; k < color.length - 4; k += 4) {
+                if (color[k+3] <= color[k-1] || color[k+3] <= color[k+7])
+                    continue;
+
+                const alpha = (1 - (k+2) / color.length) ** 2;
+                for (let m = 0; m < 3; m++)
+                    color[k+m] = Math.min(color[k+m], 1) * (1 - alpha + peak_color[m] * alpha);
+            }
+        }
+
         function update_color_table() {
             const k = 0xb9/0xdc;
             const color_tmp = new Array(9);
@@ -416,13 +433,17 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
                 color_table[0+x] = color_tmp[0+x] - k * color_table[3+x];
                 color_table[6+x] = color_tmp[6+x] - k * color_table[3+x];
             }
+
+            peak_color[0] = ((color_int[3] >> 16) & 0xff) / 0xff;
+            peak_color[1] = ((color_int[3] >> 8) & 0xff) / 0xff;
+            peak_color[2] = (color_int[3] & 0xff) / 0xff;
         }
 
         create_child_color_menu("Left Color", "left_color", child => color_int[0] = color2number(child.value));
         create_child_color_menu("Mid Color", "mid_color", child => color_int[1] = color2number(child.value));
         create_child_color_menu("Right Color", "right_color", child => color_int[2] = color2number(child.value));
 
-        cqt.actual_render_callback = function(color) {
+        function transform_color(color) {
             if (color_int[0] == 0xdcb900 && color_int[1] == 0xdcdcdc && color_int[2] == 0x00b9dc)
                 return;
 
@@ -432,6 +453,11 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
                 color[x+1] = color_table[1] * left + color_table[4] * mid + color_table[7] * right;
                 color[x+2] = color_table[2] * left + color_table[5] * mid + color_table[8] * right;
             }
+        }
+
+        cqt.actual_render_callback = function(color) {
+            transform_color(color);
+            detect_peak(color);
         }
 
         function create_child_select_codecs() {
