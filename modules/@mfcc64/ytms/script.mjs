@@ -410,7 +410,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
                 return;
 
             for (let k = 4; k < color.length - 4; k += 4) {
-                if (color[k+3] <= color[k-1] || color[k+3] <= color[k+7])
+                if (color[k+3] <= color[k-1] || color[k+3] < color[k+7])
                     continue;
 
                 const alpha = (1 - (k+2) / color.length) ** 2;
