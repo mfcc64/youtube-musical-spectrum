@@ -354,18 +354,24 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         create_child_range_menu("Scale Y", "scale_y", (child) => cqt.dataset.scaleY = child.value);
         create_child_select_codecs();
 
-        function update_range() {
+        function update_range(child) {
             if (!child_menu.base_note || !child_menu.semitones)
                 return;
 
             const width = child_menu.semitones.value * 1;
-            const base = Math.min(child_menu.base_note.value - 16, 120 - width);
+            const base = child_menu.base_note.value - 16;
+            if (base + width > 120) {
+                child == child_menu.semitones ?
+                    (child_menu.base_note.value = 120 - width + 16, child_menu.base_note.onchange()) :
+                    (child_menu.semitones.value = 120 - base, child_menu.semitones.onchange());
+                return;
+            }
             cqt.style.left = -base / width * 100 + "%";
             cqt.style.width = 12000 / width + "%";
         }
 
-        create_child_range_menu("Base Note", "base_note", update_range);
-        create_child_range_menu("Semitones", "semitones", update_range);
+        create_child_range_menu("Base Note", "base_note", child => update_range(child));
+        create_child_range_menu("Semitones", "semitones", child => update_range(child));
 
         const number2color = n => "#" + (n|0).toString(16).padStart(6, "0");
         const color2number = c => Number.parseInt(c.slice(1), 16);
