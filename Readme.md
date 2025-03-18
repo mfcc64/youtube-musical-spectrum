@@ -62,6 +62,9 @@ The available settings:
 - **Codecs:** Set allowed codecs to mitigate unsmooth experience. The default value is `Block AV1`. If
   your machine is powerful enough, you probably want to set it to `All`. If your machine has H.264 accelerated
   video playback but no VP9 accelerated playback, you probably want to set it to `Only H.264`.
+- **Base Note:** Set base note as MIDI number. The default is `16` or `E0`.
+- **Semitones:** Set spectrogram range in semitones. The default is `120` or `10 octaves`.
+- **Peak Color:** Set color of peaks to aid locating peaks especially at low frequency region. The default is `#ffffff` or `disabled`.
 - **Left Color:** Set left color. The default value is `#dcb900`.
 - **Mid Color:** Set middle color. The default value is `#dcdcdc`.
 - **Right Color:** Set right color. The default value is `#00b9dc`.
