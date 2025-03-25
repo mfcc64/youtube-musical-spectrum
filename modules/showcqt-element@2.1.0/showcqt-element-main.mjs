@@ -48,7 +48,7 @@ const OBSERVED_ATTRIBUTES = {
 // Hopefully nobody hijacks HTMLDivElement
 const HTMLElement = Object.getPrototypeOf(HTMLDivElement);
 class ShowCQTElement extends HTMLElement {
-    static version = "2.0.2";
+    static version = "2.1.0";
 
     static global_audio_context;
 
@@ -103,7 +103,7 @@ class ShowCQTElement extends HTMLElement {
             await p.audio_ctx.audioWorklet.addModule(new URL("audio-worklet.mjs", import.meta.url));
             const worklet = new AudioWorkletNode(p.audio_ctx, "showcqt-element--send-frame", { outputChannelCount: [2] });
             p.panner.connect(worklet);
-            worklet.port.onmessage = (msg) => p.ring_buffer ? this.#ring_buffer_write(msg.data) : 0;
+            worklet.port.onmessage = (msg) => this.send_buffer(msg.data);
         })().catch(e => console.error(e));
 
         for (const attr of Object.keys(OBSERVED_ATTRIBUTES))
@@ -415,8 +415,11 @@ class ShowCQTElement extends HTMLElement {
         p.iir_coeffs[1] = -1 + unit / sqrt_A;
     };
 
-    #ring_buffer_write = (data) => {
+    write_buffer(data) {
         const p = this.#private;
+        if (!p.ring_buffer)
+            return;
+
         const len = data[0].length, size = p.ring_size;
         const mask = p.ring_mask, buf = p.ring_buffer;
         const ic = p.iir_coeffs;
@@ -430,8 +433,9 @@ class ShowCQTElement extends HTMLElement {
         }
 
         p.ring_write = w;
+    }
 
-    };
+    send_buffer = this.write_buffer;
 
     #ring_buffer_read = (idx) => {
         const p = this.#private;
