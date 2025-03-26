@@ -45,7 +45,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         interval:   { def:  1, min:  1, max:  4 },
         codecs:     { def:  1, min:  0, max:  2 },
         transparent:{ def:  1, min:  0, max:  1 },
-        visible:    { def: document.location.hostname == "music.youtube.com" ? 1 : 0,
+        visible:    { def: document.location.hostname != "www.youtube.com" ? 1 : 0,
                                min:  0, max:  1 },
         axis:       { def:  0, min:  0, max: axis_list.length - 1 }
     };
