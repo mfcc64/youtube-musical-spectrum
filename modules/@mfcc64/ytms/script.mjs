@@ -19,8 +19,7 @@
 import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
 
 (async function(){
-    const current_script = import.meta.url;
-    const get_asset = (name) => String(new URL(`../ytms-assets@1.0.0/${name}`, current_script));
+    const get_asset = (name) => String(new URL(`../ytms-assets@1.0.0/${name}`, import.meta.url));
     const axis_list = [
         "",
         get_asset("axis-hz-1920x32.png")
