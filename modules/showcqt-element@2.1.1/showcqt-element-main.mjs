@@ -48,7 +48,7 @@ const OBSERVED_ATTRIBUTES = {
 // Hopefully nobody hijacks HTMLDivElement
 const HTMLElement = Object.getPrototypeOf(HTMLDivElement);
 class ShowCQTElement extends HTMLElement {
-    static version = "2.1.0";
+    static version = "2.1.1";
 
     static global_audio_context;
 
@@ -426,10 +426,11 @@ class ShowCQTElement extends HTMLElement {
         let w = p.ring_write;
 
         for (let x = 0; x < len; x++, w = (w + 1) & mask) {
-            buf[0][w] = ic[4] = data[0][x] + (ic[0] * ic[2] - ic[1] * ic[4]);
-            buf[1][w] = ic[5] = data[1][x] + (ic[0] * ic[3] - ic[1] * ic[5]);
-            ic[2] = data[0][x];
-            ic[3] = data[1][x];
+            const data0 = data[0][x] + 1e-9, data1 = data[1][x] + 1e-9;
+            buf[0][w] = ic[4] = data0 + (ic[0] * ic[2] - ic[1] * ic[4]);
+            buf[1][w] = ic[5] = data1 + (ic[0] * ic[3] - ic[1] * ic[5]);
+            ic[2] = data0;
+            ic[3] = data1;
         }
 
         p.ring_write = w;
