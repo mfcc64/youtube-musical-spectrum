@@ -1,6 +1,6 @@
 {
   "name": "@mfcc64/ytms",
-  "version": "12.1.0",
+  "version": "12.1.1",
   "description": "YouTube Musical Spectrum",
   "main": "script.mjs",
   "scripts": {
