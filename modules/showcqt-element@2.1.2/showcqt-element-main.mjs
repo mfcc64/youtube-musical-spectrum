@@ -48,7 +48,7 @@ const OBSERVED_ATTRIBUTES = {
 // Hopefully nobody hijacks HTMLDivElement
 const HTMLElement = Object.getPrototypeOf(HTMLDivElement);
 class ShowCQTElement extends HTMLElement {
-    static version = "2.1.1";
+    static version = "2.1.2";
 
     static global_audio_context;
 
@@ -368,12 +368,13 @@ class ShowCQTElement extends HTMLElement {
         const delta = this.#calc_delta(buffer_delta, ideal_delta);
 
         p.ring_read = (p.ring_read + delta) & p.ring_mask;
-        this.#ring_buffer_read(p.ring_read);
 
-        const is_silent = p.cqt.detect_silence(1e-14);
-
+        const is_silent = p.zero_count > 2 * p.cqt.fft_size;
         if (is_silent && p.sono_dirty_h <= 0)
             return;
+
+        this.#ring_buffer_read(p.ring_read);
+
 
         p.cqt.set_height(p.bar_h);
         p.cqt.set_volume(p.bar, p.brightness);
@@ -425,14 +426,22 @@ class ShowCQTElement extends HTMLElement {
         const ic = p.iir_coeffs;
         let w = p.ring_write;
 
+        let sum = 0;
         for (let x = 0; x < len; x++, w = (w + 1) & mask) {
             const data0 = data[0][x] + 1e-9, data1 = data[1][x] + 1e-9;
-            buf[0][w] = ic[4] = data0 + (ic[0] * ic[2] - ic[1] * ic[4]);
-            buf[1][w] = ic[5] = data1 + (ic[0] * ic[3] - ic[1] * ic[5]);
+            ic[4] = data0 + (ic[0] * ic[2] - ic[1] * ic[4]);
+            ic[5] = data1 + (ic[0] * ic[3] - ic[1] * ic[5]);
             ic[2] = data0;
             ic[3] = data1;
+            // quantize
+            const r0 = ic[4] + 1e9 - 1e9;
+            const r1 = ic[5] + 1e9 - 1e9;
+            buf[0][w] = r0;
+            buf[1][w] = r1;
+            sum += r0*r0 + r1*r1;
         }
 
+        p.zero_count = sum > 0 ? 0 : p.zero_count + len;
         p.ring_write = w;
     }
 
@@ -501,6 +510,7 @@ class ShowCQTElement extends HTMLElement {
 
         // ring buffer
         iir_coeffs: new Float64Array(6),
+        zero_count: 0,
         ring_buffer: null,
         ring_size: 0,
         ring_write: 0,
