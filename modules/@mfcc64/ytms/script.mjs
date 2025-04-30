@@ -473,7 +473,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
             td.textContent = "Codecs";
             tr.appendChild(td);
             td = document.createElement("td");
-            td.colSpan = 2;
+            td.colSpan = 3;
             var child = child_menu["codecs"] = document.createElement("select");
             child.style.cursor = "pointer";
             child.style.width = "100%";
@@ -487,7 +487,6 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
             child.value = get_opt("codecs");
             td.appendChild(child);
             tr.appendChild(td);
-            tr.appendChild(document.createElement("td"));
             child.onchange = function() {};
             const old_func = MediaSource.isTypeSupported;
             MediaSource.isTypeSupported = function (mime_type) {
