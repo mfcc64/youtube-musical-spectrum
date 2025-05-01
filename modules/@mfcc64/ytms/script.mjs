@@ -534,6 +534,82 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
             update_af_links();
         });
 
+        function create_child_select_presets() {
+            var tr = get_menu_table_tr();
+            set_common_tr_style(tr);
+            var td = document.createElement("td");
+            set_common_left_td_style(td);
+            td.textContent = "Presets";
+            tr.appendChild(td);
+            td = document.createElement("td");
+            td.colSpan = 3;
+            var child = document.createElement("select");
+            child.style.cursor = "pointer";
+            child.style.width = "100%";
+
+            const presets = {
+                none: { text: "-- Choose Preset --" },
+                color_default: { text: "Color: Default", command: set_color_default },
+                color_deep_blue: { text: "Color: Deep Blue", command: set_color_deep_blue },
+                color_mono_fire: { text: "Color: Mono Fire", command: set_color_mono_fire },
+                color_juicy_lemon: { text: "Color: Juicy Lemon", command: set_color_juicy_lemon },
+                color_rain_forest: { text: "Color: Rain Forest", command: set_color_rain_forest },
+                scale_960: { text: "Scale: 960", command: () => set_scale_preset(960) },
+                scale_1280: { text: "Scale: 1280", command: () => set_scale_preset(1280) }
+            };
+
+            for (const name of Object.keys(presets)) {
+                var opt = document.createElement("option");
+                opt.textContent = presets[name].text;
+                opt.value = name;
+                child.appendChild(opt);
+            }
+
+            child.onchange = function() {
+                presets[child.value]?.command?.();
+                child.value = "none";
+            };
+
+            td.appendChild(child);
+            tr.appendChild(td);
+
+            function set_color_preset(...args) {
+                child_menu.left_color.value = number2color(args[0]), child_menu.left_color.onchange();
+                child_menu.mid_color.value = number2color(args[1]), child_menu.mid_color.onchange();
+                child_menu.right_color.value = number2color(args[2]), child_menu.right_color.onchange();
+                child_menu.peak_color.value = number2color(args[3]), child_menu.peak_color.onchange();
+                child_menu.brightness.value = args[4], child_menu.brightness.onchange();
+            }
+
+            function set_color_default() {
+                set_color_preset(defaults.left_color.def, defaults.mid_color.def, defaults.right_color.def,
+                                 defaults.peak_color.def, defaults.brightness.def);
+            }
+
+            function set_color_deep_blue() {
+                set_color_preset(0x6400b9, 0x6464dc, 0x0064b9, 0x0000ff, 50);
+            }
+
+            function set_color_mono_fire() {
+                set_color_preset(0xb94a25, 0xdc582c, 0xb94a25, 0xff0000, 70);
+            }
+
+            function set_color_juicy_lemon() {
+                set_color_preset(0xff004a, 0xffff58, 0x00ff4a, 0xffffff, 33);
+            }
+
+            function set_color_rain_forest() {
+                set_color_preset(0x64b900, 0x64dc64, 0x00b964, 0x00ff00, 33);
+            }
+
+            function set_scale_preset(target) {
+                const scale = Math.max(30, Math.min(100, Math.round(target / window.innerWidth * 100)));
+                child_menu.scale_x.value = scale, child_menu.scale_x.onchange();
+                child_menu.scale_y.value = scale, child_menu.scale_y.onchange();
+            }
+        }
+        create_child_select_presets();
+
         current_tr = null;
         set_common_tr_style(get_menu_table_tr());
         current_tr = null;
