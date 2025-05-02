@@ -59,9 +59,7 @@ The available settings:
   The value is between `30` and `100`. The default value is `100`.
 - **Scale Y:** Set canvas vertical scale (in percents). Lower value reduces CPU usage but image quality is also reduced.
   This also affects waterfall speed. The value is between `30` and `100`. The default value is `100`.
-- **Codecs:** Set allowed codecs to mitigate unsmooth experience. The default value is `Block AV1`. If
-  your machine is powerful enough, you probably want to set it to `All`. If your machine has H.264 accelerated
-  video playback but no VP9 accelerated playback, you probably want to set it to `Only H.264`.
+- **Bar Scale:** Set bar scale. The default value is `Linear`.
 - **Base Note:** Set base note as MIDI number. The default is `16` or `E0`.
 - **Semitones:** Set spectrogram range in semitones. The default is `120` or `10 octaves`.
 - **Peak Color:** Set color of peaks to aid locating peaks especially at low frequency region. The default is `#ffffff` or `disabled`.
@@ -70,6 +68,7 @@ The available settings:
 - **Right Color:** Set right color. The default value is `#00b9dc`.
 - **Transparent:** Set the transparency of the visualizer. The default value is set to `true`.
 - **Visible:** Set the visibility of the visualizer. The default value is set to `true` on YT Music and `false` on YouTube.
+- **Presets:** Choose a preset. Currently, most of them are color preset.
 - **Reset Settings:** Reset settings to the default values (Note that the default values can be changed).
 - **Set as Default Settings:** Set the current setttings as the default settings. Subsequent `Reset Settings` or new pages
   will load these settings.
