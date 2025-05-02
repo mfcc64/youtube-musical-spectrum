@@ -43,7 +43,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         right_color:{ def:0x00b9dc, min:0, max:0xffffff },
         mid_color:  { def:0xdcdcdc, min:0, max:0xffffff },
         interval:   { def:  1, min:  1, max:  4 },
-        codecs:     { def:  1, min:  0, max:  2 },
+        bar_scale:  { def:  0, min:  0, max:  4 },
         transparent:{ def:  1, min:  0, max:  1 },
         visible:    { def: document.location.hostname != "www.youtube.com" ? 1 : 0,
                                min:  0, max:  1 },
@@ -351,7 +351,52 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         create_child_range_menu("Interval", "interval", (child) => cqt.dataset.interval = child.value);
         create_child_range_menu("Scale X", "scale_x", (child) => cqt.dataset.scaleX = child.value);
         create_child_range_menu("Scale Y", "scale_y", (child) => cqt.dataset.scaleY = child.value);
-        create_child_select_codecs();
+
+        let bar_scale_func = null;
+        function create_child_select_bar_scale(title, name) {
+            var tr = get_menu_table_tr();
+            set_common_tr_style(tr);
+            var td = document.createElement("td");
+            set_common_left_td_style(td);
+            td.textContent = title;
+            tr.appendChild(td);
+            td = document.createElement("td");
+            td.colSpan = 3;
+            var child = child_menu[name] = document.createElement("select");
+            child.style.cursor = "pointer";
+            child.style.width = "100%";
+            var select_opt = [ "Linear", "Sqrt", "Log (40 dB)", "Log (60 dB)", "Log (80 dB)" ];
+            for (var k = 0; k < select_opt.length; k++) {
+                var opt = document.createElement("option");
+                opt.textContent = select_opt[k];
+                opt.value = k;
+                child.appendChild(opt);
+            }
+            child.value = get_opt("bar_scale");
+            td.appendChild(child);
+            tr.appendChild(td);
+            child.onchange = function() {
+                switch (child.value) {
+                    case "1": bar_scale_func = bar_scale_sqrt; break;
+                    case "2": bar_scale_func = c => bar_scale_db(c, 2); break;
+                    case "3": bar_scale_func = c => bar_scale_db(c, 3); break;
+                    case "4": bar_scale_func = c => bar_scale_db(c, 4); break;
+                    default: bar_scale_func = null;
+                }
+            };
+            child.onchange();
+
+            function bar_scale_sqrt(color) {
+                for (let k = 3; k < color.length; k += 4)
+                    color[k] = Math.sqrt(color[k]);
+            }
+
+            function bar_scale_db(color, range) {
+                for (let k = 3; k < color.length; k += 4)
+                    color[k] = Math.max(0, (Math.log10(color[k]) + range) / range);
+            }
+        }
+        create_child_select_bar_scale("Bar Scale", "bar_scale");
 
         function update_range(child) {
             if (!child_menu.base_note || !child_menu.semitones)
@@ -463,47 +508,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         cqt.actual_render_callback = function(color) {
             transform_color(color);
             detect_peak(color);
-        }
-
-        function create_child_select_codecs() {
-            var tr = get_menu_table_tr();
-            set_common_tr_style(tr);
-            var td = document.createElement("td");
-            set_common_left_td_style(td);
-            td.textContent = "Codecs";
-            tr.appendChild(td);
-            td = document.createElement("td");
-            td.colSpan = 3;
-            var child = child_menu["codecs"] = document.createElement("select");
-            child.style.cursor = "pointer";
-            child.style.width = "100%";
-            var select_opt = [ "All", "Block AV1", "Only H.264" ];
-            for (var k = 0; k < select_opt.length; k++) {
-                var opt = document.createElement("option");
-                opt.textContent = select_opt[k];
-                opt.value = k;
-                child.appendChild(opt);
-            }
-            child.value = get_opt("codecs");
-            td.appendChild(child);
-            tr.appendChild(td);
-            child.onchange = function() {};
-            const old_func = MediaSource.isTypeSupported;
-            MediaSource.isTypeSupported = function (mime_type) {
-                let rejected = [ "av01" ];
-                switch (child.value) {
-                    case "0": rejected = []; break;
-                    case "1": rejected = [ "av01" ]; break;
-                    case "2": rejected = [ "av01", "vp09", "vp9", "vp08", "vp8" ]; break;
-                }
-
-                for (const type of rejected) {
-                    if (String(mime_type).indexOf(type) >= 0)
-                        return false;
-                }
-
-                return old_func.call(this, mime_type);
-            }
+            bar_scale_func?.(color);
         }
 
         function create_child_checkbox_menu(title, name, callback) {
