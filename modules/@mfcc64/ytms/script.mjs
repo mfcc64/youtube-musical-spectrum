@@ -714,4 +714,5 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
     create_menu();
     document.body.appendChild(cqt);
     document.body.appendChild(af_links);
+    dispatchEvent(new CustomEvent("youtube-musical-spectrum-is-available"));
 })().catch(e => console.error(e));
