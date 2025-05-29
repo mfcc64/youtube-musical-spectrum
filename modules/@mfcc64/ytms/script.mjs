@@ -44,6 +44,9 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         mid_color:  { def:0xdcdcdc, min:0, max:0xffffff },
         interval:   { def:  1, min:  1, max:  4 },
         bar_scale:  { def:  0, min:  0, max:  4 },
+        line_mode:  { def:  0, min:  0, max:  2 },
+        line_width: { def:  1, min:  1, max:  3 },
+        line_color: { def:0xffffff, min:0, max:0xffffff },
         transparent:{ def:  1, min:  0, max:  1 },
         visible:    { def: document.location.hostname != "www.youtube.com" ? 1 : 0,
                                min:  0, max:  1 },
@@ -505,11 +508,114 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
             }
         }
 
+        function create_child_select_line_mode(title, name) {
+            var tr = get_menu_table_tr();
+            set_common_tr_style(tr);
+            var td = document.createElement("td");
+            set_common_left_td_style(td);
+            td.textContent = title;
+            tr.appendChild(td);
+            td = document.createElement("td");
+            td.colSpan = 3;
+            var child = child_menu[name] = document.createElement("select");
+            child.style.cursor = "pointer";
+            child.style.width = "100%";
+            var select_opt = [ "Off", "Static", "Mid Color", "Average", "Spectrum" ];
+            for (var k = 0; k < select_opt.length; k++) {
+                var opt = document.createElement("option");
+                opt.textContent = select_opt[k];
+                opt.value = k;
+                child.appendChild(opt);
+            }
+            child.value = get_opt("line_mode");
+            td.appendChild(child);
+            tr.appendChild(td);
+            child.onchange = () => {};
+        }
+        create_child_select_line_mode("Line Mode", "line_mode");
+        create_child_range_menu("Line Width", "line_width");
+        create_child_color_menu("Line Color", "line_color");
+
+        const line_visualizer = new class {
+            color = null;
+            is_set = false;
+            c4 = new Uint32Array(1);
+            c = new Uint8ClampedArray(this.c4.buffer);
+
+            get_color(color) {
+                if (child_menu.line_mode.value == "0")
+                    return;
+
+                if (this.color?.length != color.length)
+                    this.color = new Float32Array(color.length);
+
+                if (this.is_set)
+                    return;
+
+                this.color.set(color);
+                this.is_set = true;
+            }
+
+            render(p) {
+                if (child_menu.line_mode.value == "0")
+                    return;
+
+                const ctx = p.canvas_ctx, w = p.canvas.width;
+
+                this.color = this.color ?? new Float32Array(4 * w);
+                this.is_set || this.color.fill(0);
+
+                switch (child_menu.line_mode.value) {
+                    case "1": {
+                        ctx.strokeStyle = child_menu.line_color.value;
+                    } break;
+                    case "2": {
+                        ctx.strokeStyle = child_menu.mid_color.value;
+                    } break;
+                    case "3": {
+                        const c_sum = [ 0, 0, 0 ];
+                        for (let k = 0; k < w; k++)
+                            for (let m = 0; m < 3; m++)
+                                c_sum[m] += Math.max(0, this.color[4*k + m]) ** 2;
+                        for (let m = 0; m < 3; m++)
+                            this.c[2-m] = Math.sqrt(c_sum[m] / w) * 255.5;
+                        ctx.strokeStyle = "#" + this.c4[0].toString(16).padStart(6, "0");
+                    } break;
+                    case "4": {
+                        const gradient = ctx.createLinearGradient(0, 0, w, 0);
+                        for (let k = 0; k < w; k++) {
+                            for (let m = 0; m < 3; m++)
+                                this.c[2-m] = this.color[4*k + m] * 255.5;
+                            gradient.addColorStop((k+0.5) / w, "#" + this.c4[0].toString(16).padStart(6, "0"));
+                        }
+                        ctx.strokeStyle = gradient;
+                    } break;
+                    default:
+                        console.warn("Invalid line mode");
+                        return;
+                }
+
+                ctx.lineWidth = child_menu.line_width.value;
+                const translate = h => p.bar_h * (1 - h);
+
+                ctx.beginPath();
+                ctx.moveTo(-1, translate(this.color[3]));
+                for (let x = 0; x < w; x++)
+                    ctx.lineTo(x + 0.5, translate(this.color[4*x + 3]));
+                ctx.lineTo(w + 1, translate(this.color[4*w - 1]));
+                ctx.stroke();
+                this.is_set = false;
+            }
+        };
+
         cqt.actual_render_callback = function(color) {
             transform_color(color);
-            detect_peak(color);
             bar_scale_func?.(color);
+            line_visualizer.get_color(color);
+            detect_peak(color);
         }
+
+        cqt.post_render_callback = p => line_visualizer.render(p);
 
         function create_child_checkbox_menu(title, name, callback) {
             var tr = get_menu_table_tr();
