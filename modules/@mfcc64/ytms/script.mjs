@@ -44,7 +44,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         mid_color:  { def:0xdcdcdc, min:0, max:0xffffff },
         interval:   { def:  1, min:  1, max:  4 },
         bar_scale:  { def:  0, min:  0, max:  4 },
-        line_mode:  { def:  0, min:  0, max:  2 },
+        line_mode:  { def:  0, min:  0, max:  4 },
         line_width: { def:  1, min:  1, max:  3 },
         line_color: { def:0xffffff, min:0, max:0xffffff },
         transparent:{ def:  1, min:  0, max:  1 },
