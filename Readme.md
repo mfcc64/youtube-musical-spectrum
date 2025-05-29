@@ -66,6 +66,9 @@ The available settings:
 - **Left Color:** Set left color. The default value is `#dcb900`.
 - **Mid Color:** Set middle color. The default value is `#dcdcdc`.
 - **Right Color:** Set right color. The default value is `#00b9dc`.
+- **Line Mode:** Set line mode. The default value is `Off`.
+- **Line Width:** Set line width. The default value is `1`.
+- **Line Color:** Set line color when `Line Mode` is `Static`. The default value is `#ffffff`.
 - **Transparent:** Set the transparency of the visualizer. The default value is set to `true`.
 - **Visible:** Set the visibility of the visualizer. The default value is set to `true` on YT Music and `false` on YouTube.
 - **Presets:** Choose a preset. Currently, most of them are color preset.
