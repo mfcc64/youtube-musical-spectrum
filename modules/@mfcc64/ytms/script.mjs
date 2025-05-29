@@ -391,7 +391,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
 
             function bar_scale_sqrt(color) {
                 for (let k = 3; k < color.length; k += 4)
-                    color[k] = Math.sqrt(color[k]);
+                    color[k] = 0.5 * Math.sqrt(color[k]);
             }
 
             function bar_scale_db(color, range) {
