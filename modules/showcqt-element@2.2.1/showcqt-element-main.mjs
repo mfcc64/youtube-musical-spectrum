@@ -48,7 +48,7 @@ const OBSERVED_ATTRIBUTES = {
 // Hopefully nobody hijacks HTMLDivElement
 const HTMLElement = Object.getPrototypeOf(HTMLDivElement);
 class ShowCQTElement extends HTMLElement {
-    static version = "2.2.0";
+    static version = "2.2.1";
 
     static global_audio_context;
 
@@ -193,16 +193,14 @@ class ShowCQTElement extends HTMLElement {
 
     connectedCallback() {
         const p = this.#private;
-        if (this.isConnected) {
-            !p.is_active_render ? requestAnimationFrame(this.#render) : 0;
-            p.is_active_render = true;
-        } else {
-            p.is_active_render = false;
-        }
+        if (p.render_id === undefined)
+            p.render_id = requestAnimationFrame(this.#render);
     }
 
     disconnectedCallback() {
-        this.connectedCallback();
+        const p = this.#private;
+        if (p.render_id !== undefined)
+            p.render_id = cancelAnimationFrame(p.render_id);
     }
 
     get audio_context() {
@@ -235,8 +233,7 @@ class ShowCQTElement extends HTMLElement {
 
     #render = (time) => {
         const p = this.#private;
-        if (p.is_active_render)
-            requestAnimationFrame(this.#render);
+        p.render_id = requestAnimationFrame(this.#render);
 
         if (!p.cqt)
             return;
@@ -508,7 +505,7 @@ class ShowCQTElement extends HTMLElement {
 
         // render state
         alpha_table: null,
-        is_active_render: false,
+        render_id: undefined,
         render_count: 0,
         canvas_is_dirty: false,
         is_paused: false,
