@@ -28,7 +28,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
     const defaults = {
         height:     { def: 33, min: 20, max:100 },
         bar:        { def: 17, min:  1, max: 33 },
-        waterfall:  { def: 33, min:  0, max: 70 },
+        waterfall:  { def: 33, min:  0, max:100 },
         brightness: { def: 17, min:  1, max: 70 },
         bass:       { def:-30, min:-50, max:  0 },
         speed:      { def:  2, min:  1, max: 12 },
