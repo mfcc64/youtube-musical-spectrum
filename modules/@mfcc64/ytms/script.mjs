@@ -541,7 +541,10 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
                 if (color[k+3] <= color[k-1] || color[k+3] < color[k+7])
                     continue;
 
-                const alpha = (1 - (k+2) / color.length) ** 2;
+                const alpha = (1 - (k+2) / color.length) ** 2 - 0.16;
+                if (alpha <= 0)
+                    break;
+
                 for (let m = 0; m < 3; m++)
                     color[k+m] = Math.min(color[k+m], 1) * (1 - alpha + peak_color[m] * alpha);
             }
