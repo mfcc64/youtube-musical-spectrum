@@ -42,6 +42,9 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         left_color: { def:0xdcb900, min:0, max:0xffffff },
         right_color:{ def:0x00b9dc, min:0, max:0xffffff },
         mid_color:  { def:0xdcdcdc, min:0, max:0xffffff },
+        saturation: { def:  0, min:  0, max: 30 },
+        hue:        { def:  0, min:-18, max: 19 },
+        hue_range:  { def: 18, min:-36, max: 36 },
         interval:   { def:  1, min:  1, max:  4 },
         bar_scale:  { def:  0, min:  0, max:  4 },
         line_mode:  { def:  0, min:  0, max:  4 },
@@ -426,6 +429,78 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         const color_table = new Array(9);
         const peak_color = new Array(3);
 
+        class ColorRotation {
+            constructor() {
+                const kr = 0.2126;
+                const kb = 0.0722;
+                const kg = 1 - (kr + kb);
+                const kmul = 2 / Math.sqrt(3);
+
+                this.mat_r = [ 1, 2 * (kb + kg), kmul * (kb - kg) ];
+                this.mat_g = [ 1,       -2 * kr, kmul * (kb - kg + 1) ];
+                this.mat_b = [ 1,       -2 * kr, kmul * (kb - kg - 1) ];
+
+                this.saturation = 0;
+                this.hue = 0;
+                this.hue_range = 0;
+                this.table_len = 1000;
+                this.table = new Float32Array(this.table_len * 3 + 6);
+            }
+
+            rgb_from_yuv(res, y, u, v) {
+                res[0] = y + this.mat_r[1] * u + this.mat_r[2] * v;
+                res[1] = y + this.mat_g[1] * u + this.mat_g[2] * v;
+                res[2] = y + this.mat_b[1] * u + this.mat_b[2] * v;
+            }
+
+            update(saturation, hue, hue_range) {
+                this.saturation = saturation;
+                this.hue = hue;
+                this.hue_range = hue_range;
+
+                if (this.saturation == 0)
+                    return;
+
+                const res = [ 0, 0, 0 ];
+                const hue_step = Math.PI / 18 * hue_range;
+                const hue_start = Math.PI / 18 * hue - 0.5 * hue_step;
+                const sat_g = 10 ** (saturation / 10 - 1);
+
+                for (let k = 0; k <= this.table_len + 1; k++) {
+                    let y = Math.min(1, k / this.table_len);
+                    let h = hue_start + Math.sin(0.5 * Math.PI * y) * hue_step;
+                    h = h - 0.23 * Math.sin(3 * h);
+                    y = y*y;
+                    let u = Math.cos(h), v = Math.sin(h), s = 0, sum_rcp = 0;
+                    this.rgb_from_yuv(res, y, u, v);
+                    for (let c = 0; c < 3; c++) {
+                        sum_rcp += Math.exp((res[c] - y) * y * sat_g);
+                        sum_rcp += Math.exp((y - res[c]) * (1 - y) * sat_g);
+                    }
+                    s = y * (1 - y) * sat_g / Math.log(sum_rcp);
+                    this.rgb_from_yuv(res, y, s*u, s*v);
+                    const gamma = 1/2.2;
+                    this.table[3*k+0] = Math.max(0, res[0])**gamma;
+                    this.table[3*k+1] = Math.max(0, res[1])**gamma;
+                    this.table[3*k+2] = Math.max(0, res[2])**gamma;
+                }
+            }
+
+            transform(color) {
+                const len = color.length / 4;
+                for (let k = 0; k < len; k++) {
+                    const y = Math.max(0, Math.min(1, color[4*k+1])) * this.table_len;
+                    const idx = Math.floor(y);
+                    const frac = y - idx;
+                    const ifrac = 1 - frac;
+                    color[4*k+0] = this.table[3*idx+0] * ifrac + this.table[3*idx+3] * frac;
+                    color[4*k+1] = this.table[3*idx+1] * ifrac + this.table[3*idx+4] * frac;
+                    color[4*k+2] = this.table[3*idx+2] * ifrac + this.table[3*idx+5] * frac;
+                }
+            }
+        }
+        const color_rotation = new ColorRotation();
+
         function create_child_color_menu(title, name, callback) {
             var tr = get_menu_table_tr();
             set_common_tr_style(tr);
@@ -496,7 +571,25 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         create_child_color_menu("Mid Color", "mid_color", child => color_int[1] = color2number(child.value));
         create_child_color_menu("Right Color", "right_color", child => color_int[2] = color2number(child.value));
 
+        function update_color_rotation() {
+            color_rotation.update(Number(child_menu.saturation?.value ?? 0),
+                                  Number(child_menu.hue?.value ?? 0),
+                                  Number(child_menu.hue_range?.value ?? 0));
+        }
+        create_child_range_menu("Saturation", "saturation", update_color_rotation);
+        create_child_range_menu("Hue", "hue", child => {
+            if (child.value == 19)
+                return child.value = -17, child.onchange();
+            if (child.value == -18)
+                return child.value = 18, child.onchange();
+            update_color_rotation();
+        });
+        create_child_range_menu("Hue Range", "hue_range", update_color_rotation);
+
         function transform_color(color) {
+            if (color_rotation.saturation > 0)
+                return color_rotation.transform(color);
+
             if (color_int[0] == 0xdcb900 && color_int[1] == 0xdcdcdc && color_int[2] == 0x00b9dc)
                 return;
 
@@ -690,6 +783,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
                 child_menu.right_color.value = number2color(args[2]), child_menu.right_color.onchange();
                 child_menu.peak_color.value = number2color(args[3]), child_menu.peak_color.onchange();
                 child_menu.brightness.value = args[4], child_menu.brightness.onchange();
+                child_menu.saturation.value = 0, child_menu.saturation.onchange();
             }
 
             function set_color_default() {
