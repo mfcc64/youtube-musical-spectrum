@@ -167,7 +167,8 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
 
     const cqt = new ShowCQTElement();
     set_fixed_style(cqt, 9999999);
-    cqt.style.left = cqt.style.bottom = 0;
+    cqt.style.left = 0;
+    cqt.style.bottom = "var(--ytms-cqt-bottom, 0px)";
     cqt.style.width = "100%";
     let stop_count = 0;
     const videos = document.getElementsByTagName("video");
@@ -202,10 +203,10 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
 
         function update_cqt_bottom() {
             if (document.fullscreenElement) {
-                cqt.style.bottom = 0;
+                document.body.style.setProperty("--ytms-cqt-bottom", "0px");
                 af_links.style.visibility = "hidden";
             } else {
-                cqt.style.bottom = "var(--ytmusic-player-bar-height, 0)";
+                document.body.style.setProperty("--ytms-cqt-bottom", "var(--ytmusic-player-bar-height, 0px)");
                 af_links.style.visibility = "visible";
             }
         }
@@ -319,7 +320,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         mic.pan.connect(cqt.audio_input);
         mic.gain.connect(mic.pan);
 
-        create_child_range_menu("Height", "height", (child) => cqt.style.height = child.value + "%");
+        create_child_range_menu("Height", "height", (child) => cqt.style.height = `calc(${ child.value / 100} * (100% - var(--ytms-cqt-bottom, 0px)))`);
         create_child_range_menu("Bar", "bar", (child) => cqt.dataset.bar = child.value);
         create_child_range_menu("Waterfall", "waterfall", (child) => cqt.dataset.waterfall = child.value);
         create_child_range_menu("Brightness", "brightness", (child) => cqt.dataset.brightness = child.value);
