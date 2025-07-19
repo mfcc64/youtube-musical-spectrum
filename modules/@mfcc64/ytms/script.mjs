@@ -741,7 +741,9 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
                 { title: "-- Choose Preset --" },
                 { title: "Color: Default", callback: set_color_default },
                 { title: "Color: Deep Blue", callback: set_color_deep_blue },
+                { title: "Color: Flame on Violet", callback: set_color_flame_on_violet },
                 { title: "Color: Mono Fire", callback: set_color_mono_fire },
+                { title: "Color: Evergreen", callback: set_color_evergreen },
                 { title: "Color: Juicy Lemon", callback: set_color_juicy_lemon },
                 { title: "Color: Rain Forest", callback: set_color_rain_forest },
                 { title: "Scale: 960", callback: () => set_scale_preset(960) },
@@ -762,6 +764,14 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
                 child_menu.saturation.value = 0, child_menu.saturation.onchange();
             }
 
+            function set_color_hue_preset(sat, hue, range, br, peak) {
+                child_menu.saturation.value = sat, child_menu.saturation.onchange();
+                child_menu.hue.value = hue, child_menu.hue.onchange();
+                child_menu.hue_range.value = range, child_menu.hue_range.onchange();
+                child_menu.brightness.value = br, child_menu.brightness.onchange();
+                child_menu.peak_color.value = number2color(peak), child_menu.peak_color.onchange();
+            }
+
             function set_color_default() {
                 set_color_preset(defaults.left_color.def, defaults.mid_color.def, defaults.right_color.def,
                                  defaults.peak_color.def, defaults.brightness.def);
@@ -771,8 +781,16 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
                 set_color_preset(0x6400b9, 0x6464dc, 0x0064b9, 0x0000ff, 50);
             }
 
+            function set_color_flame_on_violet() {
+                set_color_hue_preset(20, -3, 18, 10, 0x6633cc);
+            }
+
             function set_color_mono_fire() {
                 set_color_preset(0xb94a25, 0xdc582c, 0xb94a25, 0xff0000, 70);
+            }
+
+            function set_color_evergreen() {
+                set_color_hue_preset(20, 15, -18, 10, 0x3366cc);
             }
 
             function set_color_juicy_lemon() {
