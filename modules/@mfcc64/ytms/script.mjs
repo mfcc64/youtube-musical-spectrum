@@ -50,6 +50,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         line_mode:  { def:  0, min:  0, max:  4 },
         line_width: { def:  1, min:  1, max:  3 },
         line_color: { def:0xffffff, min:0, max:0xffffff },
+        scroll:     { def:  0, min:  0, max:  1 },
         transparent:{ def:  1, min:  0, max:  1 },
         visible:    { def: document.location.hostname != "www.youtube.com" ? 1 : 0,
                                min:  0, max:  1 },
@@ -167,9 +168,6 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
 
     const cqt = new ShowCQTElement();
     set_fixed_style(cqt, 9999999);
-    cqt.style.left = 0;
-    cqt.style.bottom = "var(--ytms-cqt-bottom, 0px)";
-    cqt.style.width = "100%";
     let stop_count = 0;
     const videos = document.getElementsByTagName("video");
     let svideos = [];
@@ -217,6 +215,38 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
 
     if (document.location.hostname == "music.youtube.com")
         ytmusic_layout();
+
+    function update_cqt_layout(child) {
+        if (!child_menu.height || !child_menu.scroll || !child_menu.base_note || !child_menu.semitones)
+            return;
+
+        const width = child_menu.semitones.value * 1;
+        const base = child_menu.base_note.value - 16;
+        if (base + width > 120) {
+            child == child_menu.semitones ?
+                (child_menu.base_note.value = 120 - width + 16, child_menu.base_note.onchange()) :
+                (child_menu.semitones.value = 120 - base, child_menu.semitones.onchange());
+            return;
+        }
+
+        const vleft = -base / width;
+        const vwidth = 120 / width;
+
+        if (child_menu.scroll.value == "0") {
+            cqt.style.height = `calc(${ child_menu.height.value / 100} * (100% - var(--ytms-cqt-bottom, 0px)))`;
+            cqt.style.width = vwidth * 100 + "%";
+            cqt.style.left = vleft * 100 + "%";
+            cqt.style.bottom = "var(--ytms-cqt-bottom, 0px)";
+            cqt.style.transform = "";
+        } else {
+            cqt.style.height = child_menu.height.value + "vw";
+            cqt.style.width = `calc(${vwidth} * (100vh - var(--ytms-cqt-bottom, 0px)))`;
+            cqt.style.left = "100vw";
+            cqt.style.bottom = `calc(var(--ytms-cqt-bottom, 0px) + ${vleft} * (100vh - var(--ytms-cqt-bottom, 0px)))`;
+            cqt.style.transform = "rotate(-90deg)";
+            cqt.style.transformOrigin = "bottom left";
+        }
+    }
 
     child_menu.axis = { value: get_opt("axis") };
     child_menu.axis.onchange = function() { cqt.dataset.axis = axis_list[child_menu.axis.value]; };
@@ -320,7 +350,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         mic.pan.connect(cqt.audio_input);
         mic.gain.connect(mic.pan);
 
-        create_child_range_menu("Height", "height", (child) => cqt.style.height = `calc(${ child.value / 100} * (100% - var(--ytms-cqt-bottom, 0px)))`);
+        create_child_range_menu("Height", "height", update_cqt_layout);
         create_child_range_menu("Bar", "bar", (child) => cqt.dataset.bar = child.value);
         create_child_range_menu("Waterfall", "waterfall", (child) => cqt.dataset.waterfall = child.value);
         create_child_range_menu("Brightness", "brightness", (child) => cqt.dataset.brightness = child.value);
@@ -359,8 +389,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         create_child_range_menu("Scale X", "scale_x", (child) => cqt.dataset.scaleX = child.value);
         create_child_range_menu("Scale Y", "scale_y", (child) => cqt.dataset.scaleY = child.value);
 
-        let bar_scale_func = null;
-        function create_child_select_bar_scale(title, name) {
+        function create_child_select_menu(title, name, select_opt, callback) {
             var tr = get_menu_table_tr();
             set_common_tr_style(tr);
             var td = document.createElement("td");
@@ -369,60 +398,48 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
             tr.appendChild(td);
             td = document.createElement("td");
             td.colSpan = 3;
-            var child = child_menu[name] = document.createElement("select");
+            var child = document.createElement("select");
+            if (name) child_menu[name] = child;
             child.style.cursor = "pointer";
             child.style.width = "100%";
-            var select_opt = [ "Linear", "Sqrt", "Log (40 dB)", "Log (60 dB)", "Log (80 dB)" ];
-            for (var k = 0; k < select_opt.length; k++) {
-                var opt = document.createElement("option");
+            for (let k = 0; k < select_opt.length; k++) {
+                const opt = document.createElement("option");
                 opt.textContent = select_opt[k];
                 opt.value = k;
                 child.appendChild(opt);
             }
-            child.value = get_opt("bar_scale");
+            if (name) child.value = get_opt(name);
             td.appendChild(child);
             tr.appendChild(td);
-            child.onchange = function() {
-                switch (child.value) {
-                    case "1": bar_scale_func = bar_scale_sqrt; break;
-                    case "2": bar_scale_func = c => bar_scale_db(c, 2); break;
-                    case "3": bar_scale_func = c => bar_scale_db(c, 3); break;
-                    case "4": bar_scale_func = c => bar_scale_db(c, 4); break;
-                    default: bar_scale_func = null;
-                }
-            };
+            child.onchange = () => callback?.(child);
             child.onchange();
-
-            function bar_scale_sqrt(color) {
-                for (let k = 3; k < color.length; k += 4)
-                    color[k] = 0.5 * Math.sqrt(color[k]);
-            }
-
-            function bar_scale_db(color, range) {
-                for (let k = 3; k < color.length; k += 4)
-                    color[k] = Math.max(0, (Math.log10(color[k]) + range) / range);
-            }
-        }
-        create_child_select_bar_scale("Bar Scale", "bar_scale");
-
-        function update_range(child) {
-            if (!child_menu.base_note || !child_menu.semitones)
-                return;
-
-            const width = child_menu.semitones.value * 1;
-            const base = child_menu.base_note.value - 16;
-            if (base + width > 120) {
-                child == child_menu.semitones ?
-                    (child_menu.base_note.value = 120 - width + 16, child_menu.base_note.onchange()) :
-                    (child_menu.semitones.value = 120 - base, child_menu.semitones.onchange());
-                return;
-            }
-            cqt.style.left = -base / width * 100 + "%";
-            cqt.style.width = 12000 / width + "%";
         }
 
-        create_child_range_menu("Base Note", "base_note", child => update_range(child));
-        create_child_range_menu("Semitones", "semitones", child => update_range(child));
+        let bar_scale_func = null;
+
+        function bar_scale_sqrt(color) {
+            for (let k = 3; k < color.length; k += 4)
+                color[k] = 0.5 * Math.sqrt(color[k]);
+        }
+
+        function bar_scale_db(color, range) {
+            for (let k = 3; k < color.length; k += 4)
+                color[k] = Math.max(0, (Math.log10(color[k]) + range) / range);
+        }
+
+        create_child_select_menu("Bar Scale", "bar_scale",
+            [ "Linear", "Sqrt", "Log (40 dB)", "Log (60 dB)", "Log (80 dB)" ], (child) => {
+            switch (child.value) {
+                case "1": bar_scale_func = bar_scale_sqrt; break;
+                case "2": bar_scale_func = c => bar_scale_db(c, 2); break;
+                case "3": bar_scale_func = c => bar_scale_db(c, 3); break;
+                case "4": bar_scale_func = c => bar_scale_db(c, 4); break;
+                default: bar_scale_func = null;
+            }
+        });
+
+        create_child_range_menu("Base Note", "base_note", update_cqt_layout);
+        create_child_range_menu("Semitones", "semitones", update_cqt_layout);
 
         const number2color = n => "#" + (n|0).toString(16).padStart(6, "0");
         const color2number = c => Number.parseInt(c.slice(1), 16);
@@ -605,31 +622,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
             }
         }
 
-        function create_child_select_line_mode(title, name) {
-            var tr = get_menu_table_tr();
-            set_common_tr_style(tr);
-            var td = document.createElement("td");
-            set_common_left_td_style(td);
-            td.textContent = title;
-            tr.appendChild(td);
-            td = document.createElement("td");
-            td.colSpan = 3;
-            var child = child_menu[name] = document.createElement("select");
-            child.style.cursor = "pointer";
-            child.style.width = "100%";
-            var select_opt = [ "Off", "Static", "Mid Color", "Average", "Spectrum" ];
-            for (var k = 0; k < select_opt.length; k++) {
-                var opt = document.createElement("option");
-                opt.textContent = select_opt[k];
-                opt.value = k;
-                child.appendChild(opt);
-            }
-            child.value = get_opt("line_mode");
-            td.appendChild(child);
-            tr.appendChild(td);
-            child.onchange = () => {};
-        }
-        create_child_select_line_mode("Line Mode", "line_mode");
+        create_child_select_menu("Line Mode", "line_mode", [ "Off", "Static", "Mid Color", "Average", "Spectrum" ]);
         create_child_range_menu("Line Width", "line_width");
         create_child_color_menu("Line Color", "line_color");
 
@@ -736,6 +729,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
             tr.appendChild(td);
         }
 
+        create_child_select_menu("Scroll", "scroll", [ "Vertical", "Horizontal" ], update_cqt_layout);
         create_child_checkbox_menu("Transparent", "transparent", (child) => cqt.dataset.opacity = child.checked ? "transparent" : "opaque");
         create_child_checkbox_menu("Visible", "visible", (child) => {
             cqt.style.display = child.checked ? "block" : "none";
@@ -743,43 +737,21 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         });
 
         function create_child_select_presets() {
-            var tr = get_menu_table_tr();
-            set_common_tr_style(tr);
-            var td = document.createElement("td");
-            set_common_left_td_style(td);
-            td.textContent = "Presets";
-            tr.appendChild(td);
-            td = document.createElement("td");
-            td.colSpan = 3;
-            var child = document.createElement("select");
-            child.style.cursor = "pointer";
-            child.style.width = "100%";
+            const presets = [
+                { title: "-- Choose Preset --" },
+                { title: "Color: Default", callback: set_color_default },
+                { title: "Color: Deep Blue", callback: set_color_deep_blue },
+                { title: "Color: Mono Fire", callback: set_color_mono_fire },
+                { title: "Color: Juicy Lemon", callback: set_color_juicy_lemon },
+                { title: "Color: Rain Forest", callback: set_color_rain_forest },
+                { title: "Scale: 960", callback: () => set_scale_preset(960) },
+                { title: "Scale: 1280", callback: () => set_scale_preset(1280) }
+            ];
 
-            const presets = {
-                none: { text: "-- Choose Preset --" },
-                color_default: { text: "Color: Default", command: set_color_default },
-                color_deep_blue: { text: "Color: Deep Blue", command: set_color_deep_blue },
-                color_mono_fire: { text: "Color: Mono Fire", command: set_color_mono_fire },
-                color_juicy_lemon: { text: "Color: Juicy Lemon", command: set_color_juicy_lemon },
-                color_rain_forest: { text: "Color: Rain Forest", command: set_color_rain_forest },
-                scale_960: { text: "Scale: 960", command: () => set_scale_preset(960) },
-                scale_1280: { text: "Scale: 1280", command: () => set_scale_preset(1280) }
-            };
-
-            for (const name of Object.keys(presets)) {
-                var opt = document.createElement("option");
-                opt.textContent = presets[name].text;
-                opt.value = name;
-                child.appendChild(opt);
-            }
-
-            child.onchange = function() {
-                presets[child.value]?.command?.();
-                child.value = "none";
-            };
-
-            td.appendChild(child);
-            tr.appendChild(td);
+            create_child_select_menu("Presets", null, presets.map(v => v.title), child => {
+                presets[child.value|0]?.callback?.();
+                child.value = 0;
+            });
 
             function set_color_preset(...args) {
                 child_menu.left_color.value = number2color(args[0]), child_menu.left_color.onchange();
