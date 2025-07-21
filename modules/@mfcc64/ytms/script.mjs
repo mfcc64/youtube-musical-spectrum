@@ -51,6 +51,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         line_width: { def:  1, min:  1, max:  3 },
         line_color: { def:0xffffff, min:0, max:0xffffff },
         scroll:     { def:  0, min:  0, max:  1 },
+        coord_color:{ def:0x000000, min:0, max:0xffffff },
         transparent:{ def:  1, min:  0, max:  1 },
         visible:    { def: document.location.hostname != "www.youtube.com" ? 1 : 0,
                                min:  0, max:  1 },
@@ -215,6 +216,19 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
 
     if (document.location.hostname == "music.youtube.com")
         ytmusic_layout();
+
+    const coord_line_h = document.createElement("div");
+    const coord_line_v = document.createElement("div");
+    set_fixed_style(coord_line_h, cqt.style.zIndex);
+    set_fixed_style(coord_line_v, cqt.style.zIndex);
+    coord_line_h.style.left = 0;
+    coord_line_h.style.width = "100%";
+    coord_line_h.style.height = "1px";
+    coord_line_v.style.top = 0;
+    coord_line_v.style.height = "100%";
+    coord_line_v.style.width = "1px";
+    coord_line_h.style.pointerEvents = coord_line_v.style.pointerEvents = "none";
+    coord_line_h.style.display = coord_line_v.style.display = "none";
 
     function update_cqt_layout(child) {
         if (!child_menu.height || !child_menu.scroll || !child_menu.base_note || !child_menu.semitones)
@@ -733,7 +747,31 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         create_child_checkbox_menu("Transparent", "transparent", (child) => cqt.dataset.opacity = child.checked ? "transparent" : "opaque");
         create_child_checkbox_menu("Visible", "visible", (child) => {
             cqt.style.display = child.checked ? "block" : "none";
+            if (!child.checked)
+                coord_line_h.style.display = coord_line_v.style.display = "none";
             update_af_links();
+        });
+
+        function cqt_coord_line_leave(ev) {
+            coord_line_h.style.display = coord_line_v.style.display = "none";
+        }
+
+        function cqt_coord_line_move(ev) {
+            coord_line_h.style.display = coord_line_v.style.display = "block";
+            coord_line_h.style.top = ev.pageY + "px";
+            coord_line_v.style.left = ev.pageX + "px";
+        }
+
+        create_child_color_menu("Coord Color", "coord_color", child => {
+            if (child.value == "#000000") {
+                coord_line_h.style.display = coord_line_v.style.display = "none";
+                cqt.removeEventListener("mouseleave", cqt_coord_line_leave);
+                cqt.removeEventListener("mousemove", cqt_coord_line_move);
+            } else {
+                cqt.addEventListener("mouseleave", cqt_coord_line_leave);
+                cqt.addEventListener("mousemove", cqt_coord_line_move);
+                coord_line_h.style.backgroundColor = coord_line_v.style.backgroundColor = child.value;
+            }
         });
 
         function create_child_select_presets() {
@@ -907,6 +945,8 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
 
     create_menu();
     document.body.appendChild(cqt);
+    document.body.appendChild(coord_line_h);
+    document.body.appendChild(coord_line_v);
     document.body.appendChild(af_links);
     dispatchEvent(new CustomEvent("youtube-musical-spectrum-is-available"));
 })().catch(e => console.error(e));
