@@ -761,8 +761,8 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
 
         function cqt_coord_line_move(ev) {
             coord_line_h.style.display = coord_line_v.style.display = "block";
-            coord_line_h.style.top = ev.pageY + "px";
-            coord_line_v.style.left = ev.pageX + "px";
+            coord_line_h.style.top = ev.clientY + "px";
+            coord_line_v.style.left = ev.clientX + "px";
         }
 
         create_child_color_menu("Coord Color", "coord_color", child => {
