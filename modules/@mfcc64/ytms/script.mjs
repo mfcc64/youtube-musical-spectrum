@@ -297,10 +297,13 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         menu_div.style.backgroundColor = "#000000DD";
         menu_div.style.verticalAlign = "middle";
         menu_div.style.maxHeight = "90%";
+        menu_div.style.maxWidth = "90%";
         menu_div.style.overflow = "auto";
-        menu_div.style.scrollbarWidth = "none";
+        menu_div.style.scrollbarWidth = "8px";
+        menu_div.style.scrollbarColor = "#555555 #222222dd";
         menu_div.style.visibility = "hidden";
         menu_div.style.cursor = "default";
+        menu_table.style.width = "860px";
 
         var current_tr = null;
         var current_tr_count = 0;
