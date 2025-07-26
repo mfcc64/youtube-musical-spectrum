@@ -66,11 +66,19 @@ The available settings:
 - **Left Color:** Set left color. The default value is `#dcb900`.
 - **Mid Color:** Set middle color. The default value is `#dcdcdc`.
 - **Right Color:** Set right color. The default value is `#00b9dc`.
+- **Saturation:** Enable hue rotation mode and set saturation. When enabled, `Left Color`, `Mid Color`, and `Right Color`
+  are ignored, and you can't visualize stereo separation. The default value is `0` (`disabled`).
+- **Hue:** Set average hue for hue rotation mode. The unit is `10degree`. The value of `0` is `red`, the value of `12` is `green`, and
+  the value of `-12` is `blue`. The default value is `0`.
+- **Hue Range:** Set hue range for hue rotation mode. The actual hue will be from `Hue - 0.5 Hue Range` to `Hue + 0.5 Hue Range`.
+  The default value is `18`.
 - **Line Mode:** Set line mode. The default value is `Off`.
 - **Line Width:** Set line width. The default value is `1`.
 - **Line Color:** Set line color when `Line Mode` is `Static`. The default value is `#ffffff`.
+- **Scroll:** Set scroll direction. The default value is `vertical`.
 - **Transparent:** Set the transparency of the visualizer. The default value is set to `true`.
 - **Visible:** Set the visibility of the visualizer. The default value is set to `true` on YT Music and `false` on YouTube.
+- **Coord Color:** Enable coordinate line and set its color. The default value is `#000000` (`disabled`).
 - **Presets:** Choose a preset. Currently, most of them are color preset.
 - **Reset Settings:** Reset settings to the default values (Note that the default values can be changed).
 - **Set as Default Settings:** Set the current setttings as the default settings. Subsequent `Reset Settings` or new pages
