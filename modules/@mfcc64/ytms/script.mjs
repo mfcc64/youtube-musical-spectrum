@@ -126,7 +126,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
                 e("li", "If you want to change the axis, click it."),
                 e("li", "If you want to make your change persistent, click ", e("b", "Set as Default Settings"), " button."),
                 e("li", e("b", "New Features:"), " Custom color, custom range," +
-                    " peak color, bar scale, presets, line visualizer."),
+                    " peak color, bar scale, line visualizer, hue rotation, more color presets, horizontal scroll, coordinate line."),
                 e("li", e("a", {href: "https://github.com/mfcc64/youtube-musical-spectrum#settings"}, {target: "_blank"}, "Read more..."))
               ),
               e("p",
@@ -157,7 +157,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         af_links.style.display = !af_links_timeout || (child_menu.visible?.checked ?? true) ? "block" : "none";
     }
 
-    const message_version = 11;
+    const message_version = 12;
     af_links.shadowRoot.getElementById("message").style.display = get_opt("message_version") == message_version ? "none" : "block";
     af_links.shadowRoot.getElementById("close_message").addEventListener("click", function() {
         set_opt("message_version", message_version);
