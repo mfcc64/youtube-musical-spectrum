@@ -21,7 +21,7 @@
     },
     "web_accessible_resources": [
         {
-            "matches"   : [ "https://www.youtube.com/*", "https://music.youtube.com/*" ],
+            "matches"   : [ "https://www.youtube.com/*", "https://music.youtube.com/*", "https://open.spotify.com/*" ],
             "resources" : [ "*.png", "/modules/*.mjs", "/modules/*.wasm" ]
         }
     ],
@@ -29,7 +29,7 @@
         {
             "run_at"    : "document_end",
             "js"        : [ "wrapper.js" ],
-            "matches"   : [ "https://www.youtube.com/*", "https://music.youtube.com/*" ]
+            "matches"   : [ "https://www.youtube.com/*", "https://music.youtube.com/*", "https://open.spotify.com/*" ]
         }
     ],
     "content_security_policy" : {

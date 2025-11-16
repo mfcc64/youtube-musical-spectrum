@@ -99,7 +99,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
     af_links.style.color = "#FFFFFF";
     af_links.style.fontSize = "10pt";
     af_links.style.right = "8px";
-    af_links.style.bottom = "8px";
+    af_links.style.bottom = "calc(var(--ytms-cqt-bottom, 0px) + 8px)";
     af_links.style.opacity = 1;
     {
         const e = (name, ...args) => {
@@ -173,12 +173,14 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
     const videos = document.getElementsByTagName("video");
     let svideos = [];
     cqt.render_callback = function() {
-        let need_refresh = (videos.length != svideos.length);
-        for (let k = 0; k < videos.length && !need_refresh; k++)
-            need_refresh = (videos[k] != svideos[k]);
-        if (need_refresh) {
-            this.dataset.inputs = "video";
-            svideos = Array.from(videos);
+        if (document.location.hostname != "open.spotify.com") {
+            let need_refresh = (videos.length != svideos.length);
+            for (let k = 0; k < videos.length && !need_refresh; k++)
+                need_refresh = (videos[k] != svideos[k]);
+            if (need_refresh) {
+                this.dataset.inputs = "video";
+                svideos = Array.from(videos);
+            }
         }
 
         let state = 0;
@@ -197,7 +199,6 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
             #player { margin-top: 0 !important; }`;
         document.head.appendChild(style);
         af_links.style.zIndex = 11;
-        af_links.style.bottom = "calc(var(--ytmusic-player-bar-height, 0) + 8px)";
         cqt.style.zIndex = 10;
 
         function update_cqt_bottom() {
@@ -214,8 +215,31 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         update_cqt_bottom();
     }
 
-    if (document.location.hostname == "music.youtube.com")
-        ytmusic_layout();
+    function spotify_layout() {
+        cqt.style.zIndex = 4;
+        af_links.style.zIndex = 5;
+        document.body.style.setProperty("--ytms-cqt-bottom", "88px"); // FIXME
+        const old_play = HTMLMediaElement.prototype.play;
+        HTMLMediaElement.prototype.play = async function() {
+            const ret = old_play.call(this);
+            if (this.isConnected || this instanceof HTMLAudioElement)
+                return ret;
+            for (const video of svideos)
+                if (this == video)
+                    return ret;
+
+            svideos.push(this);
+            const source = cqt.audio_context.createMediaElementSource(this);
+            source.connect(cqt.audio_input);
+            source.connect(cqt.audio_context.destination);
+            return ret;
+        };
+    }
+
+    switch (document.location.hostname) {
+        case "music.youtube.com": ytmusic_layout(); break;
+        case "open.spotify.com": spotify_layout(); break;
+    }
 
     const coord_line_h = document.createElement("div");
     const coord_line_v = document.createElement("div");
@@ -304,6 +328,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         menu_div.style.visibility = "hidden";
         menu_div.style.cursor = "default";
         menu_table.style.width = "860px";
+        menu_div.style.display = "block";
 
         var current_tr = null;
         var current_tr_count = 0;
@@ -907,7 +932,8 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
             setTimeout(function(){ child.value = "Reset Default Settings"; }, 300);
         });
 
-        menu_div.appendChild(menu_table);
+        menu_div.attachShadow({mode: "open"});
+        menu_div.shadowRoot.appendChild(menu_table);
         menu.onclick = function() {
             menu_is_hidden = !menu_is_hidden;
             if (menu_is_hidden)
