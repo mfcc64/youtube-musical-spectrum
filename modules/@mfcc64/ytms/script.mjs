@@ -138,7 +138,6 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
               e("img", {alt: "YTMS"}, {src: icon_16}, {style: "curson: pointer;"}, {id: "open_message"}),
               " Support me on ",
               e("a", {href: "https://www.youtube.com/@mfcc64"}, {target: "_blank"}, "Youtube"), " ",
-              e("a", {href: "https://www.patreon.com/mfcc64"}, {target: "_blank"}, "Patreon"), " ",
               e("a", {href: "https://github.com/mfcc64"}, {target: "_blank"}, "GitHub"), " ",
               e("a", {href: "https://paypal.me/mfcc64"}, {target: "_blank"}, "PayPal"), " ",
               e("a", {href: "https://saweria.co/mfcc64"}, {target: "_blank"}, "Saweria")
