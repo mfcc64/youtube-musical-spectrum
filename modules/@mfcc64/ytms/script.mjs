@@ -119,7 +119,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
             e("div", {id: "message"},
               e("h3", "YouTube Musical Spectrum"),
               e("ul",
-                e("li", "By default, the visualization is visible on YT Music page but hidden on YouTube page."),
+                e("li", "By default, the visualization is visible on YT Music, Spotify, and SoundCloud but hidden on YouTube page."),
                 e("li", "Press ", e("b", "Ctrl+Alt+G"), " as a shortcut to show/hide visualization. This is equivalent to check/uncheck ", e("b", "Visible"), " setting."),
                 e("li", "Click the ", e("img", {alt: "YTMS"}, {src: icon_16}), " icon at the top left corner to open/close settings."),
                 e("li", "Press ", e("b", "Ctrl+Alt+H"), " to open/close settings and show/hide the ", e("img", {alt: "YTMS"}, {src: icon_16}), " icon."),
@@ -156,7 +156,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         af_links.style.display = !af_links_timeout || (child_menu.visible?.checked ?? true) ? "block" : "none";
     }
 
-    const message_version = 12;
+    const message_version = 13;
     af_links.shadowRoot.getElementById("message").style.display = get_opt("message_version") == message_version ? "none" : "block";
     af_links.shadowRoot.getElementById("close_message").addEventListener("click", function() {
         set_opt("message_version", message_version);
