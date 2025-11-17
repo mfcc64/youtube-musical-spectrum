@@ -186,8 +186,9 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
     set_fixed_style(cqt, 9999999);
     let stop_count = 0;
     const videos = document.getElementsByTagName("video");
+    const require_refresh = ["open.spotify.com", "soundcloud.com"].indexOf(document.location.hostname) < 0;
     cqt.render_callback = function() {
-        if (["open.spotify.com", "soundcloud.com"].indexOf(document.location.hostname) < 0) {
+        if (require_refresh) {
             let need_refresh = (videos.length != svideos.length);
             for (let k = 0; k < videos.length && !need_refresh; k++)
                 need_refresh = (videos[k] != svideos[k]);
