@@ -166,13 +166,28 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         af_links.shadowRoot.getElementById("message").style.display = "block";
     });
 
+    const media_symbol = Symbol("media_symbol");
+    let svideos = [];
+    if (document.location.hostname == "soundcloud.com") {
+        await new Promise((res, rej) => {
+            const old = AudioContext.prototype.createMediaElementSource;
+            AudioContext.prototype.createMediaElementSource = function(media) {
+                const retval = old.call(this, media);
+                ShowCQTElement.global_audio_context = this;
+                svideos.push(media);
+                media[media_symbol] = retval;
+                res();
+                return retval;
+            };
+        });
+    }
+
     const cqt = new ShowCQTElement();
     set_fixed_style(cqt, 9999999);
     let stop_count = 0;
     const videos = document.getElementsByTagName("video");
-    let svideos = [];
     cqt.render_callback = function() {
-        if (document.location.hostname != "open.spotify.com") {
+        if (["open.spotify.com", "soundcloud.com"].indexOf(document.location.hostname) < 0) {
             let need_refresh = (videos.length != svideos.length);
             for (let k = 0; k < videos.length && !need_refresh; k++)
                 need_refresh = (videos[k] != svideos[k]);
@@ -235,9 +250,17 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         };
     }
 
+    function soundcloud_layout() {
+        cqt.style.zIndex = 1000;
+        af_links.style.zIndex = 1001;
+        svideos[0][media_symbol].connect(cqt.audio_input);
+        document.body.style.setProperty("--ytms-cqt-bottom", "var(--play-controls-height, 0px)");
+    }
+
     switch (document.location.hostname) {
         case "music.youtube.com": ytmusic_layout(); break;
         case "open.spotify.com": spotify_layout(); break;
+        case "soundcloud.com": soundcloud_layout(); break;
     }
 
     const coord_line_h = document.createElement("div");
