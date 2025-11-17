@@ -25,7 +25,7 @@ You can see not only spectrogram of YouTube video but also spectrogram of your m
 ## Settings
 
 Basic usage:
-- By default, the visualization is visible on YT Music page but hidden on YouTube page.
+- By default, the visualization is visible on YT Music, Spotify, and SoundCloud but hidden on YouTube page.
 - Press **Ctrl+Alt+G** as a shortcut to show/hide visualization. This is equivalent to check/uncheck **Visible** setting.
 - Click the ![Settings](modules/@mfcc64/ytms-assets@1.0.0/icon-16.png) icon at the top left corner to open/close settings.
 - Press **Ctrl+Alt+H** to open/close settings and show/hide the ![Settings](modules/@mfcc64/ytms-assets@1.0.0/icon-16.png) icon.
@@ -69,7 +69,7 @@ The available settings:
 - **Line Color:** Set line color when `Line Mode` is `Static`. The default value is `#ffffff`.
 - **Scroll:** Set scroll direction. The default value is `vertical`.
 - **Transparent:** Set the transparency of the visualizer. The default value is set to `true`.
-- **Visible:** Set the visibility of the visualizer. The default value is set to `true` on YT Music and `false` on YouTube.
+- **Visible:** Set the visibility of the visualizer. The default value is set to `false` on YouTube and `true` elsewhere.
 - **Coord Color:** Enable coordinate line and set its color. The default value is `#000000` (`disabled`).
 - **Presets:** Choose a preset. Currently, most of them are color preset.
 - **Reset Settings:** Reset settings to the default values (Note that the default values can be changed).
