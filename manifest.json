@@ -3,7 +3,7 @@
     "name" : "YouTube Musical Spectrum",
     "short_name" : "YTMS",
     "description" : "Audio visualizer for YouTube, YT Music, Spotify, and SoundCloud with musical notes.",
-    "version" : "17.0.0",
+    "version" : "17.1.0",
     "icons" : {
         "128" : "modules/@mfcc64/ytms-assets@1.0.0/icon-128.png",
         "64"  : "modules/@mfcc64/ytms-assets@1.0.0/icon-64.png",
