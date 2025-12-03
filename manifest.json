@@ -13,6 +13,14 @@
         "16"  : "modules/@mfcc64/ytms-assets@1.0.0/icon-16.png"
     },
     "action" : {},
+    "background" : {
+        "service_worker" : "background.js",
+        "scripts" : [ "background.js" ]
+    },
+    "options_ui" : {
+        "page" : "options/options.html",
+        "open_in_tab" : false
+    },
     "browser_specific_settings": {
         "gecko": {
             "id": "{1e41b6c3-1ae3-41eb-89fc-f5c5eb5c1301}"

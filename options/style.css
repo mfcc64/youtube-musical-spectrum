@@ -1,0 +1,12 @@
+
+:root {
+    background-color: #333333;
+    color: #dddddd;
+    font-family: sans-serif;
+}
+
+em {
+    font-weight: bold;
+    font-style: italic;
+    color: #ffffff;
+}
