@@ -54,7 +54,7 @@ The available settings:
 - **Bar Scale:** Set bar scale. The default value is `Linear`.
 - **Base Note:** Set base note as MIDI number. The default is `16` or `E0`.
 - **Semitones:** Set spectrogram range in semitones. The default is `120` or `10 octaves`.
-- **Peak Color:** Set color of peaks to aid locating peaks especially at low frequency region. The default is `#ffffff` or `disabled`.
+- **Scroll:** Set scroll direction. The default value is `vertical`.
 - **Left Color:** Set left color. The default value is `#dcb900`.
 - **Mid Color:** Set middle color. The default value is `#dcdcdc`.
 - **Right Color:** Set right color. The default value is `#00b9dc`.
@@ -67,10 +67,12 @@ The available settings:
 - **Line Mode:** Set line mode. The default value is `Off`.
 - **Line Width:** Set line width. The default value is `1`.
 - **Line Color:** Set line color when `Line Mode` is `Static`. The default value is `#ffffff`.
-- **Scroll:** Set scroll direction. The default value is `vertical`.
+- **Peak Range:** Set range of peaks for peak detection. The default value is `72`.
+- **Peak Color:** Set color of peaks for peak detection. The color is multiplied with spectrogram color. The default is `#ffffff` or `disabled`.
+  Both `Peak Range` and `Peak Color` are useful to aid locating peaks especially at low frequency region.
+- **Coord Color:** Enable coordinate line and set its color. The default value is `#000000` (`disabled`).
 - **Transparent:** Set the transparency of the visualizer. The default value is set to `true`.
 - **Visible:** Set the visibility of the visualizer. The default value is set to `false` on YouTube and `true` elsewhere.
-- **Coord Color:** Enable coordinate line and set its color. The default value is `#000000` (`disabled`).
 - **Presets:** Choose a preset. Currently, most of them are color preset.
 - **Reset Settings:** Reset settings to the default values (Note that the default values can be changed).
 - **Set as Default Settings:** Set the current setttings as the default settings. Subsequent `Reset Settings` or new pages
