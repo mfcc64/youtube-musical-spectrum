@@ -52,6 +52,7 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         line_color: { def:0xffffff, min:0, max:0xffffff },
         scroll:     { def:  0, min:  0, max:  1 },
         coord_color:{ def:0x000000, min:0, max:0xffffff },
+        peak_range: { def:  72, min:  0, max:120 },
         transparent:{ def:  1, min:  0, max:  1 },
         visible:    { def: document.location.hostname != "www.youtube.com" ? 1 : 0,
                                min:  0, max:  1 },
@@ -614,19 +615,18 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
             child.onchange();
         }
 
-        create_child_color_menu("Peak Color", "peak_color", child => color_int[3] = color2number(child.value));
+        create_child_select_menu("Scroll", "scroll", [ "Vertical", "Horizontal" ], update_cqt_layout);
 
         function detect_peak(color) {
             if (color_int[3] == 0xffffff)
                 return;
 
-            for (let k = 4; k < color.length - 4; k += 4) {
+            const range = child_menu.peak_range.value / 120 * color.length;
+            for (let k = 4; k + 2 < range && k < color.length - 4; k += 4) {
                 if (color[k+3] <= color[k-1] || color[k+3] < color[k+7])
                     continue;
 
-                const alpha = (1 - (k+2) / color.length) ** 2 - 0.16;
-                if (alpha <= 0)
-                    break;
+                const alpha = Math.cos(0.5 * Math.PI * (k+2) / range) ** 2;
 
                 for (let m = 0; m < 3; m++)
                     color[k+m] = Math.min(color[k+m], 1) * (1 - alpha + peak_color[m] * alpha);
@@ -794,14 +794,8 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
             tr.appendChild(td);
         }
 
-        create_child_select_menu("Scroll", "scroll", [ "Vertical", "Horizontal" ], update_cqt_layout);
-        create_child_checkbox_menu("Transparent", "transparent", (child) => cqt.dataset.opacity = child.checked ? "transparent" : "opaque");
-        create_child_checkbox_menu("Visible", "visible", (child) => {
-            cqt.style.display = child.checked ? "block" : "none";
-            if (!child.checked)
-                coord_line_h.style.display = coord_line_v.style.display = "none";
-            update_af_links();
-        });
+        create_child_range_menu("Peak Range", "peak_range");
+        create_child_color_menu("Peak Color", "peak_color", child => color_int[3] = color2number(child.value));
 
         function cqt_coord_line_leave(ev) {
             coord_line_h.style.display = coord_line_v.style.display = "none";
@@ -823,6 +817,14 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
                 cqt.addEventListener("mousemove", cqt_coord_line_move);
                 coord_line_h.style.backgroundColor = coord_line_v.style.backgroundColor = child.value;
             }
+        });
+
+        create_child_checkbox_menu("Transparent", "transparent", (child) => cqt.dataset.opacity = child.checked ? "transparent" : "opaque");
+        create_child_checkbox_menu("Visible", "visible", (child) => {
+            cqt.style.display = child.checked ? "block" : "none";
+            if (!child.checked)
+                coord_line_h.style.display = coord_line_v.style.display = "none";
+            update_af_links();
         });
 
         function create_child_select_presets() {
