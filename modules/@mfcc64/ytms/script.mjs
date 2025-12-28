@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
+import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/showcqt-element.mjs";
 
 (async function(){
     const get_asset = (name) => String(new URL(`../ytms-assets@1.0.0/${name}`, import.meta.url));
@@ -167,23 +167,30 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
         af_links.shadowRoot.getElementById("message").style.display = "block";
     });
 
-    const media_symbol = Symbol("media_symbol");
     let svideos = [];
     if (document.location.hostname == "soundcloud.com") {
-        await new Promise((res, rej) => {
-            const old = AudioContext.prototype.createMediaElementSource;
-            AudioContext.prototype.createMediaElementSource = function(media) {
-                const retval = old.call(this, media);
-                ShowCQTElement.global_audio_context = this;
-                svideos.push(media);
-                media[media_symbol] = retval;
-                res();
+        ShowCQTElement.global_audio_context = new AutoResumeAudioContext();
+        const old = AudioContext.prototype.createMediaElementSource;
+        AudioContext.prototype.createMediaElementSource = function(media) {
+            const retval = old.call(this, media);
+            if (this != ShowCQTElement.global_audio_context) {
+                console.warn("audio can't connect to showcqt-element");
                 return retval;
-            };
-        });
+            }
+            retval.connect(cqt.audio_input);
+            svideos.push(media);
+            return retval;
+        };
+
+        window.AudioContext = function() {
+            return ShowCQTElement.global_audio_context;
+        };
+
+        Object.setPrototypeOf(window.AudioContext, AutoResumeAudioContext);
+        window.AudioContext.prototype = AutoResumeAudioContext.prototype;
     }
 
-    const cqt = new ShowCQTElement();
+    var cqt = new ShowCQTElement();
     set_fixed_style(cqt, 9999999);
     let stop_count = 0;
     const videos = document.getElementsByTagName("video");
@@ -255,7 +262,6 @@ import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
     function soundcloud_layout() {
         cqt.style.zIndex = 1000;
         af_links.style.zIndex = 1001;
-        svideos[0][media_symbol].connect(cqt.audio_input);
         document.body.style.setProperty("--ytms-cqt-bottom", "var(--play-controls-height, 0px)");
     }
 
