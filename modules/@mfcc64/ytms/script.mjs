@@ -963,8 +963,8 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
             setTimeout(function(){ child.value = "Reset Default Settings"; }, 300);
         });
 
-        menu_div.attachShadow({mode: "open"});
-        menu_div.shadowRoot.appendChild(menu_table);
+        (document.location.hostname == "open.spotify.com" ? menu_div.attachShadow({mode: "open"}) : menu_div)
+            .appendChild(menu_table);
         menu.onclick = function() {
             menu_is_hidden = !menu_is_hidden;
             if (menu_is_hidden)
