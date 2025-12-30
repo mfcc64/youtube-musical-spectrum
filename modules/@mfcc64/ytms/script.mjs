@@ -340,7 +340,7 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
         menu.appendChild(menu_img);
         var menu_is_hidden = true;
         var menu_div = document.createElement("div");
-        var menu_table = document.createElement("table");
+        var menu_table = document.createElement("div");
         set_fixed_style(menu_div, 10000001);
         menu_div.style.left = "0px";
         menu_div.style.top = "0px";
@@ -349,70 +349,66 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
         menu_div.style.color = "white";
         menu_div.style.fontSize = "10pt";
         menu_div.style.backgroundColor = "#000000DD";
-        menu_div.style.verticalAlign = "middle";
-        menu_div.style.maxHeight = "90%";
-        menu_div.style.maxWidth = "90%";
+        menu_div.style.maxHeight = "100%";
+        menu_div.style.maxWidth = "100%";
+        menu_div.style.boxSizing = "border-box";
         menu_div.style.overflow = "auto";
         menu_div.style.scrollbarWidth = "8px";
         menu_div.style.scrollbarColor = "#555555 #222222dd";
         menu_div.style.visibility = "hidden";
         menu_div.style.cursor = "default";
-        menu_table.style.width = "860px";
         menu_div.style.display = "block";
+        menu_table.style.display = "grid";
+        menu_table.style.padding = "0px";
+        menu_table.style.margin = "0px";
+        menu_table.style.border = "0px";
+        menu_table.style.gridTemplateColumns = "repeat(3, 48px 80px 80px 40px 32px)";
+        menu_table.style.gridAutoRows = "32px";
+        menu_table.style.alignItems = "center";
 
-        var current_tr = null;
-        var current_tr_count = 0;
-
-        function get_menu_table_tr() {
-            if (current_tr && current_tr_count < 3)
-                return current_tr_count++, current_tr;
-            current_tr_count = 1;
-            current_tr = document.createElement("tr");
-            menu_table.appendChild(current_tr);
-            return current_tr;
+        function get_grid_item(n) {
+            var div = document.createElement("div");
+            div.style.display = "block";
+            div.style.padding = "0px";
+            div.style.margin = "0px";
+            div.style.border = "0px";
+            div.style.overflow = "hidden";
+            div.style.whiteSpace = "nowrap";
+            div.style.lineHeight = "1em";
+            div.style.gridColumn = "span " + n;
+            menu_table.appendChild(div);
+            return div;
         }
 
-        function set_common_tr_style(tr) {
-            tr.style.height = "32px";
-        }
-
-        function set_common_left_td_style(td) {
-            td.style.paddingLeft = "48px";
-            td.style.width       = "80px";
+        function set_common_stretched_input_style(e) {
+            e.style.cursor = "pointer";
+            e.style.width = "100%";
+            e.style.margin = "0px";
+            e.style.outline = "none";
+            e.style.boxSizing = "border-box";
         }
 
         function create_child_range_menu(title, name, callback) {
-            var tr = get_menu_table_tr();
-            set_common_tr_style(tr);
-            var td = document.createElement("td");
-            set_common_left_td_style(td);
-            td.textContent = title;
-            tr.appendChild(td);
-            td = document.createElement("td");
-            td.style.width = "120px";
-            td.colSpan = 2;
+            get_grid_item(1);
+            var label = get_grid_item(1);
+            var container = get_grid_item(2);
+            var text = get_grid_item(1);
+            label.textContent = title;
+            text.style.textAlign = "right";
+
             var child = child_menu[name] = document.createElement("input");
-            var child_text = document.createElement("td");
-            child.style.cursor = "pointer";
-            child.style.width = "100%";
+            set_common_stretched_input_style(child);
             child.type = "range";
             child.min = defaults[name].min;
             child.max = defaults[name].max;
             child.step = 1;
             child.value = get_opt(name);
-            child.oninput = function() {
-                child_text.textContent = this.value;
+            child.oninput = () => { text.textContent = child.value; };
+            child.onchange = () => {
+                child.oninput();
+                callback?.(child);
             };
-            child.onchange = function() {
-                this.oninput();
-                if (callback)
-                    callback(child);
-            };
-            td.appendChild(child);
-            tr.appendChild(td);
-            tr.appendChild(child_text);
-            child_text.style.textAlign = "right";
-            child_text.style.width = "32px";
+            container.appendChild(child);
             child.onchange();
         }
 
@@ -462,27 +458,27 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
         create_child_range_menu("Scale Y", "scale_y", (child) => cqt.dataset.scaleY = child.value);
 
         function create_child_select_menu(title, name, select_opt, callback) {
-            var tr = get_menu_table_tr();
-            set_common_tr_style(tr);
-            var td = document.createElement("td");
-            set_common_left_td_style(td);
-            td.textContent = title;
-            tr.appendChild(td);
-            td = document.createElement("td");
-            td.colSpan = 3;
+            get_grid_item(1);
+            var label = get_grid_item(1);
+            var container = get_grid_item(3);
+
+            label.textContent = title;
             var child = document.createElement("select");
-            if (name) child_menu[name] = child;
-            child.style.cursor = "pointer";
-            child.style.width = "100%";
+            set_common_stretched_input_style(child);
+
             for (let k = 0; k < select_opt.length; k++) {
                 const opt = document.createElement("option");
                 opt.textContent = select_opt[k];
                 opt.value = k;
                 child.appendChild(opt);
             }
-            if (name) child.value = get_opt(name);
-            td.appendChild(child);
-            tr.appendChild(td);
+
+            if (name) {
+                child_menu[name] = child;
+                child.value = get_opt(name);
+            }
+
+            container.appendChild(child);
             child.onchange = () => callback?.(child);
             child.onchange();
         }
@@ -592,32 +588,24 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
         const color_rotation = new ColorRotation();
 
         function create_child_color_menu(title, name, callback) {
-            var tr = get_menu_table_tr();
-            set_common_tr_style(tr);
-            var td = document.createElement("td");
-            set_common_left_td_style(td);
-            td.textContent = title;
-            tr.appendChild(td);
-            td = document.createElement("td");
-            td.style.width = "80px";
-            var child_text = document.createElement("td");
-            child_text.style.textAlign = "right";
-            child_text.colSpan = 2;
+            get_grid_item(1);
+            var label = get_grid_item(1);
+            var container = get_grid_item(1);
+            var text = get_grid_item(2);
+
+            label.textContent = title;
+            text.style.textAlign = "right";
             var child = child_menu[name] = document.createElement("input");
-            child.style.cursor = "pointer";
-            child.style.width = "100%";
+            set_common_stretched_input_style(child);
             child.type = "color";
             child.value = number2color(get_opt(name));
-            child.onchange = function() {
-                child_text.textContent = child.value;
-                child.textContent = child.value;
+            child.onchange = () => {
+                text.textContent = child.value;
                 callback?.(child);
                 update_color_table();
             };
             child.oninput = child.onchange;
-            td.appendChild(child);
-            tr.appendChild(td);
-            tr.appendChild(child_text);
+            container.appendChild(child);
             child.onchange();
         }
 
@@ -779,25 +767,19 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
         cqt.post_render_callback = p => line_visualizer.render(p);
 
         function create_child_checkbox_menu(title, name, callback) {
-            var tr = get_menu_table_tr();
-            set_common_tr_style(tr);
-            var td = document.createElement("td");
-            set_common_left_td_style(td);
-            td.textContent = title;
-            tr.appendChild(td);
-            td = document.createElement("td");
-            td.colSpan = 3;
+            get_grid_item(1);
+            var label = get_grid_item(1);
+            var container = get_grid_item(3)
+
+            label.textContent = title;
             var child = child_menu[name] = document.createElement("input");
             child.style.cursor = "pointer";
+            child.style.outline = "none";
             child.type = "checkbox";
             child.checked = get_opt(name) * 1;
-            child.onchange = function() {
-                if (callback)
-                    callback(child);
-            };
+            child.onchange = () => callback?.(child);
+            container.appendChild(child);
             child.onchange();
-            td.appendChild(child);
-            tr.appendChild(td);
         }
 
         create_child_range_menu("Peak Range", "peak_range");
@@ -906,20 +888,17 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
         }
         create_child_select_presets();
 
-        current_tr = null;
-        set_common_tr_style(get_menu_table_tr());
-        current_tr = null;
+        get_grid_item(15);
 
-        var child_buttons_td = document.createElement("td");
-        child_buttons_td.colSpan = 4 * 3;
+        var child_buttons_td = get_grid_item(15);
         child_buttons_td.style.textAlign = "right";
-        get_menu_table_tr().appendChild(child_buttons_td);
 
         function create_child_button_menu(title, callback) {
             var child = document.createElement("input");
             child.type = "button";
             child.value = title;
             child.style.cursor = "pointer";
+            child.style.outline = "none";
             child.style.fontFamily = "inherit";
             child.style.fontSize = "inherit";
             child.style.marginLeft = "8px";
@@ -963,8 +942,7 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
             setTimeout(function(){ child.value = "Reset Default Settings"; }, 300);
         });
 
-        (document.location.hostname == "open.spotify.com" ? menu_div.attachShadow({mode: "open"}) : menu_div)
-            .appendChild(menu_table);
+        menu_div.appendChild(menu_table);
         menu.onclick = function() {
             menu_is_hidden = !menu_is_hidden;
             if (menu_is_hidden)
