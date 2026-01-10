@@ -48,7 +48,7 @@ const OBSERVED_ATTRIBUTES = {
 // Hopefully nobody hijacks HTMLDivElement
 const HTMLElement = Object.getPrototypeOf(HTMLDivElement);
 class ShowCQTElement extends HTMLElement {
-    static version = "2.2.1";
+    static version = "2.3.0";
 
     static global_audio_context;
 
@@ -96,6 +96,9 @@ class ShowCQTElement extends HTMLElement {
 
         p.canvas_ctx = p.canvas.getContext("2d");
 
+        if (this.hasAttribute("data-shared") && !ShowCQTElement.global_audio_context)
+            ShowCQTElement.global_audio_context = new AutoResumeAudioContext();
+
         p.audio_ctx = custom_ctx || ShowCQTElement.global_audio_context || new AutoResumeAudioContext();
 
         p.panner = p.audio_ctx.createStereoPanner();
@@ -119,11 +122,12 @@ class ShowCQTElement extends HTMLElement {
 
     #update_input_elements = (val) => {
         const p = this.#private;
-        const src = p.showcqt_element_input_source;
+        const src = Symbol.for("showcqt-element/media-element-source");
+        const count = Symbol.for("showcqt-element/media-element-source-count");
         val = val ? val : "";
         const new_elems = [];
         try {
-            for (const elem of document.querySelectorAll(val)) {
+            for (const elem of val ? document.querySelectorAll(val) : []) {
                 try {
                     const k = p.i_elems.indexOf(elem);
                     if (k >= 0) {
@@ -133,24 +137,32 @@ class ShowCQTElement extends HTMLElement {
                     }
 
                     if (elem[src]) {
-                        if (elem[src].context == p.audio_ctx) {
-                            elem[src].connect(this.audio_input);
-                            elem[src].connect(p.audio_ctx.destination);
-                            new_elems.push(elem);
-                        }
+                        elem[src].connect(this.audio_input);
+                        elem[src].connect(p.audio_ctx.destination);
+                        elem[count]++;
+                        new_elems.push(elem);
                     } else {
                         elem[src] = p.audio_ctx.createMediaElementSource(elem);
                         elem[src].connect(this.audio_input);
                         elem[src].connect(p.audio_ctx.destination);
+                        elem[count] = (elem[count] ?? 0) + 1;
                         new_elems.push(elem);
                     }
-                } catch { }
+                } catch (e) {
+                    console.error(e);
+                }
             }
-        } catch { }
+        } catch (e) {
+            console.error(e);
+        }
 
         for (const elem of p.i_elems)
-            if (elem)
-                elem[src].disconnect();
+            if (elem) {
+                elem[src].disconnect(this.audio_input);
+                elem[count]--;
+                if (elem[count] <= 0)
+                    elem[src].disconnect(p.audio_ctx.destination);
+            }
 
         p.i_elems = new_elems;
     };
@@ -469,8 +481,6 @@ class ShowCQTElement extends HTMLElement {
     };
 
     #private = {
-        showcqt_element_input_source: Symbol("showcqt_element_input_source"),
-
         // layout
         width: 0,
         height: 0,
