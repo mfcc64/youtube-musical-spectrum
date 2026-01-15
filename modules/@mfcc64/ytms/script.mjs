@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/showcqt-element.mjs";
+import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
 
 (async function(){
     const get_asset = (name) => String(new URL(`../ytms-assets@1.0.0/${name}`, import.meta.url));
@@ -167,13 +167,13 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
         af_links.shadowRoot.getElementById("message").style.display = "block";
     });
 
+    const cqt = new ShowCQTElement();
     let svideos = [];
     if (document.location.hostname == "soundcloud.com") {
-        ShowCQTElement.global_audio_context = new AutoResumeAudioContext();
         const old = AudioContext.prototype.createMediaElementSource;
         AudioContext.prototype.createMediaElementSource = function(media) {
             const retval = old.call(this, media);
-            if (this != ShowCQTElement.global_audio_context) {
+            if (this != cqt.audio_context) {
                 console.warn("audio can't connect to showcqt-element");
                 return retval;
             }
@@ -183,14 +183,13 @@ import {ShowCQTElement, AutoResumeAudioContext} from "../../showcqt-element@2/sh
         };
 
         window.AudioContext = function() {
-            return ShowCQTElement.global_audio_context;
+            return cqt.audio_context;
         };
 
-        Object.setPrototypeOf(window.AudioContext, AutoResumeAudioContext);
-        window.AudioContext.prototype = AutoResumeAudioContext.prototype;
+        Object.setPrototypeOf(window.AudioContext, cqt.audio_context.constructor);
+        window.AudioContext.prototype = cqt.audio_context.constructor.prototype;
     }
 
-    var cqt = new ShowCQTElement();
     set_fixed_style(cqt, 9999999);
     let stop_count = 0;
     const videos = document.getElementsByTagName("video");
