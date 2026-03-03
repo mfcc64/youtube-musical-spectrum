@@ -48,7 +48,7 @@ const OBSERVED_ATTRIBUTES = {
 // Hopefully nobody hijacks HTMLDivElement
 const HTMLElement = Object.getPrototypeOf(HTMLDivElement);
 class ShowCQTElement extends HTMLElement {
-    static version = "2.3.0";
+    static version = "3.0.0";
 
     static global_audio_context;
 
@@ -96,22 +96,28 @@ class ShowCQTElement extends HTMLElement {
 
         p.canvas_ctx = p.canvas.getContext("2d");
 
-        if (this.hasAttribute("data-shared") && !ShowCQTElement.global_audio_context)
-            ShowCQTElement.global_audio_context = new AutoResumeAudioContext();
-
-        p.audio_ctx = custom_ctx || ShowCQTElement.global_audio_context || new AutoResumeAudioContext();
+        p.audio_ctx = custom_ctx || ShowCQTElement.global_audio_context ||
+            (ShowCQTElement.global_audio_context = new AutoResumeAudioContext());
 
         p.panner = p.audio_ctx.createStereoPanner();
         (async () => {
             await p.audio_ctx.audioWorklet.addModule(new URL("audio-worklet.mjs", import.meta.url));
-            const worklet = new AudioWorkletNode(p.audio_ctx, "showcqt-element--send-frame", { outputChannelCount: [2] });
+            const worklet = new AudioWorkletNode(p.audio_ctx, "showcqt-element--send-frame-v2", { outputChannelCount: [2] });
             p.panner.connect(worklet);
-            worklet.port.onmessage = (msg) => this.send_buffer(msg.data);
+            worklet.port.onmessage = ShowCQTElement.#gen_port_onmessage(new WeakRef(this));
+            ShowCQTElement.#finalizer.register(this, {worklet, input: p.panner});
         })().catch(e => console.error(e));
 
         for (const attr of Object.keys(OBSERVED_ATTRIBUTES))
             this.#update_attribute(attr);
     }
+
+    static #finalizer = new FinalizationRegistry(({worklet, input}) => {
+        worklet.port.postMessage("close");
+        worklet.port.close();
+        input.disconnect();
+    });
+    static #gen_port_onmessage = wr => (msg => wr.deref()?.send_buffer(msg.data));
 
     attributeChangedCallback(name, old_val, val) {
         if (name == "data-inputs")
@@ -122,12 +128,26 @@ class ShowCQTElement extends HTMLElement {
 
     #update_input_elements = (val) => {
         const p = this.#private;
+        if (!p.qs_root)
+            return;
+
         const src = Symbol.for("showcqt-element/media-element-source");
         const count = Symbol.for("showcqt-element/media-element-source-count");
         val = val ? val : "";
         const new_elems = [];
+
+        if (p.observer) {
+            const level = (val.indexOf("#") >= 0 || val.indexOf(".") >= 0 || val.indexOf("[") >= 0) ? 2 : 1 * !!val;
+            if (level != p.observe_level) {
+                p.observer.disconnect();
+                p.observe_level = level;
+                if (level > 0)
+                    p.observer.observe(p.qs_root, {subtree: true, childList: true, attributes: level == 2});
+            }
+        }
+
         try {
-            for (const elem of val ? document.querySelectorAll(val) : []) {
+            for (const elem of val ? p.qs_root.querySelectorAll(val) : []) {
                 try {
                     const k = p.i_elems.indexOf(elem);
                     if (k >= 0) {
@@ -136,18 +156,12 @@ class ShowCQTElement extends HTMLElement {
                         continue;
                     }
 
-                    if (elem[src]) {
-                        elem[src].connect(this.audio_input);
+                    elem[src] = elem[src] ?? p.audio_ctx.createMediaElementSource(elem);
+                    elem[src].connect(this.audio_input);
+                    if (!elem[count])
                         elem[src].connect(p.audio_ctx.destination);
-                        elem[count]++;
-                        new_elems.push(elem);
-                    } else {
-                        elem[src] = p.audio_ctx.createMediaElementSource(elem);
-                        elem[src].connect(this.audio_input);
-                        elem[src].connect(p.audio_ctx.destination);
-                        elem[count] = (elem[count] ?? 0) + 1;
-                        new_elems.push(elem);
-                    }
+                    elem[count] = (elem[count] ?? 0) + 1;
+                    new_elems.push(elem);
                 } catch (e) {
                     console.error(e);
                 }
@@ -158,13 +172,14 @@ class ShowCQTElement extends HTMLElement {
 
         for (const elem of p.i_elems)
             if (elem) {
-                elem[src].disconnect(this.audio_input);
+                try { elem[src].disconnect(this.audio_input); } catch (e) { console.error(e); }
                 elem[count]--;
                 if (elem[count] <= 0)
-                    elem[src].disconnect(p.audio_ctx.destination);
+                    try { elem[src].disconnect(p.audio_ctx.destination); } catch (e) { console.error(e); }
             }
 
-        p.i_elems = new_elems;
+        p.i_elems.length = 0;
+        p.i_elems.push(...new_elems);
     };
 
     #update_attribute = (name, val) => {
@@ -205,12 +220,40 @@ class ShowCQTElement extends HTMLElement {
 
     connectedCallback() {
         const p = this.#private;
+        let need_observer = false;
+        p.qs_root = this;
+        if (this.hasAttribute("data-scoped-level")) {
+            let level = Math.round(this.getAttribute("data-scoped-level"));
+            if (level != level) level = 0;
+            (level >= 0) ? (need_observer = true) : (level = -level);
+
+            for (let m = 0; m < level; m++) {
+                const next = p.qs_root.parentNode ?? p.qs_root.host;
+                if (!next)
+                    break;
+                p.qs_root = next;
+            }
+        }
+
+        if (p.qs_root == this) p.qs_root = document;
+
+        if (need_observer)
+            p.observer = new MutationObserver(this.#observe);
+
+        this.#update_input_elements(this.getAttribute("data-inputs"));
         if (p.render_id === undefined)
             p.render_id = requestAnimationFrame(this.#render);
     }
 
+    #observe = (r) => {
+        this.#update_input_elements(this.getAttribute("data-inputs"));
+    };
+
     disconnectedCallback() {
         const p = this.#private;
+        this.#update_input_elements("");
+        p.observer = null;
+        p.qs_root = null;
         if (p.render_id !== undefined)
             p.render_id = cancelAnimationFrame(p.render_id);
     }
@@ -512,6 +555,9 @@ class ShowCQTElement extends HTMLElement {
         cqt: null,
         audio_ctx: null,
         panner: null,
+        qs_root: null,
+        observer: null,
+        observe_level: 0,
 
         // render state
         alpha_table: null,

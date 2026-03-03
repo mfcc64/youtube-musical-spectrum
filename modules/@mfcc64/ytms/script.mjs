@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-import {ShowCQTElement} from "../../showcqt-element@2/showcqt-element.mjs";
+import {ShowCQTElement} from "../../showcqt-element@3/showcqt-element.mjs";
 
 (async function(){
     const get_asset = (name) => String(new URL(`../ytms-assets@1.0.0/${name}`, import.meta.url));

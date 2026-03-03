@@ -17,13 +17,24 @@
  */
 
 class SendFrameProcessor extends AudioWorkletProcessor {
+    constructor(...args) {
+        super(...args);
+        this.alive = true;
+        this.port.onmessage = (msg) => {
+            if (msg.data == "close") {
+                this.alive = false;
+                this.port.close();
+            }
+        };
+    }
+
     process(inputs, outputs) {
         if (inputs?.[0]?.[1]?.length)
             this.port.postMessage(inputs[0]);
         else if (outputs?.[0]?.[1]?.length)
             this.port.postMessage(outputs[0]);
-        return true;
+        return this.alive;
     }
 }
 
-registerProcessor("showcqt-element--send-frame", SendFrameProcessor);
+registerProcessor("showcqt-element--send-frame-v2", SendFrameProcessor);
