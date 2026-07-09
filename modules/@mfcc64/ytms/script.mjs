@@ -97,7 +97,7 @@ import {ShowCQTElement} from "../../showcqt-element@3/showcqt-element.mjs";
     af_links.style.padding = "8px";
     af_links.style.border = "thin solid white";
     af_links.style.backgroundColor = "#000000DD";
-    af_links.style.color = "#FFFFFF";
+    af_links.style.color = "#dddddd";
     af_links.style.fontSize = "10pt";
     af_links.style.right = "8px";
     af_links.style.bottom = "calc(var(--ytms-cqt-bottom, 0px) + 8px)";
@@ -115,6 +115,8 @@ import {ShowCQTElement} from "../../showcqt-element@3/showcqt-element.mjs";
         af_links.attachShadow({mode: "open"}).append(
             e("style",
               `:host { opacity: 0; max-width: 700px; }
+              a, a:visited { color: #ffffff; font-weight: bold; }
+              a:hover { color: #ffffa0; }
               :host(:hover) { opacity: 1; }
               img { vertical-align: middle; }`),
             e("div", {style: "text-align: right;"},
