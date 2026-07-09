@@ -943,12 +943,23 @@ import {ShowCQTElement} from "../../showcqt-element@3/showcqt-element.mjs";
 
         menu_div.appendChild(menu_table);
         menu.onclick = function() {
+            if (menu_is_hidden && !child_menu.visible.checked) {
+                child_menu.visible.checked = true;
+                child_menu.visible.onchange();
+                return;
+            }
+
             menu_is_hidden = !menu_is_hidden;
             if (menu_is_hidden)
                 menu_div.style.visibility = "hidden";
             else
                 menu_div.style.visibility = "visible";
         };
+
+        cqt.addEventListener("dblclick", () => {
+            child_menu.visible.checked = false;
+            child_menu.visible.onchange();
+        });
 
         var hide_menu = !!(get_opt("hide_menu") * 1);
         menu.style.visibility = hide_menu ? "hidden" : "visible";

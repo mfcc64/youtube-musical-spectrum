@@ -27,6 +27,8 @@ You can see not only spectrogram of YouTube video but also spectrogram of your m
 Basic usage:
 - By default, the visualization is visible on YT Music, Spotify, and SoundCloud but hidden on YouTube page.
 - Press **Ctrl+Alt+G** as a shortcut to show/hide visualization. This is equivalent to check/uncheck **Visible** setting.
+- Click the ![Settings](modules/@mfcc64/ytms-assets@1.0.0/icon-16.png) icon at the top left corner to show the visualizer when previously hidden.
+- Double click the visualizer to hide it.
 - Click the ![Settings](modules/@mfcc64/ytms-assets@1.0.0/icon-16.png) icon at the top left corner to open/close settings.
 - Press **Ctrl+Alt+H** to open/close settings and show/hide the ![Settings](modules/@mfcc64/ytms-assets@1.0.0/icon-16.png) icon.
 - If you want to change the axis, click it.
