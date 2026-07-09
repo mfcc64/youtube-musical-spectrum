@@ -809,8 +809,10 @@ import {ShowCQTElement} from "../../showcqt-element@3/showcqt-element.mjs";
         create_child_checkbox_menu("Transparent", "transparent", (child) => cqt.dataset.opacity = child.checked ? "transparent" : "opaque");
         create_child_checkbox_menu("Visible", "visible", (child) => {
             cqt.style.display = child.checked ? "block" : "none";
-            if (!child.checked)
+            if (!child.checked) {
                 coord_line_h.style.display = coord_line_v.style.display = "none";
+                cqt.render_clear();
+            }
             update_af_links();
         });
 
