@@ -165,6 +165,9 @@ import {ShowCQTElement} from "../../showcqt-element@3/showcqt-element.mjs";
     }
 
     set_fixed_style(cqt, 9999999);
+    cqt.style.setProperty("user-select", "none");
+    cqt.style.setProperty("-webkit-user-select", "none");
+
     let stop_count = 0;
     const videos = document.getElementsByTagName("video");
     const require_refresh = ["open.spotify.com", "soundcloud.com"].indexOf(document.location.hostname) < 0;
