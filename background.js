@@ -27,7 +27,7 @@ chrome.runtime.onInstalled.addListener(v => {
     if (v.reason == "update") {
         const va = v.previousVersion.split(".");
         const version = 1000000 * va[0] + 1000 * va[1] + 1 * va[2];
-        if (version <= 17000000)
+        if (version < 20000000)
             first_time = true;
     }
 

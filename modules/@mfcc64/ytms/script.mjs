@@ -117,28 +117,10 @@ import {ShowCQTElement} from "../../showcqt-element@3/showcqt-element.mjs";
               `:host { opacity: 0; max-width: 700px; }
               :host(:hover) { opacity: 1; }
               img { vertical-align: middle; }`),
-            e("div", {id: "message"},
-              e("h3", "YouTube Musical Spectrum"),
-              e("ul",
-                e("li", "By default, the visualization is visible on YT Music, Spotify, and SoundCloud but hidden on YouTube page."),
-                e("li", "Press ", e("b", "Ctrl+Alt+G"), " as a shortcut to show/hide visualization. This is equivalent to check/uncheck ", e("b", "Visible"), " setting."),
-                e("li", "Click the ", e("img", {alt: "YTMS"}, {src: icon_16}), " icon at the top left corner to open/close settings."),
-                e("li", "Press ", e("b", "Ctrl+Alt+H"), " to open/close settings and show/hide the ", e("img", {alt: "YTMS"}, {src: icon_16}), " icon."),
-                e("li", "If you want to change the axis, click it."),
-                e("li", "If you want to make your change persistent, click ", e("b", "Set as Default Settings"), " button."),
-                e("li", e("b", "New Features:"), " Custom color, custom range," +
-                    " peak color, bar scale, line visualizer, hue rotation, more color presets, horizontal scroll, coordinate line, peak range."),
-                e("li", e("a", {href: "https://github.com/mfcc64/youtube-musical-spectrum#settings"}, {target: "_blank"}, "Read more..."))
-              ),
-              e("p",
-                e("button", {id: "close_message"}, {style: "cursor: pointer;"}, "Close"),
-                " (Click the ", e("img", {alt: "YTMS"}, {src: icon_16}), " icon below to reopen again)"
-              )
-            ),
             e("div", {style: "text-align: right;"},
-              e("img", {alt: "YTMS"}, {src: icon_16}, {style: "curson: pointer;"}, {id: "open_message"}),
+              e("img", {alt: "YTMS"}, {src: icon_16}, {style: "curson: pointer;"}),
               " Support me on ",
-              e("a", {href: "https://www.youtube.com/@mfcc64"}, {target: "_blank"}, "Youtube"), " ",
+              e("a", {href: "https://www.youtube.com/@mfcc64"}, {target: "_blank"}, "YouTube"), " ",
               e("a", {href: "https://github.com/mfcc64"}, {target: "_blank"}, "GitHub"), " ",
               e("a", {href: "https://paypal.me/mfcc64"}, {target: "_blank"}, "PayPal"), " ",
               e("a", {href: "https://saweria.co/mfcc64"}, {target: "_blank"}, "Saweria")
@@ -156,16 +138,6 @@ import {ShowCQTElement} from "../../showcqt-element@3/showcqt-element.mjs";
     function update_af_links() {
         af_links.style.display = !af_links_timeout || (child_menu.visible?.checked ?? true) ? "block" : "none";
     }
-
-    const message_version = 14;
-    af_links.shadowRoot.getElementById("message").style.display = get_opt("message_version") == message_version ? "none" : "block";
-    af_links.shadowRoot.getElementById("close_message").addEventListener("click", function() {
-        set_opt("message_version", message_version);
-        af_links.shadowRoot.getElementById("message").style.display = "none";
-    });
-    af_links.shadowRoot.getElementById("open_message").addEventListener("click", function() {
-        af_links.shadowRoot.getElementById("message").style.display = "block";
-    });
 
     const cqt = new ShowCQTElement();
     let svideos = [];

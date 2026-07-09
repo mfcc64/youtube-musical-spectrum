@@ -3,10 +3,22 @@
     background-color: #333333;
     color: #dddddd;
     font-family: sans-serif;
+    line-height: 1.7;
 }
 
-em {
-    font-weight: bold;
-    font-style: italic;
+a, a:visited {
     color: #ffffff;
+    font-weight: bold;
+}
+
+a:hover {
+    color: #ffffa0;
+}
+
+strong {
+    color: #ffffff;
+}
+
+img {
+    vertical-align: middle;
 }
