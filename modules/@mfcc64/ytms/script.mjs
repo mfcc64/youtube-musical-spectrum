@@ -144,7 +144,7 @@ import {ShowCQTElement} from "../../showcqt-element@3/showcqt-element.mjs";
     function ytmusic_layout() {
         const style = document.createElement("style");
         style.textContent = `
-            ytmusic-player-bar { z-index: 12 !important; }
+            ytmusic-player-bar, ytmusic-miniplayer { z-index: 12 !important; }
             #main-panel { align-items: flex-start !important; }
             #player { margin-top: 0 !important; }`;
         document.head.appendChild(style);
