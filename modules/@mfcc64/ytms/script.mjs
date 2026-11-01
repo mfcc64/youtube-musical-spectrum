@@ -91,58 +91,6 @@ import {ShowCQTElement} from "../../showcqt-element@3/showcqt-element.mjs";
         element.style.zIndex = z_index;
     }
 
-    const icon_16 = get_asset("icon-16.png");
-    const af_links = document.createElement("div");
-    set_fixed_style(af_links, 10000001);
-    af_links.lang = "en";
-    af_links.dir = "ltr";
-    af_links.style.padding = "8px";
-    af_links.style.border = "thin solid white";
-    af_links.style.backgroundColor = "#000000DD";
-    af_links.style.color = "#dddddd";
-    af_links.style.fontSize = "10pt";
-    af_links.style.right = "8px";
-    af_links.style.bottom = "calc(var(--ytms-cqt-bottom, 0px) + 8px)";
-    af_links.style.opacity = 1;
-    {
-        const e = (name, ...args) => {
-            const v = document.createElement(name);
-            for (const arg of args)
-                if (typeof arg == "object" && !(arg instanceof Node))
-                    v.setAttribute(...Object.entries(arg)[0])
-                else
-                    v.append(arg);
-            return v;
-        };
-        af_links.attachShadow({mode: "open"}).append(
-            e("style",
-              `:host { opacity: 0; max-width: 700px; }
-              a, a:visited { color: #ffffff; font-weight: bold; }
-              a:hover { color: #ffffa0; }
-              :host(:hover) { opacity: 1; }
-              img { vertical-align: middle; }`),
-            e("div", {style: "text-align: right;"},
-              e("img", {alt: "YTMS"}, {src: icon_16}, {style: "curson: pointer;"}),
-              " Support me on ",
-              e("a", {href: "https://www.youtube.com/@mfcc64"}, {target: "_blank"}, "YouTube"), " ",
-              e("a", {href: "https://github.com/mfcc64"}, {target: "_blank"}, "GitHub"), " ",
-              e("a", {href: "https://paypal.me/mfcc64"}, {target: "_blank"}, "PayPal"), " ",
-              e("a", {href: "https://saweria.co/mfcc64"}, {target: "_blank"}, "Saweria")
-            )
-        );
-    }
-
-    let af_links_timeout = false;
-    setTimeout(() => {
-        af_links.style.opacity = "";
-        af_links_timeout = true,
-        update_af_links();
-    }, 15000);
-
-    function update_af_links() {
-        af_links.style.display = !af_links_timeout || (child_menu.visible?.checked ?? true) ? "block" : "none";
-    }
-
     const cqt = new ShowCQTElement();
     let svideos = [];
     if (document.location.hostname == "soundcloud.com") {
@@ -200,16 +148,13 @@ import {ShowCQTElement} from "../../showcqt-element@3/showcqt-element.mjs";
             #main-panel { align-items: flex-start !important; }
             #player { margin-top: 0 !important; }`;
         document.head.appendChild(style);
-        af_links.style.zIndex = 11;
         cqt.style.zIndex = 10;
 
         function update_cqt_bottom() {
             if (document.fullscreenElement) {
                 document.body.style.setProperty("--ytms-cqt-bottom", "0px");
-                af_links.style.visibility = "hidden";
             } else {
                 document.body.style.setProperty("--ytms-cqt-bottom", "var(--ytmusic-player-bar-height, 0px)");
-                af_links.style.visibility = "visible";
             }
         }
 
@@ -219,7 +164,6 @@ import {ShowCQTElement} from "../../showcqt-element@3/showcqt-element.mjs";
 
     function spotify_layout() {
         cqt.style.zIndex = 4;
-        af_links.style.zIndex = 5;
         document.body.style.setProperty("--ytms-cqt-bottom", "88px"); // FIXME
         const old_play = HTMLMediaElement.prototype.play;
         HTMLMediaElement.prototype.play = async function() {
@@ -240,7 +184,6 @@ import {ShowCQTElement} from "../../showcqt-element@3/showcqt-element.mjs";
 
     function soundcloud_layout() {
         cqt.style.zIndex = 1000;
-        af_links.style.zIndex = 1001;
         document.body.style.setProperty("--ytms-cqt-bottom", "var(--play-controls-height, 0px)");
     }
 
@@ -814,7 +757,6 @@ import {ShowCQTElement} from "../../showcqt-element@3/showcqt-element.mjs";
                 coord_line_h.style.display = coord_line_v.style.display = "none";
                 cqt.render_clear();
             }
-            update_af_links();
         });
 
         function create_child_select_presets() {
@@ -998,6 +940,5 @@ import {ShowCQTElement} from "../../showcqt-element@3/showcqt-element.mjs";
     document.body.appendChild(cqt);
     document.body.appendChild(coord_line_h);
     document.body.appendChild(coord_line_v);
-    document.body.appendChild(af_links);
     dispatchEvent(new CustomEvent("youtube-musical-spectrum-is-available"));
 })().catch(e => console.error(e));
