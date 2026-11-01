@@ -1,6 +1,6 @@
 {
   "name": "@mfcc64/ytms-assets",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Assets of YouTube Musical Spectrum",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

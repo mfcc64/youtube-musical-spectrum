@@ -19,10 +19,10 @@
 import {ShowCQTElement} from "../../showcqt-element@3/showcqt-element.mjs";
 
 (async function(){
-    const get_asset = (name) => String(new URL(`../ytms-assets@1.0.0/${name}`, import.meta.url));
+    const get_asset = (name) => String(new URL(`../ytms-assets@2.0.0/${name}`, import.meta.url));
     const axis_list = [
-        "",
-        get_asset("axis-hz-1920x32.png")
+        [ "", get_asset("axis-1920x32-flip.png") ],
+        [ get_asset("axis-hz-1920x32.png"), get_asset("axis-hz-1920x32-flip.png") ]
     ];
 
     const defaults = {
@@ -40,7 +40,7 @@ import {ShowCQTElement} from "../../showcqt-element@3/showcqt-element.mjs";
         bar_scale:  { def:  0, min:  0, max:  4 },
         base_note:  { def: 16, min: 16, max:100 },
         semitones:  { def:120, min: 36, max:120 },
-        scroll:     { def:  0, min:  0, max:  1 },
+        scroll:     { def:  0, min:  0, max:  3 },
         left_color: { def:0xdcb900, min:0, max:0xffffff },
         mid_color:  { def:0xdcdcdc, min:0, max:0xffffff },
         right_color:{ def:0x00b9dc, min:0, max:0xffffff },
@@ -169,6 +169,7 @@ import {ShowCQTElement} from "../../showcqt-element@3/showcqt-element.mjs";
     set_fixed_style(cqt, 9999999);
     cqt.style.setProperty("user-select", "none");
     cqt.style.setProperty("-webkit-user-select", "none");
+    cqt.style.transformOrigin = "bottom left";
 
     let stop_count = 0;
     const videos = document.getElementsByTagName("video");
@@ -262,6 +263,12 @@ import {ShowCQTElement} from "../../showcqt-element@3/showcqt-element.mjs";
     coord_line_h.style.pointerEvents = coord_line_v.style.pointerEvents = "none";
     coord_line_h.style.display = coord_line_v.style.display = "none";
 
+    function update_axis() {
+        if (!child_menu.axis || !child_menu.scroll)
+            return;
+        cqt.dataset.axis = axis_list[child_menu.axis.value][+(child_menu.scroll.value > 1)];
+    }
+
     function update_cqt_layout(child) {
         if (!child_menu.height || !child_menu.scroll || !child_menu.base_note || !child_menu.semitones)
             return;
@@ -278,24 +285,37 @@ import {ShowCQTElement} from "../../showcqt-element@3/showcqt-element.mjs";
         const vleft = -base / width;
         const vwidth = 120 / width;
 
-        if (child_menu.scroll.value == "0") {
+        if (child_menu.scroll.value % 2 == 0) {
             cqt.style.height = `calc(${ child_menu.height.value / 100} * (100% - var(--ytms-cqt-bottom, 0px)))`;
             cqt.style.width = vwidth * 100 + "%";
             cqt.style.left = vleft * 100 + "%";
-            cqt.style.bottom = "var(--ytms-cqt-bottom, 0px)";
-            cqt.style.transform = "";
+
+            if (child_menu.scroll.value == 0) {
+                cqt.style.bottom = "var(--ytms-cqt-bottom, 0px)";
+                cqt.style.transform = "";
+            } else {
+                cqt.style.bottom = "100%";
+                cqt.style.transform = "scale(1, -1)";
+            }
         } else {
             cqt.style.height = child_menu.height.value + "vw";
             cqt.style.width = `calc(${vwidth} * (100vh - var(--ytms-cqt-bottom, 0px)))`;
-            cqt.style.left = "100vw";
             cqt.style.bottom = `calc(var(--ytms-cqt-bottom, 0px) + ${vleft} * (100vh - var(--ytms-cqt-bottom, 0px)))`;
-            cqt.style.transform = "rotate(-90deg)";
-            cqt.style.transformOrigin = "bottom left";
+
+            if (child_menu.scroll.value == 1) {
+                cqt.style.left = "100vw";
+                cqt.style.transform = "rotate(-90deg)";
+            } else {
+                cqt.style.left = "0";
+                cqt.style.transform = "rotate(-90deg) scale(1, -1)";
+            }
         }
+
+        update_axis();
     }
 
     child_menu.axis = { value: get_opt("axis") };
-    child_menu.axis.onchange = function() { cqt.dataset.axis = axis_list[child_menu.axis.value]; };
+    child_menu.axis.onchange = update_axis;
     cqt.shadowRoot.getElementById("axis").addEventListener("click", function() {
         child_menu.axis.value = (child_menu.axis.value + 1) % axis_list.length;
         child_menu.axis.onchange();
@@ -589,7 +609,7 @@ import {ShowCQTElement} from "../../showcqt-element@3/showcqt-element.mjs";
             child.onchange();
         }
 
-        create_child_select_menu("Scroll", "scroll", [ "Vertical", "Horizontal" ], update_cqt_layout);
+        create_child_select_menu("Scroll", "scroll", [ "Vertical", "Horizontal", "Flip Vertical", "Flip Horizontal" ], update_cqt_layout);
 
         function detect_peak(color) {
             if (color_int[3] == 0xffffff)
